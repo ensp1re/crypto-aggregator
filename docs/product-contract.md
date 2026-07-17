@@ -94,7 +94,8 @@ The complete mandatory threat model is [security.md](security.md).
 
 ## Runtime and operational constraints
 
-- Web request plane: indexable, accessible Next.js application and BFF reading published projections.
+- Web request plane: one indexable, accessible Next.js application backend/BFF reading published
+  projections; no standalone API service for MVP.
 - Research plane: separately deployed scheduler and TypeScript worker; browser work is isolated from
   lightweight HTTP collection.
 - Initial scale: sub-thousand offering catalog, 40–60 launch programs, and low-to-moderate scheduled

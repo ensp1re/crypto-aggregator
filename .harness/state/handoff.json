@@ -1,41 +1,45 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T15:17:16+02:00",
-  "goal": "Make the CardStats blueprint restartable and safe for an eventual first implementation slice.",
+  "updatedAt": "2026-07-17T15:43:27+02:00",
+  "goal": "Finalize the CardStats Prisma and Next.js application-backend baseline before implementation.",
   "scope": [
     "phase-0-decision-gate"
   ],
   "status": "waiting",
   "git": {
-    "branch": "chore/add-agent-harness",
-    "head": "e7900e89d76a210e9508d4e234e6ea11a40c5be1",
+    "branch": "docs/prisma-next-backend",
+    "head": "b563c17ae07e5e479812c4eba8bcb69f8c9916d7",
     "worktree": "dirty"
   },
   "completed": [
     "Created the portable Core harness surfaces and pre-coding decision gate.",
-    "Validated cold-start context, structural integrity, context budgets, and stale-state conflict detection."
+    "Validated cold-start context, structural integrity, context budgets, and stale-state conflict detection.",
+    "Updated the proposed stack to one Next.js request-plane backend, Prisma ORM/Migrate, PostgreSQL-native SQL where required, and one isolated ingestion worker.",
+    "Added repository ignore rules that keep local environment files and credentials out of Git."
   ],
   "nextActions": [
-    "Founder reviews and explicitly approves or revises the ten pre-coding decisions in docs/product-contract.md."
+    "Rotate the exposed database credential, then founder reviews and approves or revises the updated product contract and ADR 0001."
   ],
   "decisions": [
     "Use the Core harness profile only; no hooks, MCP servers, event database, semantic index, daemon, or parallel-agent orchestration.",
     "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass.",
-    "Require ui-ux-pro-max before any visual or interaction design, implementation, refactor, or review task."
+    "Require ui-ux-pro-max before any visual or interaction design, implementation, refactor, or review task.",
+    "Use Next.js as the only MVP request-plane application backend; retain a separate worker for ingestion, Playwright, schedules, and retries.",
+    "Use Prisma ORM/Migrate for normal data access and migration orchestration while PostgreSQL constraints and reviewed SQL remain authoritative."
   ],
   "openQuestions": [
     "Which countries and inclusion boundary define the first release?",
-    "Are the product contract and ADR 0001 accepted as the implementation baseline?",
-    "Which hosting region, processors, recovery objectives, browser baseline, and legal review scope are approved?"
+    "Are the updated product contract and ADR 0001 accepted as the implementation baseline?",
+    "Which PostgreSQL provider, TLS/network policy, runtime pooler, hosting region, processors, recovery objectives, browser baseline, and legal review scope are approved?"
   ],
   "verification": {
     "passed": [
-      "python3 scripts/harness/check.py — passed against Git head 7d28f9d689b42fd6380083f52b8b69b089fc2afc with a dirty harness worktree.",
-      "python3 scripts/harness/verify.py — passed script syntax, state/link/budget/security checks, compact context contract, and git diff whitespace checks.",
+      "python3 scripts/harness/check.py — passed manifest, state, link, budget, and credential-pattern checks on branch docs/prisma-next-backend.",
+      "python3 scripts/harness/verify.py — passed script syntax, compact context contract, state consistency, and Git whitespace checks.",
       "Bundled validate_harness.py --strict — 0 errors and 0 warnings.",
-      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources total 9,252 bytes and approximately 2,310 tokens.",
-      "Bundled test_skill.py — inspector, validator, budget, placeholder, unsafe-path, and over-budget cases passed.",
-      "Expected-failure state test — a forged handoff head was rejected, then the authoritative head was restored."
+      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources remain below 10.5 KB and approximately 2,700 tokens.",
+      "Stack consistency search — no remaining Drizzle recommendation or obsolete Next.js BFF wording found in README/docs.",
+      "Secret hygiene — .env is ignored and absent from Git status; its contents were not read, staged, tested, or copied."
     ],
     "failed": [],
     "notRun": [
@@ -45,14 +49,20 @@
     ]
   },
   "risks": [
-    "The product and architecture documents are recommendations until the founder explicitly approves the pre-coding gate.",
+    "The database credential disclosed in chat must be rotated before use; the repository does not store or validate it.",
+    "The remote PostgreSQL endpoint is unapproved until TLS, restricted network access, pooling, least-privilege roles, backups, monitoring, and restore are verified.",
+    "The remaining product and architecture decisions require explicit founder approval before the pre-coding gate passes.",
     "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
   ],
   "touchedPaths": [
     "README.md",
+    ".gitignore",
     "AGENTS.md",
     "docs/product-contract.md",
     "docs/decisions/0001-architecture-baseline.md",
+    "docs/architecture.md",
+    "docs/tech-stack.md",
+    "docs/database-design.md",
     "docs/verification.md",
     ".harness/manifest.json",
     ".harness/state/work-items.json",
@@ -63,7 +73,8 @@
   ],
   "doNotRepeat": [
     "Do not start product coding merely because the blueprint recommends a stack.",
-    "Do not add automatic memory, hooks, services, or specialist data stores without a measured need and explicit trust."
+    "Do not add automatic memory, hooks, services, or specialist data stores without a measured need and explicit trust.",
+    "Do not connect to, print, stage, or reuse the disclosed database credential; rotate it first."
   ],
   "contextSources": [
     "AGENTS.md",

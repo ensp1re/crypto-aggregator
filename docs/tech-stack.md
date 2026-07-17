@@ -2,7 +2,7 @@
 
 ## Executive recommendation
 
-Build a TypeScript modular monolith and a separately deployed TypeScript worker. Use PostgreSQL for transactional data, temporal claims, search, and the initial job queue. Use HTTP collection first and Playwright only for sources that require a browser. Keep the vendor surface intentional and defer specialized infrastructure.
+Use Next.js as the complete request-plane application backend and frontend, with one separately deployed TypeScript ingestion worker. Do not add a standalone API service for the MVP. Use Prisma for ordinary typed data access and migration orchestration, while PostgreSQL and reviewed SQL remain authoritative for temporal constraints, projections, specialized indexes, and complex reads. Use HTTP collection first and Playwright only for sources that require a browser.
 
 The stack optimizes for a small team that must spend more time on data correctness than distributed-systems maintenance.
 
@@ -45,11 +45,15 @@ Do not use a heavy grid product for the MVP; its desktop-first assumptions fight
 
 ## Backend and API
 
-### Modular monolith — recommended
+### Next.js application backend — recommended
 
-Keep public reads, finder logic, ranking explanations, admin mutations, source registry, and publication orchestration in one codebase with explicit domain modules. Run ingestion in a separate process because browser execution, retries, and untrusted remote content have different security and scaling needs.
+Keep public reads, finder logic, ranking explanations, admin mutations, source registry, and publication orchestration in the Next.js codebase with explicit server-only application and domain modules. This is a modular monolith inside the Next.js deployment, not business logic embedded in React components.
 
-Use REST for public and internal APIs. Resources are clear, cache semantics matter, and GraphQL would add schema, authorization, query-cost, and caching complexity without a demonstrated client need. Introduce `/api/v1` when the API becomes a product; internal server calls can initially use typed application services.
+Server Components call application services and repositories directly; they must not call the app's own Route Handlers and pay an unnecessary HTTP round trip. Use Server Actions for UI-scoped mutations after authorization and input validation. Use Route Handlers for public/client-side endpoints, webhooks, callbacks, exports, and the future versioned REST API. Do not treat Route Handlers as a durable job runner or shared in-memory process: some hosts execute them as functions with filesystem, timeout, and connection-lifetime limits. Next.js documents both the [Backend for Frontend pattern and its deployment caveats](https://nextjs.org/docs/app/guides/backend-for-frontend).
+
+Run ingestion in a separate containerized process because scheduling, Playwright, hostile remote content, retries, long execution, and controlled egress have different security and scaling needs. A standalone Express/Fastify/Nest API is deferred until a non-web client, independent scaling requirement, or security/ownership boundary demonstrates that the Next.js backend is insufficient.
+
+Use REST for externally consumed APIs. Resources are clear, cache semantics matter, and GraphQL would add schema, authorization, query-cost, and caching complexity without a demonstrated client need. Introduce `/api/v1` when the API becomes a product.
 
 ### Node.js vs Go
 
@@ -72,18 +76,27 @@ Use it for:
 
 PostgreSQL is not the correct home for immutable source binaries, raw screenshots, or eventually billions of onchain events.
 
-### Drizzle — recommended over Prisma
+### Prisma ORM and Prisma Migrate — selected
 
-[Drizzle](https://orm.drizzle.team/docs/overview) stays close to SQL and supports explicit migrations. The team needs partial indexes, generated views, temporal queries, database constraints, and predictable query plans more than a high-abstraction object model.
+[Prisma ORM](https://www.prisma.io/docs/orm) is the default application data-access layer. It provides a productive typed client for ordinary entity, relationship, workflow, and transaction operations across both the Next.js backend and TypeScript worker. This is a team productivity choice, not permission to reduce the domain to whatever Prisma Schema Language can express.
 
-[Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate) is credible and may suit teams already expert in it, but its generated client and abstraction do not remove the need for SQL-heavy schema work. Revisit only if team familiarity materially outweighs control.
+[Prisma Migrate](https://docs.prisma.io/docs/orm/prisma-migrate) produces versioned SQL migrations that can be reviewed and customized. Generate migrations with a create-only/review step whenever native PostgreSQL features or data-preserving changes are involved. Use [TypedSQL or parameterized raw queries](https://www.prisma.io/docs/orm/prisma-client/using-raw-sql) for current-value projections, complex temporal reads, full-text/trigram search, reporting, and queries whose plans need direct control.
 
 Rules:
 
-- SQL constraints are the final integrity boundary.
-- Migrations are reviewed artifacts, never production `push` operations.
+- PostgreSQL constraints are the final integrity boundary; use database foreign keys rather than Prisma-emulated referential integrity.
+- Prisma schema models the application-facing portion of the database. Migration SQL, views, extensions, indexes, and constraints are also first-class reviewed source.
+- Migrations are reviewed artifacts. `prisma db push` is limited to disposable prototyping before the shared migration baseline exists and is never used against shared, staging, or production databases.
+- Generate a draft migration, inspect and customize its SQL, test it against production-like data, then apply it through the delivery pipeline.
+- Prefer Prisma Client for normal queries, TypedSQL for owned complex SQL, and unsafe raw methods only as an exceptional reviewed path with parameterization and tests.
 - Complex reads have query-plan tests and measured indexes.
 - JSON is reserved for source-specific conditions that cannot yet be normalized, not used as the default schema.
+
+### Connections and credentials
+
+Do not assume a direct PostgreSQL URL is safe for a function-style Next.js deployment. The runtime connection must use an approved pooler or a deliberately capped connection strategy; migration and administrative commands need a separately controlled direct connection when the pooler cannot support them. Current Prisma versions configure connection URLs in `prisma.config.ts`, so the implementation must pin a tested Prisma major and follow that version's configuration model rather than copying an older `directUrl` example.
+
+Use separate least-privilege roles for the public/request plane, worker candidates/jobs, migrations, and later publication/admin operations. Require TLS verification, network allowlisting or private networking, rotated credentials, connection/time limits, monitored saturation, automated backups, and a restore drill before any remote database is treated as staging or production. Never commit connection strings; keep a redacted `.env.example` when implementation begins.
 
 ### Search — PostgreSQL first
 
@@ -118,7 +131,7 @@ Browser collection is slower, more fragile, and a larger security surface. Never
 
 - **Vercel:** Next.js web and lightweight request handlers.
 - **Railway:** Dockerized collection/normalization worker and scheduler.
-- **Supabase:** managed PostgreSQL and admin authentication in an EU region.
+- **Managed PostgreSQL:** provider selected after TLS, regional, pooling, backup, restore, and operational-ownership gates; Supabase remains a viable option rather than a hard dependency.
 - **Cloudflare R2:** private immutable source artifacts, PDFs, and screenshots.
 - **PostHog Cloud EU:** explicit product analytics and feature flags.
 
@@ -130,9 +143,9 @@ Use Docker as the deployment contract for the worker and as a supported path for
 
 Serverless limits have improved—see [Vercel function limits](https://vercel.com/changelog/higher-defaults-and-limits-for-vercel-functions-running-fluid-compute)—but browser collection needs stable containers, predictable concurrency, egress control, and long job supervision. Keep it off the request plane.
 
-### Why Supabase?
+### PostgreSQL provider decision
 
-[Supabase provides managed PostgreSQL](https://supabase.com/docs/guides/database/overview), pooling, authentication, and operational tooling without changing the database model. It is not used as a magic backend abstraction. Review [backup behavior](https://supabase.com/docs/guides/platform/backups): database backups do not replace object-storage backups, and point-in-time recovery has a cost. MVP policy should include daily provider backups, encrypted offsite logical backups, and quarterly restore drills.
+The project may use Supabase, Railway, another managed PostgreSQL provider, or an existing hardened instance. A reachable server is not an approved production database. Selection requires TLS verification, restricted ingress/private networking, a pooler compatible with the Next.js deployment model, point-in-time or equivalent recovery, encrypted offsite logical backups, monitoring, upgrade ownership, and a successful restore drill. Authentication is evaluated separately and must not force the database provider choice.
 
 ### Why R2?
 
@@ -186,6 +199,7 @@ Scale in this order:
 | Technology | Why not now | Revisit when |
 |---|---|---|
 | Microservices/Kubernetes | Operations and consistency cost | Multiple teams and independently scaling domains |
+| Separate Express/Fastify/Nest API | Duplicates the Next.js request plane and creates an internal network boundary without a present need | Independent clients, scaling, deployment, or security ownership requires it |
 | Go backend | Second language without bottleneck | Profiled worker CPU/concurrency constraint |
 | GraphQL | Query/security/caching complexity | Multiple rich external clients require composition |
 | Redis | Another stateful system | PostgreSQL queue/cache is measured insufficient |

@@ -37,9 +37,9 @@ Later releases add scenario-based value calculations, alerts and watchlists, cou
 
 ## Architecture overview
 
-The recommended first architecture is a **TypeScript modular monolith with a separate ingestion worker**, not microservices:
+The recommended first architecture is a **Next.js TypeScript application backend with a separate ingestion worker**, not a standalone API service or microservices:
 
-- Next.js renders the public research experience and supplies a small REST/BFF layer.
+- Next.js owns server rendering, the application/domain backend, admin mutations, and the REST/BFF endpoints needed by browsers and external clients.
 - PostgreSQL is the system of record, search engine, temporal claim store, and initial job queue.
 - A containerized worker fetches official sources, stores immutable artifacts, extracts candidate changes, and opens review tasks.
 - A private admin area handles evidence review, conflicts, corrections, and atomic publication.
@@ -53,11 +53,12 @@ Redis, Elasticsearch, ClickHouse, GraphQL, Go services, and a generic CMS are in
 |---|---|---|
 | Web | Next.js, React, TypeScript | Strong server rendering for SEO, client islands for comparison, one language across the team |
 | UI | Tailwind CSS, owned shadcn/ui primitives, TanStack Table | Fast accessible composition without accepting a template aesthetic |
-| Data/API | PostgreSQL, Drizzle, REST | Temporal relational data and transparent SQL matter more than abstraction |
+| Backend/API | Next.js Route Handlers + server-only application modules, REST | One deployable request plane; no internal HTTP hop or separate API service |
+| Data access | PostgreSQL, Prisma ORM/Migrate, TypedSQL/reviewed SQL | Productive typed CRUD while retaining native SQL for temporal constraints, projections, and tuned reads |
 | Search | PostgreSQL full-text + trigram | The initial corpus does not justify a separate search service |
 | Jobs | pg-boss + PostgreSQL | Durable retries and scheduling without operating Redis |
 | Collection | HTTP parsers first, Playwright fallback | Lower cost and fragility; browsers only where necessary |
-| Hosting | Vercel web, Railway workers, Supabase Postgres, Cloudflare R2 | Each service has a narrow responsibility; revisit vendor count after beta |
+| Hosting | Vercel Next.js, Railway workers, approved managed PostgreSQL, Cloudflare R2 | Each service has a narrow responsibility; database provider must pass TLS, pooling, backup, and recovery gates |
 | Product analytics | PostHog EU, explicit events | Funnels and experiments with redaction and consent controls |
 
 These are recommendations, not procurement commitments. Decision criteria and exit thresholds are documented in [tech-stack.md](docs/tech-stack.md).
