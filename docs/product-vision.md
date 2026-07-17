@@ -1,8 +1,8 @@
-# Product vision
+# CardStats product vision
 
 ## Vision statement
 
-**Every person can see the real eligibility, cost, and evidence behind any crypto card before trusting it with money.**
+**CardStats helps every person discover, compare, and understand the real eligibility, cost, and evidence behind any crypto card before trusting it with money.**
 
 ## Mission
 

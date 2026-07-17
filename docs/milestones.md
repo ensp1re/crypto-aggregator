@@ -1,4 +1,4 @@
-# Milestones, gates, and success criteria
+# CardStats milestones, gates, and success criteria
 
 ## Summary timeline
 

@@ -1,4 +1,4 @@
-# Implementation plan
+# CardStats implementation plan
 
 ## Planning assumptions
 

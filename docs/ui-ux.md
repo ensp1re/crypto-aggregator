@@ -1,4 +1,4 @@
-# UI/UX blueprint
+# CardStats UI/UX blueprint
 
 ## Design posture
 

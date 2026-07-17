@@ -1,4 +1,4 @@
-# Market research
+# CardStats market research
 
 Research date: 17 July 2026.
 

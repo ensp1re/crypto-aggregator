@@ -1,4 +1,4 @@
-# Monetization strategy
+# CardStats monetization strategy
 
 ## Thesis
 

@@ -1,4 +1,4 @@
-# Analytics strategy
+# CardStats analytics strategy
 
 ## Purpose
 

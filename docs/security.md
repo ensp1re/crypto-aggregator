@@ -1,4 +1,4 @@
-# Security, privacy, abuse, and legal considerations
+# CardStats security, privacy, abuse, and legal considerations
 
 ## Security posture
 

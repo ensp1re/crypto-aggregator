@@ -1,4 +1,4 @@
-# System architecture
+# CardStats system architecture
 
 ## Architecture goals
 

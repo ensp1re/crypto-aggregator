@@ -1,4 +1,4 @@
-# User personas and research plan
+# CardStats user personas and research plan
 
 ## How to use these personas
 

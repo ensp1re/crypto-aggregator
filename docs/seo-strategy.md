@@ -1,4 +1,4 @@
-# SEO and content strategy
+# CardStats SEO and content strategy
 
 ## Strategic position
 

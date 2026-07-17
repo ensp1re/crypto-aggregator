@@ -1,4 +1,4 @@
-# Competitor analysis
+# CardStats competitor analysis
 
 Research date: 17 July 2026. Competitor content changes frequently; counts below are observations, not guarantees.
 

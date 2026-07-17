@@ -1,4 +1,4 @@
-# Recommended technology stack
+# CardStats recommended technology stack
 
 ## Executive recommendation
 

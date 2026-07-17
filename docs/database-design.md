@@ -1,4 +1,4 @@
-# Database design
+# CardStats database design
 
 ## Core modeling decision
 

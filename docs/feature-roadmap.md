@@ -1,4 +1,4 @@
-# Feature roadmap
+# CardStats feature roadmap
 
 ## Prioritization doctrine
 

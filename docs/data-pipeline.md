@@ -1,4 +1,4 @@
-# Data acquisition and verification pipeline
+# CardStats data acquisition and verification pipeline
 
 ## Objective
 

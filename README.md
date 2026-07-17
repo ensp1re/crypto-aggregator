@@ -1,6 +1,6 @@
-# Crypto Card Aggregator
+# CardStats
 
-This repository contains the pre-build blueprint for a global crypto card comparison platform. No product code has been written yet. The working objective is to help a person answer a deceptively hard question: **which crypto card can I actually obtain, what will it really cost, and what evidence supports those claims?**
+**CardStats** is a global crypto card analytics and comparison platform. This repository contains its pre-build blueprint; no product code has been written yet. CardStats is designed to help a person answer a deceptively hard question: **which crypto card can I actually obtain, what will it really cost, and what evidence supports those claims?**
 
 Research snapshot: **17 July 2026**. Card terms, availability, regulations, and affiliate programs change frequently; links and market counts in these documents are observations, not permanent facts.
 
