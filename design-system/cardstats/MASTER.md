@@ -1,221 +1,95 @@
-# Design System Master File
+# CardStats design system
 
-> **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
-> If that file exists, its rules **override** this Master file.
-> If not, strictly follow the rules below.
+**Updated:** 17 July 2026
 
----
+**Direction:** Editorial fintech research ledger
 
-**Project:** CardStats
-**Generated:** 2026-07-17 16:46:42
-**Category:** Financial Dashboard
-**Design Dials:** Variance 3/10 (Centered / Minimal) | Motion 2/10 (Subtle) | Density 7/10 (Standard)
+**Design dials:** variance 6/10, motion 3/10, density 8/10
 
----
+## Product posture
 
-## Global Rules
+CardStats is a consumer research product with professional analytics depth. It should feel like an
+independent financial publication joined to a precise data instrument, not a crypto exchange, generic
+SaaS dashboard, affiliate directory, or collection of plastic-card mockups.
 
-### Color Palette
+The public experience uses one system across discovery, detail, comparison, and analytics. Discovery
+can be broad, but verification status, denominator, method, scope, and observation time always travel
+with the data. Never imply that a competitor observation is issuer-verified.
 
-| Role | Hex | CSS Variable |
-|------|-----|--------------|
-| Primary | `#1E3A5F` | `--color-primary` |
-| On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#2563EB` | `--color-secondary` |
-| Accent/CTA | `#A16207` | `--color-accent` |
-| Background | `#F8FAFC` | `--color-background` |
-| Foreground | `#0F172A` | `--color-foreground` |
-| Muted | `#E9EEF5` | `--color-muted` |
-| Border | `#CBD5E1` | `--color-border` |
-| Destructive | `#DC2626` | `--color-destructive` |
-| Ring | `#1E3A5F` | `--color-ring` |
+## Visual language
 
-**Color Notes:** Institutional navy, restrained blue actions, and amber reserved for caveats. Green
-is used only for verified positive states; no state is communicated by color alone.
+| Role | Token | Value |
+|---|---|---|
+| Canvas | `--paper` | `#F3F0E8` |
+| Secondary canvas | `--paper-deep` | `#E9E4D8` |
+| Raised surface | `--surface` | `#FBFAF6` |
+| Primary text | `--ink` | `#151515` |
+| Secondary text | `--ink-soft` | `#55534E` |
+| Rule | `--rule` | `#C8C2B5` |
+| Action | `--blue` | `#2355E8` |
+| Action hover | `--blue-dark` | `#173BAA` |
+| Brand signal | `--acid` | `#D7FF43` |
+| Caveat surface | `--warning-bg` | `#FFF1CE` |
 
-### Typography
+- Warm paper and ink do most of the work. Cobalt is the only action accent.
+- Acid is reserved for the small brand mark and one ledger offset, never large backgrounds.
+- Use one-pixel rules and square geometry. Avoid rounded card grids, glass, gradients, glow, and
+  decorative shadows.
+- The only deliberate display-font contrast is restrained Georgia italic in the home headline.
+  Data and body copy use the system sans stack; metadata uses the system monospace stack.
+- Use tabular figures for metrics. Body text stays 16px minimum and long copy stays under 75 characters.
 
-- **Heading Font:** IBM Plex Sans or the system sans fallback
-- **Body Font:** IBM Plex Sans or the system sans fallback
-- **Mood:** precise, financial, neutral, accessible, and highly legible
-- **Numerals:** use tabular numerals for money, percentages, dates, and limits
+## Layout
 
-**CSS Import:**
-```css
-font-family: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
-```
+- Maximum shell: 82rem with 20px mobile and 20px to 40px desktop gutters.
+- Mobile-first breakpoints: 420px, 760px, and 1000px; verify at 375px, 768px, 1024px, and 1440px.
+- Use 4px and 8px spacing increments. Dense information is separated by alignment and rules, not tiny
+  type.
+- Home can be asymmetric. Catalog and analytics use compact aligned ledgers.
+- Never use generic three-card feature grids or a wall of KPI cards. Analytics starts with one question,
+  answer, denominator, controls, chart, data table, and interpretation.
 
-### Spacing Variables
+## Components
 
-*Density: 7/10 — Standard*
+- **Buttons:** square, 44px minimum, cobalt primary and ink-outline secondary. No gradient or scale hover.
+- **Issuer mark:** fixed square with declared dimensions. Current competitor-sourced avatars are visibly
+  discovery-only and must be replaced by official issuer assets with provenance.
+- **Catalog row:** identity, four decision facts, and profile action. Do not repeat status labels on every
+  row; source context belongs in the surrounding page and evidence surfaces.
+- **Profile fact sheet:** pair each label with its observed value. Reserve row-level evidence links for
+  official-source observations that a reader can inspect.
+- **Selector:** use the square custom listbox with a persistent label, current value, checkmark, and cobalt
+  active rule. It must preserve form submission and support arrows, Home, End, Enter, Space, Escape, Tab,
+  type-ahead, outside click, visible focus, and 44px touch targets.
+- **Comparison:** one shared context, no winner before eligibility and economics verification; stack each
+  card value under the factor on mobile.
+- **Charts:** horizontal bars for categorical counts, exact direct labels, denominator and method above,
+  accessible table below. Do not use pie charts for the custody taxonomy.
+- **Caveats:** amber surface with icon plus text. Color never carries meaning alone.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--space-xs` | `4px` / `0.25rem` | Tight gaps |
-| `--space-sm` | `8px` / `0.5rem` | Icon gaps, inline spacing |
-| `--space-md` | `16px` / `1rem` | Standard padding |
-| `--space-lg` | `24px` / `1.5rem` | Section padding |
-| `--space-xl` | `32px` / `2rem` | Large gaps |
-| `--space-2xl` | `48px` / `3rem` | Section margins |
-| `--space-3xl` | `64px` / `4rem` | Hero padding |
+## Motion and interaction
 
-### Shadow Depths
+- Use 180ms color, border, or opacity transitions. No entrance animation, parallax, floating elements, or
+  looping decoration.
+- Pressed states may change opacity but never layout bounds.
+- All interactive elements are keyboard reachable, visibly focused, and at least 44 by 44px on touch.
+- Respect `prefers-reduced-motion`; no content is hidden pending JavaScript or animation.
 
-| Level | Value | Usage |
-|-------|-------|-------|
-| `--shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle lift |
-| `--shadow-md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards, buttons |
-| `--shadow-lg` | `0 10px 15px rgba(0,0,0,0.1)` | Modals, dropdowns |
-| `--shadow-xl` | `0 20px 25px rgba(0,0,0,0.15)` | Hero images, featured cards |
+## Content rules
 
----
+- Use “reported” and “observed” for discovery data without repeating warning labels on each component.
+- Reserve “verified” for independent official evidence that passed publication review.
+- Never turn unknown into zero or rank on mismatched regional offerings.
+- Use “address” rather than “user” for onchain address counts.
+- Do not use em or en dashes in visible product copy.
+- Keep promotional language and categorical user personas out of the interface.
 
-## Component Specs
+## Pre-delivery gate
 
-### Buttons
-
-```css
-/* Primary Button */
-.btn-primary {
-  background: #A16207;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 200ms ease, border-color 200ms ease;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-/* Secondary Button */
-.btn-secondary {
-  background: transparent;
-  color: #1E3A5F;
-  border: 2px solid #1E3A5F;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 200ms ease, border-color 200ms ease;
-  cursor: pointer;
-}
-```
-
-### Cards
-
-```css
-.card {
-  background: #FFFFFF;
-  border: 1px solid #CBD5E1;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 200ms ease, box-shadow 200ms ease;
-}
-
-.card:hover {
-  border-color: #94A3B8;
-  box-shadow: var(--shadow-md);
-}
-```
-
-### Inputs
-
-```css
-.input {
-  padding: 12px 16px;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 200ms ease, box-shadow 200ms ease;
-}
-
-.input:focus {
-  border-color: #1E3A5F;
-  outline: none;
-  box-shadow: 0 0 0 3px #1E3A5F20;
-}
-```
-
-### Modals
-
-```css
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-.modal {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: var(--shadow-xl);
-  max-width: 500px;
-  width: 90%;
-}
-```
-
----
-
-## Style Guidelines
-
-**Style:** Calm financial research interface
-
-**Keywords:** precise, transparent, content-first, evidence-led, compact, humane
-
-**Best For:** country-first discovery, scoped program details, mobile comparison, and evidence review
-
-**Key Effects:** strong hierarchy, thin borders, restrained shadows, tabular data, and progressive disclosure
-
-### Page Pattern
-
-**Pattern Name:** Country-first decision and evidence flow
-
-- **Decision Strategy:** establish residency and offering scope before showing economics or rewards.
-- **CTA Placement:** primary compare action follows eligibility; official issuer confirmation remains equally available.
-- **Section Order:** context, eligibility, funding, cost, rewards, limits, evidence, and correction.
-
----
-
-## Motion
-
-Use CSS transitions of 150–250ms for focus, hover, disclosure, and comparison feedback. Do not add a
-motion library for the representative slice. Content is visible by default, no ornamental animation
-runs, and `prefers-reduced-motion` disables nonessential transitions.
-
----
-
-## Anti-Patterns (Do NOT Use)
-
-- ❌ Dark trading-terminal styling, neon, glassmorphism, or crypto visual clichés
-- ❌ Slow rendering
-- ❌ Reward-first hierarchy before eligibility and scope
-- ❌ Unsupported zero values, ambiguous blanks, or color-only value states
-
-### Additional Forbidden Patterns
-
-- ❌ **Emojis as icons** — Use SVG icons (Heroicons, Lucide, Simple Icons)
-- ❌ **Missing cursor:pointer** — All clickable elements must have cursor:pointer
-- ❌ **Layout-shifting hovers** — Avoid scale transforms that shift layout
-- ❌ **Low contrast text** — Maintain 4.5:1 minimum contrast ratio
-- ❌ **Instant state changes** — Always use transitions (150-300ms)
-- ❌ **Invisible focus states** — Focus states must be visible for a11y
-
----
-
-## Pre-Delivery Checklist
-
-Before delivering any UI code, verify:
-
-- [ ] No emojis used as icons (use SVG instead)
-- [ ] All icons from consistent icon set (Heroicons/Lucide)
-- [ ] `cursor-pointer` on all clickable elements
-- [ ] Hover states with smooth transitions (150-300ms)
-- [ ] Light mode: text contrast 4.5:1 minimum
-- [ ] Focus states visible for keyboard navigation
-- [ ] `prefers-reduced-motion` respected
-- [ ] Responsive: 375px, 768px, 1024px, 1440px
-- [ ] No content hidden behind fixed navbars
-- [ ] No horizontal scroll on mobile
+- No emoji controls, faux card art, generic bento sections, glass, neon, or purple gradients.
+- One Lucide outline-icon family; meaningful issuer images have dimensions and text alternatives.
+- Axe has no violations on home, catalog, detail, comparison, and analytics.
+- No horizontal overflow at 375px, 200% text, or 812 by 375 landscape.
+- Every mobile interactive target is at least 44px; visible focus and reduced motion pass.
+- Charts have exact labels, text insight, denominator, method, and an accessible table.
+- Desktop at 1440px and mobile at 375px have been visually inspected.

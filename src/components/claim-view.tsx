@@ -44,7 +44,7 @@ export function ClaimValue({ claim, compact = false }: { claim?: PublishedClaimV
             {claim.claim.evidence.map(({ artifact }) => (
               <dl key={`${artifact.source.title}-${artifact.locator}`}>
                 <div><dt>Source</dt><dd>{artifact.source.title}</dd></div>
-                <div><dt>Authority</dt><dd>Tier {artifact.source.authorityTier} · {artifact.source.sourceType}</dd></div>
+                <div><dt>Authority</dt><dd>Tier {artifact.source.authorityTier} / {artifact.source.sourceType}</dd></div>
                 <div><dt>Location</dt><dd>{artifact.locator}</dd></div>
                 <div><dt>Rights</dt><dd>{artifact.rightsStatus}</dd></div>
               </dl>

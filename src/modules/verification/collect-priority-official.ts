@@ -1,0 +1,190 @@
+import { createHash } from "node:crypto";
+import { prisma } from "@/lib/prisma";
+import { priorityOfficialSources, type OfficialSourceDefinition } from "./priority-official-sources";
+
+const ALLOWED_HOSTS = new Set(["support.metamask.io", "help.ether.fi", "help.gnosispay.com"]);
+const RIGHTS = "Official public source; retain factual extraction, hashes, and link for editorial verification";
+
+type FetchedOfficialSource = {
+  definition: OfficialSourceDefinition;
+  response: {
+    finalUrl: string;
+    mimeType: string;
+    html: string;
+    text: string;
+  };
+};
+
+function decodeHtml(value: string) {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#([0-9]+);/g, (_, decimal: string) => String.fromCodePoint(Number.parseInt(decimal, 10)))
+    .replaceAll("&amp;", "&").replaceAll("&quot;", '"').replaceAll("&#39;", "'").replaceAll("&nbsp;", " ")
+    .replaceAll("&ndash;", "–").replaceAll("&mdash;", "—").replaceAll("&rsquo;", "’");
+}
+
+function visibleText(html: string) {
+  return decodeHtml(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ").replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ").trim();
+}
+
+export function officialContentHash(text: string) {
+  return createHash("sha256").update(text.replace(/\s+/g, " ").trim()).digest("hex");
+}
+
+async function safeFetch(definition: OfficialSourceDefinition) {
+  let url = new URL(definition.url);
+  for (let redirects = 0; redirects <= 3; redirects += 1) {
+    if (url.protocol !== "https:" || !ALLOWED_HOSTS.has(url.hostname)) throw new Error(`Blocked official-source URL: ${url.href}`);
+    let response = await fetch(url, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(20_000),
+      headers: { "user-agent": "CardStatsResearch/0.1 (+https://cardstats-hu1c4q02f-aterli.vercel.app)" },
+    });
+    const gnosisArticleId = url.hostname === "help.gnosispay.com"
+      ? url.pathname.match(/\/articles\/(\d+)/)?.[1]
+      : undefined;
+    if (response.status === 403 && gnosisArticleId) {
+      const apiUrl = new URL(`/api/v2/help_center/en-us/articles/${gnosisArticleId}.json`, url);
+      response = await fetch(apiUrl, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(20_000),
+        headers: { "user-agent": "CardStatsResearch/0.1 (+https://cardstats-hu1c4q02f-aterli.vercel.app)" },
+      });
+    }
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) throw new Error(`Redirect without location for ${url.href}`);
+      url = new URL(location, url);
+      continue;
+    }
+    if (!response.ok) throw new Error(`${definition.slug} returned HTTP ${response.status}`);
+    const mimeType = response.headers.get("content-type")?.split(";")[0] ?? "";
+    if (mimeType !== "text/html" && mimeType !== "application/json") throw new Error(`${definition.slug} returned unexpected ${mimeType}`);
+    const content = await response.text();
+    if (Buffer.byteLength(content) > 3_000_000) throw new Error(`${definition.slug} exceeded byte limit`);
+    let finalUrl = url.href;
+    let text = visibleText(content);
+    if (mimeType === "application/json") {
+      const payload: unknown = JSON.parse(content);
+      const article = typeof payload === "object" && payload !== null && "article" in payload ? payload.article : undefined;
+      if (typeof article !== "object" || article === null || !("body" in article) || typeof article.body !== "string") {
+        throw new Error(`${definition.slug} returned malformed article JSON`);
+      }
+      if ("html_url" in article && typeof article.html_url === "string") {
+        const articleUrl = new URL(article.html_url);
+        if (articleUrl.protocol !== "https:" || !ALLOWED_HOSTS.has(articleUrl.hostname)) throw new Error(`Blocked article URL: ${articleUrl.href}`);
+        finalUrl = articleUrl.href;
+      }
+      text = visibleText(article.body);
+    }
+    for (const fact of definition.facts) {
+      for (const term of fact.requiredTerms) {
+        if (!text.toLocaleLowerCase("en-US").includes(term.toLocaleLowerCase("en-US"))) {
+          throw new Error(`${definition.slug}:${fact.fieldKey} missing required term: ${term}`);
+        }
+      }
+    }
+    return { finalUrl, mimeType, html: content, text };
+  }
+  throw new Error(`Too many redirects for ${definition.slug}`);
+}
+
+export async function fetchPriorityOfficialSources(): Promise<FetchedOfficialSource[]> {
+  const fetched: FetchedOfficialSource[] = [];
+  for (const definition of priorityOfficialSources) fetched.push({ definition, response: await safeFetch(definition) });
+  return fetched;
+}
+
+export async function collectPriorityOfficialEvidence() {
+  const observedAt = new Date();
+  const fetched = await fetchPriorityOfficialSources();
+
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('cardstats:priority-official-evidence'))`;
+    let evidenceCount = 0;
+    for (const { definition, response } of fetched) {
+      const candidate = await tx.discoveryCandidate.findFirstOrThrow({ where: { externalKey: definition.candidateKey } });
+      const source = await tx.source.upsert({
+        where: { slug: definition.slug },
+        update: { title: definition.title, url: response.finalUrl, sourceType: definition.sourceType, authorityTier: definition.authorityTier, rightsStatus: RIGHTS },
+        create: { slug: definition.slug, title: definition.title, url: response.finalUrl, sourceType: definition.sourceType, authorityTier: definition.authorityTier, rightsStatus: RIGHTS },
+      });
+      const contentHash = officialContentHash(response.text);
+      const artifact = await tx.sourceArtifact.upsert({
+        where: { contentHash }, update: {},
+        create: { sourceId: source.id, observedAt, contentHash, locator: response.finalUrl, mimeType: response.mimeType, rightsStatus: RIGHTS },
+      });
+      for (const fact of definition.facts) {
+        const excerptBasis = fact.requiredTerms.join(" | ");
+        await tx.discoveryCandidateEvidence.upsert({
+          where: { candidateId_artifactId_fieldKey: { candidateId: candidate.id, artifactId: artifact.id, fieldKey: fact.fieldKey } },
+          update: { displayValue: fact.displayValue, valueJson: fact.valueJson, scopeJson: fact.scopeJson, observedAt },
+          create: {
+            candidateId: candidate.id, artifactId: artifact.id, fieldKey: fact.fieldKey,
+            excerptHash: createHash("sha256").update(excerptBasis).digest("hex"), displayValue: fact.displayValue,
+            valueJson: fact.valueJson, scopeJson: fact.scopeJson, observedAt,
+          },
+        });
+        evidenceCount += 1;
+      }
+      await tx.discoveryCandidate.update({
+        where: { id: candidate.id },
+        data: { status: "VERIFYING", reviewReason: "Official evidence collected; normalization and independent review required before promotion." },
+      });
+    }
+    return { sourceCount: fetched.length, evidenceCount, candidateCount: new Set(fetched.map(({ definition }) => definition.candidateKey)).size };
+  }, { isolationLevel: "Serializable", timeout: 30_000 });
+}
+
+export async function repairLegacyOfficialArtifactHashes() {
+  const fetched = await fetchPriorityOfficialSources();
+
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('cardstats:priority-official-evidence'))`;
+    let removedArtifacts = 0;
+
+    for (const { definition, response } of fetched) {
+      const source = await tx.source.findUniqueOrThrow({ where: { slug: definition.slug } });
+      const artifacts = await tx.sourceArtifact.findMany({
+        where: { sourceId: source.id, candidateEvidence: { some: {} } },
+        orderBy: { observedAt: "asc" },
+        include: {
+          candidateEvidence: { include: { candidate: { select: { externalKey: true } } } },
+          _count: { select: { claimEvidence: true, importRuns: true } },
+        },
+      });
+      if (artifacts.length === 0) throw new Error(`${definition.slug} has no evidence artifact to repair`);
+
+      const expectedFacts = new Map(definition.facts.map((fact) => [fact.fieldKey, fact.displayValue]));
+      for (const artifact of artifacts) {
+        if (artifact._count.claimEvidence !== 0 || artifact._count.importRuns !== 0) {
+          throw new Error(`${definition.slug} artifact ${artifact.id} has unrelated references`);
+        }
+        if (artifact.candidateEvidence.length !== expectedFacts.size) {
+          throw new Error(`${definition.slug} artifact ${artifact.id} does not match the curated evidence set`);
+        }
+        for (const evidence of artifact.candidateEvidence) {
+          if (evidence.candidate.externalKey !== definition.candidateKey || expectedFacts.get(evidence.fieldKey) !== evidence.displayValue) {
+            throw new Error(`${definition.slug} artifact ${artifact.id} contains non-equivalent evidence`);
+          }
+        }
+      }
+
+      const normalizedHash = officialContentHash(response.text);
+      const canonical = artifacts.find(({ contentHash }) => contentHash === normalizedHash) ?? artifacts[0];
+      const duplicateIds = artifacts.filter(({ id }) => id !== canonical.id).map(({ id }) => id);
+      if (duplicateIds.length > 0) {
+        await tx.discoveryCandidateEvidence.deleteMany({ where: { artifactId: { in: duplicateIds } } });
+        await tx.sourceArtifact.deleteMany({ where: { id: { in: duplicateIds } } });
+        removedArtifacts += duplicateIds.length;
+      }
+      await tx.sourceArtifact.update({
+        where: { id: canonical.id },
+        data: { contentHash: normalizedHash, locator: response.finalUrl, mimeType: response.mimeType },
+      });
+    }
+
+    return { sourceCount: fetched.length, removedArtifacts };
+  }, { isolationLevel: "Serializable", timeout: 30_000 });
+}

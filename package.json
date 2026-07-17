@@ -17,12 +17,15 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "db:import:discovery": "tsx scripts/ingest/persist-discovery.ts",
+    "db:collect:official": "tsx scripts/ingest/collect-priority-official.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.8.0",
     "@prisma/client": "7.8.0",
+    "acorn": "8.17.0",
     "lucide-react": "1.25.0",
     "next": "16.2.10",
     "pg": "8.22.0",

@@ -77,6 +77,21 @@ enum EvidenceRelation {
   CONTRADICTS
 }
 
+enum ImportRunStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
+  QUARANTINED
+}
+
+enum CandidateStatus {
+  DISCOVERED
+  TRIAGED
+  VERIFYING
+  PROMOTED
+  REJECTED
+}
+
 model Actor {
   id                 String                @id @default(uuid()) @db.Uuid
   email              String                @unique
@@ -151,28 +166,126 @@ model Plan {
 }
 
 model Source {
-  id            String           @id @default(uuid()) @db.Uuid
-  slug          String           @unique
+  id            String               @id @default(uuid()) @db.Uuid
+  slug          String               @unique
   title         String
   url           String
   sourceType    String
   authorityTier AuthorityTier
   rightsStatus  String
-  countryCode   String?          @db.VarChar(2)
+  countryCode   String?              @db.VarChar(2)
   artifacts     SourceArtifact[]
+  importRuns    SourceImportRun[]
+  metricSeries  MarketMetricSeries[]
 }
 
 model SourceArtifact {
-  id            String          @id @default(uuid()) @db.Uuid
-  sourceId      String          @db.Uuid
-  observedAt    DateTime        @db.Timestamptz(3)
-  contentHash   String          @unique
-  locator       String
-  mimeType      String
-  rightsStatus  String
-  fixturePath   String?
-  source        Source          @relation(fields: [sourceId], references: [id], onDelete: Restrict)
-  claimEvidence ClaimEvidence[]
+  id                String                       @id @default(uuid()) @db.Uuid
+  sourceId          String                       @db.Uuid
+  observedAt        DateTime                     @db.Timestamptz(3)
+  contentHash       String                       @unique
+  locator           String
+  mimeType          String
+  rightsStatus      String
+  fixturePath       String?
+  source            Source                       @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  claimEvidence     ClaimEvidence[]
+  candidateEvidence DiscoveryCandidateEvidence[]
+  importRuns        SourceImportRun[]
+}
+
+model SourceImportRun {
+  id               String               @id @default(uuid()) @db.Uuid
+  sourceId         String               @db.Uuid
+  artifactId       String?              @db.Uuid
+  status           ImportRunStatus      @default(RUNNING)
+  collector        String
+  collectorVersion String
+  startedAt        DateTime             @default(now()) @db.Timestamptz(3)
+  finishedAt       DateTime?            @db.Timestamptz(3)
+  observedCount    Int                  @default(0)
+  acceptedCount    Int                  @default(0)
+  errorCode        String?
+  source           Source               @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  artifact         SourceArtifact?      @relation(fields: [artifactId], references: [id], onDelete: Restrict)
+  candidates       DiscoveryCandidate[]
+
+  @@index([sourceId, startedAt])
+  @@index([status, startedAt])
+}
+
+model DiscoveryCandidate {
+  id            String                       @id @default(uuid()) @db.Uuid
+  importRunId   String                       @db.Uuid
+  externalKey   String
+  canonicalHint String
+  issuerHint    String
+  officialUrl   String?
+  observation   Json
+  status        CandidateStatus              @default(DISCOVERED)
+  rightsBasis   String
+  discoveredAt  DateTime                     @db.Timestamptz(3)
+  reviewedAt    DateTime?                    @db.Timestamptz(3)
+  reviewReason  String?
+  importRun     SourceImportRun              @relation(fields: [importRunId], references: [id], onDelete: Cascade)
+  evidence      DiscoveryCandidateEvidence[]
+
+  @@unique([importRunId, externalKey])
+  @@index([status, canonicalHint])
+}
+
+model DiscoveryCandidateEvidence {
+  candidateId  String             @db.Uuid
+  artifactId   String             @db.Uuid
+  fieldKey     String
+  relation     EvidenceRelation   @default(SUPPORTS)
+  excerptHash  String
+  displayValue String
+  valueJson    Json?
+  scopeJson    Json
+  observedAt   DateTime           @db.Timestamptz(3)
+  candidate    DiscoveryCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  artifact     SourceArtifact     @relation(fields: [artifactId], references: [id], onDelete: Restrict)
+
+  @@id([candidateId, artifactId, fieldKey])
+  @@index([candidateId, fieldKey])
+}
+
+model MarketMetricSeries {
+  id                   String              @id @default(uuid()) @db.Uuid
+  sourceId             String              @db.Uuid
+  slug                 String              @unique
+  label                String
+  unit                 String
+  aggregation          String
+  eventDefinition      String
+  observationBasis     String
+  includesTopups       Boolean
+  includesOffchainData Boolean
+  coverageJson         Json
+  methodVersion        String
+  licenseBasis         String
+  publicationAllowed   Boolean             @default(false)
+  createdAt            DateTime            @default(now()) @db.Timestamptz(3)
+  source               Source              @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  points               MarketMetricPoint[]
+
+  @@index([sourceId, publicationAllowed])
+}
+
+model MarketMetricPoint {
+  id          String             @id @default(uuid()) @db.Uuid
+  seriesId    String             @db.Uuid
+  periodStart DateTime           @db.Date
+  value       Decimal            @db.Decimal(30, 8)
+  partial     Boolean            @default(false)
+  revision    Int                @default(1)
+  observedAt  DateTime           @db.Timestamptz(3)
+  metadata    Json?
+  series      MarketMetricSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, periodStart, revision])
+  @@index([seriesId, periodStart])
 }
 
 model Claim {

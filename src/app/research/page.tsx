@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClipboardCheck, FilePlus2, ShieldCheck } from "lucide-react";
+import { CustomSelect } from "@/components/custom-select";
 import { SubmitButton } from "@/components/submit-button";
 import { isResearchWorkbenchAvailable } from "@/lib/research-access";
 import { getResearchWorkspace } from "@/modules/catalog/queries";
@@ -47,23 +48,26 @@ export default async function ResearchPage({ searchParams }: { searchParams: Pro
           <header className="section-heading"><FilePlus2 aria-hidden="true" /><div><p className="eyebrow">Step 1</p><h2>Create candidate</h2></div></header>
           <form action={createCandidateAction} className="form-stack">
             <input type="hidden" name="createdById" value={researcher.id} />
-            <label>Offering<select name="offeringId" required>{offerings.map((offering) => <option value={offering.id} key={offering.id}>{offering.countryCode} · {offering.label}</option>)}</select></label>
-            <label>Plan<select name="planId"><option value="">Offering-level claim</option>{offerings.flatMap((offering) => offering.plans.map((plan) => <option value={plan.id} key={plan.id}>{offering.countryCode} · {plan.name}</option>))}</select></label>
-            <div className="form-grid"><label>Field<select name="field" defaultValue="REWARD_RATE"><option value="REWARD_RATE">Reward rate</option><option value="MONTHLY_FEE">Monthly fee</option><option value="REWARD_CAP">Reward cap</option><option value="ATM_FEE">ATM fee</option></select></label><label>Value state<select name="valueState" defaultValue="KNOWN"><option value="KNOWN">Known</option><option value="NOT_DISCLOSED">Not disclosed</option><option value="CONFLICTING">Conflicting</option><option value="STALE">Stale</option></select></label></div>
+            <CustomSelect label="Offering" name="offeringId" required options={offerings.map((offering) => ({ value: offering.id, label: `${offering.countryCode} / ${offering.label}` }))} />
+            <CustomSelect label="Plan" name="planId" options={[{ value: "", label: "Offering-level claim" }, ...offerings.flatMap((offering) => offering.plans.map((plan) => ({ value: plan.id, label: `${offering.countryCode} / ${plan.name}` })))]} />
+            <div className="form-grid">
+              <CustomSelect label="Field" name="field" defaultValue="REWARD_RATE" options={[{ value: "REWARD_RATE", label: "Reward rate" }, { value: "MONTHLY_FEE", label: "Monthly fee" }, { value: "REWARD_CAP", label: "Reward cap" }, { value: "ATM_FEE", label: "ATM fee" }]} />
+              <CustomSelect label="Value state" name="valueState" defaultValue="KNOWN" options={[{ value: "KNOWN", label: "Known" }, { value: "NOT_DISCLOSED", label: "Not disclosed" }, { value: "CONFLICTING", label: "Conflicting" }, { value: "STALE", label: "Stale" }]} />
+            </div>
             <label>Country code<input name="countryCode" required pattern="[A-Z]{2}" maxLength={2} defaultValue="DE" /></label>
             <label>Display value<input name="displayValue" required maxLength={160} placeholder="For example, 1.25% up to EUR 20/month" /></label>
             <label>Effective from<input type="date" name="effectiveFrom" required defaultValue="2026-08-01" /></label>
-            <label>Evidence fixture<select name="artifactId" required>{artifacts.map((artifact) => <option value={artifact.id} key={artifact.id}>{artifact.source.title}</option>)}</select></label>
+            <CustomSelect label="Evidence fixture" name="artifactId" required options={artifacts.map((artifact) => ({ value: artifact.id, label: artifact.source.title }))} />
             <label>Submission reason<textarea name="reason" required minLength={8} maxLength={500} defaultValue="Captured from the scoped synthetic terms fixture." /></label>
             <SubmitButton pendingLabel="Submitting candidate…">Submit candidate</SubmitButton>
           </form>
         </div>
 
         <div className="research-queue">
-          <header className="section-heading"><ClipboardCheck aria-hidden="true" /><div><p className="eyebrow">Steps 2–3</p><h2>Review queue</h2></div></header>
+          <header className="section-heading"><ClipboardCheck aria-hidden="true" /><div><p className="eyebrow">Steps 2-3</p><h2>Review queue</h2></div></header>
           {claims.length === 0 ? <p className="empty-state">No claims await review. Create a candidate to exercise the workflow.</p> : claims.map((claim) => (
             <article className="review-card" key={claim.id}>
-              <header><div><p className="scope-label">{claim.countryCode} · {claim.offering.label}{claim.plan ? ` · ${claim.plan.name}` : ""}</p><h3>{claim.field.replaceAll("_", " ").toLowerCase()}</h3></div><span className="status-chip">{claim.status.replaceAll("_", " ").toLowerCase()}</span></header>
+              <header><div><p className="scope-label">{claim.countryCode} / {claim.offering.label}{claim.plan ? ` / ${claim.plan.name}` : ""}</p><h3>{claim.field.replaceAll("_", " ").toLowerCase()}</h3></div><span className="status-chip">{claim.status.replaceAll("_", " ").toLowerCase()}</span></header>
               <p className="candidate-value">{claim.displayValue}</p>
               <dl className="review-meta"><div><dt>Created by</dt><dd>{claim.createdBy.displayName}</dd></div><div><dt>Evidence</dt><dd>{claim.evidence[0]?.artifact.source.title ?? "Missing"}</dd></div><div><dt>Audit events</dt><dd>{claim.reviewEvents.length}</dd></div></dl>
               {claim.status === "IN_REVIEW" ? (

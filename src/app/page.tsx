@@ -1,43 +1,45 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, MapPin, Scale } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CircleDot, Database, ScanSearch } from "lucide-react";
+import { IssuerMark } from "@/components/issuer-mark";
+import { distribution, getDiscoverySnapshot, maximumReward } from "@/modules/catalog/discovery";
 
 export default function HomePage() {
+  const snapshot = getDiscoverySnapshot();
+  const featured = ["metamask-card", "etherfi-card", "gnosis-card", "coinbase-card"]
+    .map((slug) => snapshot.cards.find((card) => card.slug === slug))
+    .filter((card): card is NonNullable<typeof card> => Boolean(card));
+  const nonCustodial = distribution("custody").find((item) => item.label === "Non-Custodial")?.value ?? 0;
+
   return (
     <>
-      <section className="hero">
-        <div className="shell hero-grid">
-          <div>
-            <p className="eyebrow">Evidence-led crypto card research</p>
-            <h1>Find a card that is actually scoped to you.</h1>
-            <p className="lede">
-              Start with residency, compare disclosed economics, and inspect the evidence behind every critical term.
-            </p>
-            <div className="button-row">
-              <Link className="button primary" href="/programs/atlas-card">Explore the fixture <ArrowRight aria-hidden="true" size={18} /></Link>
-              <Link className="button secondary" href="/compare">Compare offerings</Link>
-            </div>
+      <section className="home-hero">
+        <div className="shell hero-layout">
+          <div className="hero-copy">
+            <p className="kicker">Independent crypto-card intelligence</p>
+            <h1>Compare the card.<br /><em>Interrogate the claim.</em></h1>
+            <p className="hero-lede">A global index of crypto cards, their real funding models, fees, rewards, regions, and the evidence behind every term.</p>
+            <div className="button-row"><Link className="button primary" href="/cards">Explore 42 programs <ArrowRight aria-hidden="true" size={17} /></Link><Link className="button secondary" href="/analytics">Open market analytics</Link></div>
           </div>
-          <aside className="scope-card" aria-labelledby="scope-title">
-            <p className="status-line"><BadgeCheck aria-hidden="true" size={18} /> Synthetic and reviewed</p>
-            <h2 id="scope-title">Representative slice scope</h2>
-            <dl className="metric-list">
-              <div><dt>Program</dt><dd>1</dd></div>
-              <div><dt>Regional offerings</dt><dd>2</dd></div>
-              <div><dt>Plans per offering</dt><dd>2</dd></div>
-              <div><dt>Source type</dt><dd>License-safe fixture</dd></div>
-            </dl>
+          <aside className="hero-index" aria-label="Current research coverage">
+            <header><span>Research ledger</span><span>17.07.26</span></header>
+            <dl><div><dt>Programs discovered</dt><dd>42</dd></div><div><dt>Non-custodial labels</dt><dd>{nonCustodial}</dd></div><div><dt>Officially verified fields</dt><dd>0</dd></div><div><dt>Paid analytics imported</dt><dd>0</dd></div></dl>
+            <p><CircleDot aria-hidden="true" size={14} /> Broad index live. Official verification in progress.</p>
           </aside>
         </div>
       </section>
-      <section className="shell section" aria-labelledby="method-title">
-        <p className="eyebrow">How the slice works</p>
-        <h2 id="method-title">Decision first, database second.</h2>
-        <div className="feature-grid">
-          <article><MapPin aria-hidden="true" /><h3>Scope eligibility</h3><p>Germany and France remain distinct legal offerings with their own issuers and terms.</p></article>
-          <article><Scale aria-hidden="true" /><h3>Compare real conditions</h3><p>Fees, reward caps, funding, and unknown values travel with plan and country context.</p></article>
-          <article><BadgeCheck aria-hidden="true" /><h3>Inspect evidence</h3><p>Published values retain source authority, locator, observed date, and audit history.</p></article>
+      <section className="shell home-section">
+        <header className="section-lead"><div><p className="kicker">Live discovery index</p><h2>Start broad. Verify before deciding.</h2></div><Link className="text-link" href="/cards">View all programs <ArrowUpRight aria-hidden="true" size={16} /></Link></header>
+        <div className="featured-ledger">
+          {featured.map((card) => <article key={card.id}><IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} size={44} /><div><h3><Link href={`/cards/${card.slug}`}>{card.name}</Link></h3><p>{card.custody} / {card.network}</p></div><dl><div><dt>Reported reward</dt><dd>{maximumReward(card)}</dd></div><div><dt>Reported region</dt><dd>{card.regions}</dd></div></dl></article>)}
         </div>
       </section>
+      <section className="ink-section">
+        <div className="shell method-grid">
+          <div><p className="kicker">The CardStats difference</p><h2>A database that shows its seams.</h2></div>
+          <div className="method-points"><article><ScanSearch aria-hidden="true" /><h3>Every number has a source state</h3><p>Discovery, verified, conflicting, stale, and undisclosed are different facts. The interface never turns missing data into zero.</p></article><article><Database aria-hidden="true" /><h3>Analytics preserve the denominator</h3><p>Catalog distribution, onchain adoption, and product behaviour stay separate. Coverage never masquerades as market share.</p></article></div>
+        </div>
+      </section>
+      <section className="shell home-section analytics-tease"><div><p className="kicker">Market question 01</p><h2>Which funding model is shaping the current card landscape?</h2><p>Twenty-six of 42 observed programs are labelled self-custody or non-custodial. The answer is useful, but the source taxonomy still needs verification.</p><Link className="button secondary" href="/analytics">Inspect the distribution</Link></div><div className="mini-bars" aria-label="Funding control distribution preview">{distribution("custody").map((item) => <div key={item.label}><span>{item.label}</span><i style={{ width: `${(item.value / 42) * 100}%` }} /><strong>{item.value}</strong></div>)}</div></section>
     </>
   );
 }

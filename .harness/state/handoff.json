@@ -1,115 +1,117 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T17:52:00+02:00",
-  "goal": "Deploy the representative slice as a protected, database-free Vercel preview.",
+  "updatedAt": "2026-07-17T20:26:20+02:00",
+  "goal": "Replace the rejected synthetic UI with a real crypto-card discovery, comparison, and analytics foundation.",
   "scope": [
-    "representative-vertical-slice"
+    "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
     "branch": "docs/prisma-next-backend",
-    "head": "08dbfcb32d44d3f2c1dd501d055cb7d12cc69268",
+    "head": "f6e80eccd5b084cc4d3641ffa77226c0107c5eba",
     "worktree": "dirty"
   },
   "completed": [
-    "Founder approved Decision 0002; the product contract and ADR 0001 are accepted for the representative vertical slice.",
-    "Persisted the CardStats design system and scaffolded pinned Next.js 16, React 19, TypeScript, Tailwind CSS 4, Prisma 7, PostgreSQL, Vitest, and Playwright tooling.",
-    "Implemented the organization-program-offering-plan domain, explicit claim value states, evidence provenance, independent approval, audit history, atomic publication revisions, and published read projections.",
-    "Applied the reviewed migration to the empty development database and restored one program, two offerings, four plans, 24 published claims, and one review candidate from license-safe fixtures.",
-    "Built server-rendered home, program evidence, responsive comparison, and private synthetic research workflow surfaces using the mandatory UI-UX-PRO-MAX design and pre-delivery workflow.",
-    "Completed unit, database integration, production build, desktop/mobile browser, responsive, touch-target, accessibility, visual, harness, and migration verification.",
-    "Created the aterli/cardstats Vercel project and deployed a Vercel-SSO-protected preview from a manifest that explicitly excludes all local environment files.",
-    "Decoupled hosted public reads from PostgreSQL with a complete 24-claim synthetic snapshot, disabled hosted research mutations, and passed authenticated live smoke checks on every route."
+    "Built the rights-aware pipeline: safe CryptoAgg AST discovery for 42 programs, documented PaymentScan API-only adapter, quarantined database import, and ADR 0003 publication boundaries.",
+    "Shipped the editorial-fintech catalog, 42 profiles, comparison, and custody/network/card-model analytics with explicit discovery and licensing states.",
+    "Applied approved migrations 20260717193000_real_source_ingestion and 20260717194000_candidate_evidence; all three repository migrations are current.",
+    "Implemented fail-closed official collection from 11 allowlisted MetaMask, ether.fi, and Gnosis Pay sources, including a narrow public Zendesk API fallback.",
+    "Persisted 24 scoped observations across 11 official artifacts: MetaMask 8, ether.fi 7, and Gnosis Pay 9; all three candidates are VERIFYING and global PROMOTED remains zero.",
+    "Caught and repaired volatile raw-markup artifact identity during the required rerun: removed 5 duplicate artifacts only after equivalence/reference guards passed, switched to normalized visible-text hashes, and confirmed stable 24-evidence/11-artifact counts after another collection.",
+    "Replaced the MetaMask, ether.fi, and Gnosis Pay competitor avatars with pinned official issuer assets carrying source, dimensions, observation date, rights basis, and SHA-256 provenance.",
+    "Added a checked public projection that shows the 24 official observations as review-pending evidence on the three priority profiles without labeling fields verified or promoting candidates.",
+    "Deployed protected secret-free preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG at https://cardstats-991wxilo9-aterli.vercel.app; authenticated checks confirm the priority profiles and pinned asset return 200.",
+    "Removed the discovery-observation notice and repeated Unverified/verification-warning labels across catalog, home, comparison, and profiles; replaced all native selects, including the private research form, with a shared keyboard-accessible custom listbox.",
+    "Deployed protected preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich at https://cardstats-hku2smbz1-aterli.vercel.app; authenticated catalog, MetaMask profile, and comparison smoke checks return 200."
   ],
   "nextActions": [
-    "Founder reviews the protected Vercel preview at https://cardstats-2g5tcpdaa-aterli.vercel.app.",
-    "Founder explicitly authorizes deletion of deployment dpl_3TRdMrawZDyP3RzyX39BRZT85epL and rotates the development database password exposed to its build environment."
+    "Independently review the 24 official observations, normalize regional offering boundaries, and promote only supported fields through the publication workflow.",
+    "Select and verify the next official-source program batch, including official media provenance.",
+    "Configure a licensed PaymentScan API key and republication-rights flag only if those rights have actually been obtained."
   ],
   "decisions": [
-    "Decision 0002 authorizes only the synthetic representative slice; scraping, accounts, affiliates, and production infrastructure remain excluded.",
-    "Use one Next.js App Router request plane with Server Components by default and a small client boundary only for mutation pending feedback.",
-    "Use Prisma 7 with the PostgreSQL driver adapter, capped development pool, reviewed migration SQL, native integrity constraints, and rebuildable published projections.",
-    "Use the founder-owned self-hosted PostgreSQL instance as development only; it is not approved as staging or production.",
-    "Keep public reads isolated to published projections and require independently approved, evidenced critical claims before transactional publication.",
-    "Use the persisted CardStats design system over off-topic generated style matches: calm light-first financial research UI, explicit uncertainty, restrained motion, and mobile-stacked comparison.",
-    "Hosted previews use a checked-in read-only synthetic snapshot and never receive DATABASE_URL; the local research workbench renders an explicit unavailable state and rejects server actions on Vercel.",
-    "Keep the review deployment behind Vercel authentication rather than making the unfinished representative slice public."
+    "The synthetic Atlas program remains only as a database/publication test fixture; its public route redirects to the real catalog.",
+    "CryptoAgg supplies private discovery observations, not verified claims, copied prose, rankings, layout, or fake card art.",
+    "PaymentScan data enters only through its documented paid API; public display additionally requires documented republication rights.",
+    "The request plane reads a checked projection and never triggers source collection.",
+    "Broad discovery coverage and official verification are displayed as separate counts and states.",
+    "Catalog-distribution analytics are program counts, never transaction market share; address metrics are never called users.",
+    "The public design uses one editorial research system rather than user-category tiles, bento cards, glassmorphism, or crypto terminal styling.",
+    "Official observations may be shown as review-pending evidence, but verified labels, ranking inputs, and promotion remain gated by independent review.",
+    "Discovery provenance remains in headings, field language, and the evidence model; repeated per-component warning labels are omitted to keep the public interface legible."
   ],
   "openQuestions": [
-    "Will the founder accept the protected preview and local closeout commit as the representative-slice baseline?",
-    "Does the founder authorize immediate removal of the initial Vercel production deployment after its build received the development database credential?",
-    "When will the founder rotate the exposed development database password?",
-    "When should authenticated research access, TLS, least-privilege database roles, backup/restore, and CI become the next authorized work item?"
+    "Which programs should follow MetaMask, ether.fi, and Gnosis Pay in official-source verification if priority is not inferred from traffic and geographic breadth?",
+    "Has CardStats obtained PaymentScan API access and public republication rights?",
+    "When will the exposed development database password be rotated and the initial credential-bearing Vercel deployment be explicitly authorized for deletion?"
   ],
   "verification": {
     "passed": [
-      "npm run check — passed ESLint, strict TypeScript, 8 Vitest assertions across 3 files, Prisma generation, and optimized Next.js production build.",
-      "Database integration — rejected unauthorized/self approval, published with an independent verifier, asserted the read projection and SUBMITTED→APPROVED→PUBLISHED audit sequence, and cleaned up.",
-      "npm run test:e2e — 5 passed and 1 intentional duplicate-workflow skip across desktop Chromium and exact 375px mobile Chromium.",
-      "Accessibility/responsive — axe found no violations; keyboard semantics, 44px targets, reduced motion, landscape, 200% text scaling, explicit unknowns, and no mobile horizontal overflow passed.",
-      "Visual review — desktop program evidence and mobile comparison match the persisted CardStats design system and product brief.",
-      "Prisma migrate status — one reviewed migration applied and database schema current; final deterministic seed restored.",
-      "npm audit — moderate advisories resolved with same-major overrides; only one low Windows-only esbuild development-server advisory remains without an installable npm fix.",
-      "python3 scripts/harness/check.py and verify.py — harness structure, state, links, budgets, credential patterns, script syntax, compact context, and Git whitespace pass.",
-      "Secret-free Vercel-mode build — Prisma generation and Next production build passed with VERCEL=1 and an empty DATABASE_URL.",
-      "Vercel upload dry run — .env, .env.local, .vercel, .git, and build artifacts explicitly excluded; the project has no stored environment variables.",
-      "Protected preview smoke — authenticated GETs passed /, /programs/atlas-card, /compare, and /research; the hosted research page contains no mutation controls."
+      "ESLint, strict TypeScript, Prisma validation/generation, and Git whitespace checks pass.",
+      "All three migrations are applied and the database publication integration workflow passes.",
+      "Database discovery import remains one run with 42 DISCOVERED and zero PROMOTED candidates.",
+      "Database official collection: 24 evidence rows, 11 artifacts, 11 sources, three VERIFYING candidates, and zero PROMOTED after guarded duplicate repair and corrected rerun.",
+      "Normalized content hash stability: two consecutive read-only fetches produced identical hashes for all 11 sources.",
+      "Official media invariant: three priority assets match their pinned SHA-256 hashes and allowlisted official source hosts.",
+      "Final database probe: 24 evidence rows, 11 artifacts, zero range-dash display values, and zero PROMOTED candidates.",
+      "npm test: 8 files and 20 tests passed after official media, public-projection, and selector UI coverage.",
+      "The 49-page production build passes. Playwright passed all 8 desktop/mobile axe, custom-selector, responsive, reduced-motion, text-scale, landscape, and touch checks.",
+      "The updated desktop catalog was visually inspected against the CardStats design system after removing repeated warning labels and introducing the custom selector.",
+      "Vercel preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich is Ready; catalog, MetaMask profile, and comparison return authenticated HTTP 200."
     ],
     "failed": [],
     "notRun": [
-      "Manual VoiceOver and NVDA sessions: those clients are unavailable in this environment; semantic and axe checks passed.",
-      "Cross-client agent portability: only the current Codex environment is available.",
-      "CI/review delivery: no CI workflow or review artifact is configured.",
-      "Backup/restore, TLS verification, and production operations: the database is development-only and those gates are not yet authorized."
+      "PaymentScan live API: no API key or public republication-rights confirmation is configured.",
+      "Manual VoiceOver and NVDA: unavailable in this environment; semantic and axe checks passed.",
+      "Vercel production promotion: only a protected preview was deployed; production alias was not changed."
     ]
   },
   "risks": [
-    "The development database credential was disclosed in chat and then supplied to the initial Vercel production build before .vercelignore was added. Deployment dpl_3TRdMrawZDyP3RzyX39BRZT85epL remains live because deletion requires explicit founder authorization; rotate the password after containment.",
-    "The development database connection is not using TLS and currently uses one broad role; it must not be treated as staging or production.",
-    "The local /research route uses fixed synthetic actors without authentication; hosted deployments now render a read-only unavailable state and reject all three server actions.",
-    "npm audit retains one low Windows-only esbuild development-server advisory with no installable non-breaking fix reported by npm.",
-    "No CI gate or manual VoiceOver/NVDA verification exists yet.",
-    "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
+    "The 42-record public projection contains minimal competitor-discovered facts and must remain described as reported observations rather than verified terms until official-source review; competitor taxonomies may flatten regional offerings or be stale.",
+    "The remaining 39 issuer avatars still resolve through CryptoAgg-observed unavatar URLs and must stay discovery-only until replaced with official media provenance.",
+    "The 42 database candidates remain competitor-discovered and unverified; none may be promoted without independent official evidence and review.",
+    "PaymentScan analytics cannot be publicly reproduced without a paid API agreement and republication rights.",
+    "The development database credential disclosed earlier remains a rotation risk, and the initial credential-bearing Vercel deployment remains live without explicit deletion authorization.",
+    "Official help pages can change without notice; collection therefore fails closed when curated evidence phrases disappear and still requires independent review before promotion."
   ],
   "touchedPaths": [
-    ".agents/skills/lean-output/",
-    ".env.example",
-    ".gitignore",
-    ".vercelignore",
-    ".harness/manifest.json",
-    ".harness/state/work-items.json",
-    ".harness/state/handoff.json",
+    ".harness/state/",
+    "README.md",
     "design-system/cardstats/MASTER.md",
-    "docs/product-contract.md",
-    "docs/decisions/0001-architecture-baseline.md",
-    "docs/decisions/0002-phase-0-approval-record.md",
+    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
+    "next.config.ts",
     "package.json",
     "package-lock.json",
-    "prisma.config.ts",
-    "prisma/",
-    "src/",
-    "tests/",
-    "next.config.ts",
-    "eslint.config.mjs",
-    "postcss.config.mjs",
-    "playwright.config.ts",
-    "tsconfig.json",
-    "vitest.config.ts"
+    "prisma/schema.prisma",
+    "prisma/migrations/20260717193000_real_source_ingestion/",
+    "prisma/migrations/20260717194000_candidate_evidence/",
+    "public/issuer-marks/",
+    "scripts/ingest/",
+    "src/app/",
+    "src/components/",
+    "src/modules/catalog/",
+    "src/modules/ingestion/",
+    "src/modules/verification/",
+    "tests/e2e/",
+    "tests/ingestion/"
   ],
   "doNotRepeat": [
-    "Do not print, stage, log, copy, or send the disclosed database credential to another provider; use it only from ignored local environment state until rotated.",
-    "Do not deploy the functional /research workbench until real authentication, RBAC, re-authentication, CSRF/origin protection, and audit identity are implemented; retain the hosted unavailable state.",
-    "Do not use the development database as staging/production until TLS, restricted networking, least-privilege roles, pooling, backups, monitoring, and restore pass.",
-    "Do not add live collection, accounts, affiliates, production infrastructure, or automatic critical publication under the representative-slice authorization."
+    "Do not print, stage, log, copy, or send the disclosed database credential to another provider.",
+    "Do not present discovery observations as verified, rank on them, or silently normalize missing values to zero.",
+    "Do not call PaymentScan private frontend server functions, bypass authentication, or republish paid data without rights.",
+    "Do not invent card artwork or reuse CryptoAgg faux cards, prose, ranking, layout, or identifiers.",
+    "Do not deploy the functional /research workbench until authentication and authorization controls exist."
   ],
   "contextSources": [
     "AGENTS.md",
     "docs/product-contract.md",
-    "docs/decisions/0001-architecture-baseline.md",
-    "docs/decisions/0002-phase-0-approval-record.md",
+    "docs/product-vision.md",
+    "docs/data-pipeline.md",
+    "docs/analytics.md",
+    "docs/architecture.md",
     "docs/security.md",
+    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
     "design-system/cardstats/MASTER.md",
-    "prisma/schema.prisma",
     ".harness/state/work-items.json"
   ]
 }

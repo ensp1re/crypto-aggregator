@@ -34,7 +34,7 @@
     {
       "id": "representative-vertical-slice",
       "title": "Implement the approved synthetic CardStats representative vertical slice",
-      "status": "active",
+      "status": "passing",
       "owner": "engineering",
       "sources": [
         "docs/product-contract.md",
@@ -46,7 +46,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Founder reviews the protected Vercel preview, authorizes removal of the initial credential-bearing deployment, and rotates the development database password.",
+      "nextAction": "Retain this only as a technical validation baseline while the real catalog work replaces its synthetic public UI.",
       "verification": [
         "Reviewed PostgreSQL migration applied; schema is current and deterministic synthetic seed restored.",
         "npm run check passed lint, strict TypeScript, four policy assertions, one database publication integration test, and the Next.js production build.",
@@ -54,6 +54,47 @@
         "CardStats UI-UX-PRO-MAX design-system workflow, canonical checklist, and visual inspection completed.",
         "Protected Vercel preview deployed from an explicit secret-free manifest; hosted reads use the complete 24-claim synthetic snapshot and the research mutation workbench is unavailable.",
         "Authenticated live smoke checks passed home, program, comparison, and the read-only research-unavailable state."
+      ],
+      "completion": "Technical validation completed on 17 July 2026. The founder rejected the synthetic public product direction and authorized real-source catalog ingestion and redesign instead."
+    },
+    {
+      "id": "real-catalog-ingestion-and-redesign",
+      "title": "Build the real CardStats catalog, evidence pipeline, and analytics-first public product",
+      "status": "active",
+      "owner": "engineering",
+      "sources": [
+        "docs/product-contract.md",
+        "docs/product-vision.md",
+        "docs/data-pipeline.md",
+        "docs/analytics.md",
+        "docs/database-design.md",
+        "docs/architecture.md",
+        "docs/ui-ux.md",
+        "docs/security.md"
+      ],
+      "plan": "docs/implementation-plan.md",
+      "blocker": null,
+      "nextAction": "Normalize regional offering boundaries and perform independent field review for MetaMask, ether.fi, and Gnosis Pay before any promotion; then begin the next official-source batch.",
+      "verification": [
+        "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
+        "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
+        "ESLint, strict TypeScript, 12 unit/ingestion assertions, Prisma validation and generation, and Next.js production build passed.",
+        "Playwright passed 8 desktop/mobile catalog, profile, comparison, analytics, accessibility, responsive, reduced-motion, and touch-target checks after two caught accessibility defects were fixed.",
+        "Desktop home/analytics and 375px mobile catalog were visually inspected against the updated CardStats design system.",
+        "Secret-free protected Vercel preview deployed and authenticated smoke checks passed all public routes plus the disabled hosted research workspace.",
+        "Founder explicitly approved the reviewed migration; Prisma applied it successfully, confirmed both migrations current, and the database publication integration workflow passed.",
+        "Idempotent importer created one quarantined run with 42 DISCOVERED candidates, reused it on rerun, and confirmed zero PROMOTED candidates.",
+        "Complete Vitest suite passed 15 assertions across unit, ingestion, and database integration files.",
+        "Read-only official-source collection validated 24 scoped observations from 11 MetaMask, ether.fi, and Gnosis Pay pages; Gnosis Pay uses its public Zendesk article API when automated human-page reads return 403.",
+        "Candidate-evidence schema validates, official-source definition tests pass, the complete suite passes 17 assertions, and the 49-page production build passes.",
+        "Founder explicitly approved migration 20260717194000_candidate_evidence; Prisma applied it successfully and reports all three migrations current.",
+        "Collector persisted 24 observations across 11 official-source artifacts; MetaMask has 8, ether.fi 7, and Gnosis Pay 9, all three candidates are VERIFYING, and zero candidates are PROMOTED.",
+        "A repeated collection exposed volatile raw-markup hashes; the guarded repair removed 5 duplicate artifacts, normalized visible-text hashing now proves stable across repeated fetches, and final counts remain 24 evidence rows and 11 artifacts.",
+        "Complete Vitest suite passes 18 assertions and the 49-page production build passes after the idempotency fix.",
+        "MetaMask, ether.fi, and Gnosis Pay now use pinned official issuer marks with source page, asset URL, dimensions, observation date, rights basis, and byte hash; all other competitor avatars remain discovery-only.",
+        "Priority profiles expose 24 official observations in a separate review-pending ledger while retaining zero verified fields and zero promoted candidates.",
+        "Vitest passes 20 assertions, the 49-page build passes, Playwright passes all 8 desktop/mobile checks plus the targeted mobile rerun, and protected preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG is ready with authenticated 200 smoke checks.",
+        "Removed repeated discovery-warning and Unverified labels from public components; replaced all native selects with one accessible custom listbox; lint, strict TypeScript, 20 tests, the 49-page build, 8 desktop/mobile Playwright checks, axe, touch targets, visual inspection, and authenticated preview smoke checks pass."
       ],
       "completion": null
     }
