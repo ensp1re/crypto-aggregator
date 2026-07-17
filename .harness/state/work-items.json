@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "parallelMode": false,
+  "allowedStatuses": [
+    "not_started",
+    "active",
+    "blocked",
+    "passing"
+  ],
+  "retention": {
+    "passingItemsInStartupState": 3
+  },
+  "items": [
+    {
+      "id": "phase-0-decision-gate",
+      "title": "Approve the CardStats product contract and architecture baseline",
+      "status": "not_started",
+      "owner": "founder",
+      "sources": [
+        "docs/product-contract.md",
+        "docs/decisions/0001-architecture-baseline.md",
+        "docs/implementation-plan.md"
+      ],
+      "plan": "docs/implementation-plan.md",
+      "blocker": null,
+      "nextAction": "Founder reviews and explicitly approves or revises the ten pre-coding decisions in docs/product-contract.md.",
+      "verification": [],
+      "completion": null
+    }
+  ]
+}

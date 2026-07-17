@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-17T15:04:49+02:00",
+  "goal": "Make the CardStats blueprint restartable and safe for an eventual first implementation slice.",
+  "scope": [
+    "phase-0-decision-gate"
+  ],
+  "status": "waiting",
+  "git": {
+    "branch": "chore/add-agent-harness",
+    "head": "7d28f9d689b42fd6380083f52b8b69b089fc2afc",
+    "worktree": "dirty"
+  },
+  "completed": [
+    "Created the portable Core harness surfaces and pre-coding decision gate.",
+    "Validated cold-start context, structural integrity, context budgets, and stale-state conflict detection."
+  ],
+  "nextActions": [
+    "Founder reviews and explicitly approves or revises the ten pre-coding decisions in docs/product-contract.md."
+  ],
+  "decisions": [
+    "Use the Core harness profile only; no hooks, MCP servers, event database, semantic index, daemon, or parallel-agent orchestration.",
+    "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass."
+  ],
+  "openQuestions": [
+    "Which countries and inclusion boundary define the first release?",
+    "Are the product contract and ADR 0001 accepted as the implementation baseline?",
+    "Which hosting region, processors, recovery objectives, browser baseline, and legal review scope are approved?"
+  ],
+  "verification": {
+    "passed": [
+      "python3 scripts/harness/check.py — passed against Git head 7d28f9d689b42fd6380083f52b8b69b089fc2afc with a dirty harness worktree.",
+      "python3 scripts/harness/verify.py — passed script syntax, state/link/budget/security checks, compact context contract, and git diff whitespace checks.",
+      "Bundled validate_harness.py --strict — 0 errors and 0 warnings.",
+      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources total 7,829 bytes and approximately 1,955 tokens.",
+      "Bundled test_skill.py — inspector, validator, budget, placeholder, unsafe-path, and over-budget cases passed.",
+      "Expected-failure state test — a forged handoff head was rejected, then the authoritative head was restored."
+    ],
+    "failed": [],
+    "notRun": [
+      "Representative product vertical slice: product implementation is not authorized or present.",
+      "Cross-client portability: only the current Codex environment is available for this run.",
+      "CI/review delivery: no CI or review artifact is configured."
+    ]
+  },
+  "risks": [
+    "The product and architecture documents are recommendations until the founder explicitly approves the pre-coding gate.",
+    "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
+  ],
+  "touchedPaths": [
+    "README.md",
+    "AGENTS.md",
+    "docs/product-contract.md",
+    "docs/decisions/0001-architecture-baseline.md",
+    "docs/verification.md",
+    ".harness/manifest.json",
+    ".harness/state/work-items.json",
+    ".harness/state/handoff.json",
+    "scripts/harness/context.py",
+    "scripts/harness/check.py",
+    "scripts/harness/verify.py"
+  ],
+  "doNotRepeat": [
+    "Do not start product coding merely because the blueprint recommends a stack.",
+    "Do not add automatic memory, hooks, services, or specialist data stores without a measured need and explicit trust."
+  ],
+  "contextSources": [
+    "AGENTS.md",
+    "docs/product-contract.md",
+    "docs/decisions/0001-architecture-baseline.md",
+    "docs/security.md",
+    ".harness/state/work-items.json"
+  ]
+}

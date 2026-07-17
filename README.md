@@ -78,6 +78,17 @@ The eventual repository should provide a reproducible local environment, seeded 
 
 No setup instructions exist yet because this phase deliberately produces documentation only.
 
+## Agent harness
+
+The repository includes a portable, project-owned Core harness. Start every engineering session with
+`python3 scripts/harness/context.py`, run `python3 scripts/harness/check.py` during work, and run
+`python3 scripts/harness/verify.py` before review or handoff. [AGENTS.md](AGENTS.md) routes agents to
+the authoritative product, architecture, security, live-state, and verification sources.
+
+The harness remains pre-operational until the [product contract](docs/product-contract.md) and
+[architecture baseline](docs/decisions/0001-architecture-baseline.md) are approved and the first
+representative vertical slice is implemented and behaviorally exercised.
+
 ## Contribution philosophy
 
 Contributions should preserve provenance and intellectual honesty. A data change needs evidence; a ranking change needs a published rationale; a schema change needs a migration and rollback plan; an affiliate change cannot alter editorial output. Material card-term changes require a second reviewer. Generated extraction suggestions are never treated as verified facts.
@@ -87,8 +98,9 @@ Architecture decision records should accompany irreversible choices. Product dec
 ## Documentation map
 
 - [Market research](docs/market-research.md) and [competitor analysis](docs/competitor-analysis.md)
-- [Product vision](docs/product-vision.md), [personas](docs/user-personas.md), and [feature roadmap](docs/feature-roadmap.md)
+- [Product contract](docs/product-contract.md), [product vision](docs/product-vision.md), [personas](docs/user-personas.md), and [feature roadmap](docs/feature-roadmap.md)
 - [Technology](docs/tech-stack.md), [architecture](docs/architecture.md), and [database design](docs/database-design.md)
+- [Architecture decision](docs/decisions/0001-architecture-baseline.md) and [verification contract](docs/verification.md)
 - [Data pipeline](docs/data-pipeline.md), [analytics](docs/analytics.md), and [security](docs/security.md)
 - [SEO](docs/seo-strategy.md), [monetization](docs/monetization.md), and [UI/UX](docs/ui-ux.md)
 - [Implementation plan](docs/implementation-plan.md), [milestones](docs/milestones.md), and [risks](docs/risks.md)

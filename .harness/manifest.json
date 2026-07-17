@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "status": "discovery",
+  "project": {
+    "name": "CardStats",
+    "root": "."
+  },
+  "sources": {
+    "instructions": [
+      "AGENTS.md",
+      "docs/verification.md"
+    ],
+    "product": [
+      "docs/product-contract.md",
+      "docs/product-vision.md",
+      "docs/feature-roadmap.md"
+    ],
+    "architecture": [
+      "docs/decisions/0001-architecture-baseline.md",
+      "docs/architecture.md",
+      "docs/database-design.md",
+      "docs/tech-stack.md"
+    ],
+    "security": [
+      "docs/security.md",
+      "docs/risks.md"
+    ],
+    "workState": ".harness/state/work-items.json",
+    "handoff": ".harness/state/handoff.json",
+    "events": null
+  },
+  "commands": {
+    "context": "python3 scripts/harness/context.py",
+    "check": "python3 scripts/harness/check.py",
+    "verify": "python3 scripts/harness/verify.py"
+  },
+  "budgets": [
+    {
+      "name": "root-instructions",
+      "paths": [
+        "AGENTS.md"
+      ],
+      "maxBytes": 12000
+    },
+    {
+      "name": "live-state",
+      "paths": [
+        ".harness/state/work-items.json"
+      ],
+      "maxBytes": 16000
+    },
+    {
+      "name": "session-handoff",
+      "paths": [
+        ".harness/state/handoff.json"
+      ],
+      "maxBytes": 12000
+    },
+    {
+      "name": "harness-executables",
+      "paths": [
+        "scripts/harness/context.py",
+        "scripts/harness/check.py",
+        "scripts/harness/verify.py"
+      ],
+      "maxBytes": 40000
+    },
+    {
+      "name": "startup-context-output",
+      "paths": [
+        "AGENTS.md",
+        ".harness/state/work-items.json",
+        ".harness/state/handoff.json"
+      ],
+      "maxBytes": 32000
+    }
+  ],
+  "clients": {
+    "canonical": "agents-md",
+    "adapters": {}
+  }
+}
