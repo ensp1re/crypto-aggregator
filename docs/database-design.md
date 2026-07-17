@@ -234,7 +234,11 @@ Facets use relational published facts. Unknown values are selectable and include
 
 ## Migration strategy
 
-- Forward-only reviewed migrations with staging rehearsal.
+- Prisma Migrate orchestrates forward-only migrations; generated SQL is reviewed and customized for
+  PostgreSQL-native constraints, partial indexes, extensions, views, data moves, and temporal rules.
+- Never use `prisma db push` against shared, staging, or production databases.
+- Rehearse migrations against production-like data and inspect query plans for complex Prisma,
+  TypedSQL, and parameterized raw-SQL reads.
 - Expand columns/tables, backfill in resumable batches, switch readers, then contract later.
 - Never combine irreversible data transformation with a required zero-downtime deploy.
 - Version calculator and normalization logic so historical outputs remain interpretable.

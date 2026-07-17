@@ -16,7 +16,7 @@ Users / search engines
           |
       CDN / WAF
           |
-   Next.js web + BFF  ------------------> PostHog (explicit events)
+   Next.js web + application backend/BFF --> PostHog (explicit events)
           |
     read projections
           |
@@ -33,7 +33,7 @@ Users / search engines
 
 The deployment has two execution planes:
 
-- **Request plane:** public web, read API, finder, compare, and protected admin UI.
+- **Request plane:** one Next.js deployment containing public web, server-only application/domain modules, read API, finder, compare, and protected admin UI.
 - **Research plane:** scheduler, collectors, parsers, normalizers, validators, diff engine, and notifications.
 
 They share PostgreSQL but use different roles, connection pools, network policies, and resource budgets.
@@ -42,13 +42,13 @@ They share PostgreSQL but use different roles, connection pools, network policie
 
 ### Web experience
 
-Responsibilities: server-rendered discovery and detail pages, comparison state, finder questions, transparent ranking explanations, source/evidence display, corrections form, metadata, sitemaps, and accessibility.
+Responsibilities: server-rendered discovery and detail pages, comparison state, finder questions, transparent ranking explanations, source/evidence display, corrections form, metadata, sitemaps, accessibility, authenticated mutations, and externally consumed HTTP endpoints.
 
-It reads published projections, not extraction candidates. Public requests never start a scrape. Most catalog pages can be revalidated after a publication event; scenario calculations use versioned domain logic.
+It reads published projections, not extraction candidates. Public requests never start a scrape. Server Components call server-only application services directly; Route Handlers are reserved for browser/public endpoints, webhooks, callbacks, and exports rather than internal server-to-server calls. Most catalog pages can be revalidated after a publication event; scenario calculations use versioned domain logic.
 
 ### Domain/application layer
 
-Responsibilities: eligibility resolution, value scenarios, lifecycle logic, claim-state semantics, ranking explanations, publication policies, and affiliate-neutral ordering. It has no browser or source-specific parsing logic.
+Responsibilities: eligibility resolution, value scenarios, lifecycle logic, claim-state semantics, ranking explanations, publication policies, and affiliate-neutral ordering. These modules live inside the Next.js application codebase but do not depend on React, Route Handler request objects, Prisma-generated persistence types, browser automation, or source-specific parsing logic.
 
 Modules should align to stable concepts: catalog, eligibility, economics, evidence, verification, analytics, corrections, reviews, and commercial links.
 
@@ -156,7 +156,7 @@ Railway cron may skip overlapping executions, so cron is only a trigger. Databas
 
 ### Environments
 
-- **Local:** synthetic/license-safe fixtures, local PostgreSQL and object-storage emulator, network fetch off by default.
+- **Local:** synthetic/license-safe fixtures, local PostgreSQL and object-storage emulator, network fetch off by default. Local secrets are ignored and remote shared databases are not required.
 - **Preview:** ephemeral web build against a sanitized shared or branch dataset; no production source credentials.
 - **Staging:** production topology, test sources/accounts, migration and restore validation.
 - **Production:** isolated database/project, private artifacts, strict egress and admin access.
@@ -209,7 +209,7 @@ Alerts should be actionable: queue oldest age, critical source inaccessible, pro
 
 ### Stage 1: launch
 
-Single web deployment, one lightweight worker pool, one browser worker, primary PostgreSQL, private object storage. Optimize queries and cache reads.
+Single Next.js web/application-backend deployment, one lightweight worker pool, one browser worker, primary PostgreSQL with deployment-appropriate pooling, and private object storage. Optimize queries and cache reads.
 
 ### Stage 2: growth
 
@@ -238,4 +238,4 @@ Split a module into a service only when it needs a distinct security boundary, o
 
 ## Architecture risks
 
-The initial multi-vendor topology adds contracts and incident boundaries. Supabase database plus Vercel web plus Railway workers must be tested for connection latency, pooling, and regional alignment. If it is operationally awkward, consolidate web and worker on Railway; PostgreSQL compatibility and container portability preserve that option.
+The initial multi-vendor topology adds contracts and incident boundaries. The selected PostgreSQL provider plus Vercel Next.js and Railway workers must be tested for TLS, connection latency, pooling, connection exhaustion, backups, restore, and regional alignment. If function-style database access is operationally awkward, consolidate the Next.js app and worker on Railway or another container platform; PostgreSQL compatibility and container portability preserve that option. A separate request-plane API service is not added unless a measured client, scaling, deployment, or security boundary requires it.

@@ -1,0 +1,15 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/
+*.log
+
+# Local tooling
+.DS_Store
+*.swp

@@ -1,6 +1,6 @@
 # ADR 0001: CardStats architecture baseline
 
-Status: **proposed — founder approval required before product implementation**
+Status: **proposed — Next.js backend and Prisma selected; remaining launch decisions require founder approval**
 
 Date: 17 July 2026
 
@@ -15,13 +15,17 @@ without introducing distributed-system operations before product-market fit.
 
 ## Proposed decision
 
-- Use a TypeScript modular monolith for the Next.js web/BFF, domain logic, protected research console,
-  and publication orchestration.
+- Use one Next.js TypeScript deployment for the public web, application/domain backend, protected
+  research console, publication orchestration, Server Actions, and required Route Handler REST/BFF
+  endpoints. Do not create a separate request-plane API service for the MVP.
 - Deploy collection and normalization as a separate TypeScript worker process because it has distinct
   egress, resource, retry, browser, and trust boundaries.
 - Use PostgreSQL as the canonical relational and temporal store, initial faceted/text search engine,
   scheduler/job store, audit log, and source of published read projections.
-- Use Drizzle with explicit reviewed SQL migrations and database constraints as the integrity boundary.
+- Use Prisma ORM for ordinary typed data access and Prisma Migrate for migration orchestration.
+  Customize and review migration SQL; PostgreSQL constraints, views, extensions, indexes, and
+  specialized queries remain first-class. Use TypedSQL or parameterized raw SQL when Prisma Client is
+  not the correct expression of a temporal, search, projection, or performance-sensitive query.
 - Use PostgreSQL-backed `pg-boss` jobs initially. Add Redis or another queue only after measured
   contention or throughput failure.
 - Use private S3-compatible object storage for immutable artifacts; never place raw binaries in
@@ -29,8 +33,10 @@ without introducing distributed-system operations before product-market fit.
 - Keep the request plane read-only against published projections. Workers may create artifacts,
   candidates, and job state but cannot directly publish critical claims.
 - Use REST/resource APIs and version public contracts when the API becomes a product.
-- Launch topology recommendation: Vercel web, Railway worker/scheduler, EU Supabase PostgreSQL/admin
-  identity, Cloudflare R2 artifacts, and consent-controlled PostHog EU explicit events.
+- Launch topology recommendation: Vercel Next.js, Railway worker/scheduler, an approved managed
+  PostgreSQL provider, Cloudflare R2 artifacts, and consent-controlled PostHog EU explicit events.
+  Database selection requires TLS, restricted network access, deployment-appropriate pooling,
+  least-privilege roles, backups, monitoring, and a successful restore drill.
 - Keep Docker as the deployment contract and preserve the option to consolidate web, worker, and
   PostgreSQL on Railway if cross-provider operations fail validation.
 
@@ -41,7 +47,8 @@ Detailed component, data-flow, consistency, recovery, and security behavior rema
 ## Dependency direction
 
 UI and transport layers depend on application/domain contracts; domain modules do not depend on
-Next.js, Drizzle, source parsers, Playwright, analytics, or affiliate integrations. Collection adapters
+React, Next.js request objects, Prisma-generated persistence types, source parsers, Playwright,
+analytics, or affiliate integrations. Collection adapters
 produce typed candidates. Publication services validate candidates and write append-only revisions.
 Read projections depend on published canonical facts, and public rendering depends only on those
 projections and versioned scenario logic.
@@ -50,6 +57,8 @@ projections and versioned scenario logic.
 
 - **One deployment for web and collectors:** simpler topology but violates the untrusted-content and
   resource-isolation boundary.
+- **Separate Express/Fastify/Nest request API:** duplicates the Next.js backend and adds an internal
+  network/deployment boundary before an independent client or scaling/security need exists.
 - **Go backend/worker:** efficient but adds a second language before a measured CPU or concurrency
   bottleneck.
 - **Microservices/Kubernetes:** adds ownership, delivery, and consistency cost without multiple teams
@@ -63,10 +72,12 @@ projections and versioned scenario logic.
 
 ## Consequences
 
-The team gains one primary language, transactional publication, low infrastructure complexity, and a
-clear trust boundary. It accepts a multi-vendor launch topology, PostgreSQL responsibility for several
-early workloads, and the need for disciplined module boundaries. Cross-provider latency, pooling,
-backups, identity, and failure ownership must be proven in staging rather than assumed.
+The team gains one primary language, one request-plane deployable, productive typed database access,
+transactional publication, low infrastructure complexity, and a clear ingestion trust boundary. It
+accepts that Prisma is not the complete database specification: engineers must review SQL and own
+PostgreSQL-native constraints, projections, indexes, and plans. Cross-provider latency, pooling,
+connection exhaustion, backups, identity, and failure ownership must be proven in staging rather than
+assumed.
 
 ## Approval conditions
 
