@@ -40,6 +40,27 @@ provisioning, scraping, and production/external mutations require explicit user 
 the product contract and proposed architecture decision are approved. Documentation and harness
 maintenance do not authorize product implementation.
 
+## Mandatory UI/UX skill
+
+For any task that designs, builds, refactors, or reviews how CardStats looks, feels, moves, or is
+interacted with, use the `ui-ux-pro-max` skill before making UI decisions or editing UI code. This
+includes pages, components, information architecture, navigation, responsive layout, accessibility,
+touch/keyboard interaction, typography, color, spacing, icons, forms, feedback, animation, charts,
+and data visualizations.
+
+- For a new page or product surface, begin with the skill's design-system workflow; detect the actual
+  stack rather than assuming one.
+- Read [docs/ui-ux.md](docs/ui-ux.md) as the CardStats product brief and preserve any existing
+  persisted design-system source before generating or replacing it.
+- Supplement the design system with the skill's accessibility, responsive, interaction, chart, and
+  detected-stack guidance as the task requires.
+- Before delivering application UI, use the skill's canonical pre-delivery checklist and run the
+  repository's applicable accessibility and interaction checks.
+- Do not invoke this skill for backend-only, database, infrastructure, or non-visual scripting work.
+
+If the skill is unavailable in the active client, report that limitation explicitly; never claim its
+workflow or checks were applied when they were not.
+
 ## Change and verification contract
 
 - Keep business rules in product/domain sources, not agent instructions or UI code.

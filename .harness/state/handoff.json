@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T15:04:49+02:00",
+  "updatedAt": "2026-07-17T15:17:16+02:00",
   "goal": "Make the CardStats blueprint restartable and safe for an eventual first implementation slice.",
   "scope": [
     "phase-0-decision-gate"
@@ -8,7 +8,7 @@
   "status": "waiting",
   "git": {
     "branch": "chore/add-agent-harness",
-    "head": "7d28f9d689b42fd6380083f52b8b69b089fc2afc",
+    "head": "e7900e89d76a210e9508d4e234e6ea11a40c5be1",
     "worktree": "dirty"
   },
   "completed": [
@@ -20,7 +20,8 @@
   ],
   "decisions": [
     "Use the Core harness profile only; no hooks, MCP servers, event database, semantic index, daemon, or parallel-agent orchestration.",
-    "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass."
+    "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass.",
+    "Require ui-ux-pro-max before any visual or interaction design, implementation, refactor, or review task."
   ],
   "openQuestions": [
     "Which countries and inclusion boundary define the first release?",
@@ -32,7 +33,7 @@
       "python3 scripts/harness/check.py — passed against Git head 7d28f9d689b42fd6380083f52b8b69b089fc2afc with a dirty harness worktree.",
       "python3 scripts/harness/verify.py — passed script syntax, state/link/budget/security checks, compact context contract, and git diff whitespace checks.",
       "Bundled validate_harness.py --strict — 0 errors and 0 warnings.",
-      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources total 7,829 bytes and approximately 1,955 tokens.",
+      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources total 9,252 bytes and approximately 2,310 tokens.",
       "Bundled test_skill.py — inspector, validator, budget, placeholder, unsafe-path, and over-budget cases passed.",
       "Expected-failure state test — a forged handoff head was rejected, then the authoritative head was restored."
     ],
