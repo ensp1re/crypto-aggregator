@@ -59,6 +59,9 @@ Identify the crawler, publish contact, respect robots and source-specific limits
 ### Authentication and authorization
 
 - Public research requires no account.
+- The representative-slice research workbench uses fixed synthetic actors only for local testing.
+  Hosted previews must replace it with an explicit read-only unavailable state and reject its server
+  actions until staff authentication, RBAC, re-authentication, and request protection are implemented.
 - Admin uses separate identity tenancy/role, phishing-resistant passkeys or SSO plus MFA, short sessions, and re-authentication for publication, role change, exports, and destructive entity operations.
 - RBAC roles: researcher, senior verifier, publisher, admin, commercial-readonly, auditor. Default deny.
 - Two-person approval for critical term/status/entity changes; an actor cannot approve their own critical change.

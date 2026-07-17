@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T17:34:06+02:00",
-  "goal": "Implement the approved synthetic CardStats representative vertical slice.",
+  "updatedAt": "2026-07-17T17:52:00+02:00",
+  "goal": "Deploy the representative slice as a protected, database-free Vercel preview.",
   "scope": [
     "representative-vertical-slice"
   ],
   "status": "active",
   "git": {
     "branch": "docs/prisma-next-backend",
-    "head": "4886505cb039f9a9d8188a8f095e47f185ca96b6",
+    "head": "08dbfcb32d44d3f2c1dd501d055cb7d12cc69268",
     "worktree": "dirty"
   },
   "completed": [
@@ -17,10 +17,13 @@
     "Implemented the organization-program-offering-plan domain, explicit claim value states, evidence provenance, independent approval, audit history, atomic publication revisions, and published read projections.",
     "Applied the reviewed migration to the empty development database and restored one program, two offerings, four plans, 24 published claims, and one review candidate from license-safe fixtures.",
     "Built server-rendered home, program evidence, responsive comparison, and private synthetic research workflow surfaces using the mandatory UI-UX-PRO-MAX design and pre-delivery workflow.",
-    "Completed unit, database integration, production build, desktop/mobile browser, responsive, touch-target, accessibility, visual, harness, and migration verification."
+    "Completed unit, database integration, production build, desktop/mobile browser, responsive, touch-target, accessibility, visual, harness, and migration verification.",
+    "Created the aterli/cardstats Vercel project and deployed a Vercel-SSO-protected preview from a manifest that explicitly excludes all local environment files.",
+    "Decoupled hosted public reads from PostgreSQL with a complete 24-claim synthetic snapshot, disabled hosted research mutations, and passed authenticated live smoke checks on every route."
   ],
   "nextActions": [
-    "Founder reviews the local closeout commit and either accepts the slice or requests revisions."
+    "Founder reviews the protected Vercel preview at https://cardstats-2g5tcpdaa-aterli.vercel.app.",
+    "Founder explicitly authorizes deletion of deployment dpl_3TRdMrawZDyP3RzyX39BRZT85epL and rotates the development database password exposed to its build environment."
   ],
   "decisions": [
     "Decision 0002 authorizes only the synthetic representative slice; scraping, accounts, affiliates, and production infrastructure remain excluded.",
@@ -28,22 +31,29 @@
     "Use Prisma 7 with the PostgreSQL driver adapter, capped development pool, reviewed migration SQL, native integrity constraints, and rebuildable published projections.",
     "Use the founder-owned self-hosted PostgreSQL instance as development only; it is not approved as staging or production.",
     "Keep public reads isolated to published projections and require independently approved, evidenced critical claims before transactional publication.",
-    "Use the persisted CardStats design system over off-topic generated style matches: calm light-first financial research UI, explicit uncertainty, restrained motion, and mobile-stacked comparison."
+    "Use the persisted CardStats design system over off-topic generated style matches: calm light-first financial research UI, explicit uncertainty, restrained motion, and mobile-stacked comparison.",
+    "Hosted previews use a checked-in read-only synthetic snapshot and never receive DATABASE_URL; the local research workbench renders an explicit unavailable state and rejects server actions on Vercel.",
+    "Keep the review deployment behind Vercel authentication rather than making the unfinished representative slice public."
   ],
   "openQuestions": [
-    "Will the founder accept the local closeout commit as the representative-slice baseline?",
+    "Will the founder accept the protected preview and local closeout commit as the representative-slice baseline?",
+    "Does the founder authorize immediate removal of the initial Vercel production deployment after its build received the development database credential?",
+    "When will the founder rotate the exposed development database password?",
     "When should authenticated research access, TLS, least-privilege database roles, backup/restore, and CI become the next authorized work item?"
   ],
   "verification": {
     "passed": [
-      "npm run check — passed ESLint, strict TypeScript, 5 Vitest assertions across 2 files, Prisma generation, and optimized Next.js production build.",
+      "npm run check — passed ESLint, strict TypeScript, 8 Vitest assertions across 3 files, Prisma generation, and optimized Next.js production build.",
       "Database integration — rejected unauthorized/self approval, published with an independent verifier, asserted the read projection and SUBMITTED→APPROVED→PUBLISHED audit sequence, and cleaned up.",
       "npm run test:e2e — 5 passed and 1 intentional duplicate-workflow skip across desktop Chromium and exact 375px mobile Chromium.",
       "Accessibility/responsive — axe found no violations; keyboard semantics, 44px targets, reduced motion, landscape, 200% text scaling, explicit unknowns, and no mobile horizontal overflow passed.",
       "Visual review — desktop program evidence and mobile comparison match the persisted CardStats design system and product brief.",
       "Prisma migrate status — one reviewed migration applied and database schema current; final deterministic seed restored.",
       "npm audit — moderate advisories resolved with same-major overrides; only one low Windows-only esbuild development-server advisory remains without an installable npm fix.",
-      "python3 scripts/harness/check.py and verify.py — harness structure, state, links, budgets, credential patterns, script syntax, compact context, and Git whitespace pass."
+      "python3 scripts/harness/check.py and verify.py — harness structure, state, links, budgets, credential patterns, script syntax, compact context, and Git whitespace pass.",
+      "Secret-free Vercel-mode build — Prisma generation and Next production build passed with VERCEL=1 and an empty DATABASE_URL.",
+      "Vercel upload dry run — .env, .env.local, .vercel, .git, and build artifacts explicitly excluded; the project has no stored environment variables.",
+      "Protected preview smoke — authenticated GETs passed /, /programs/atlas-card, /compare, and /research; the hosted research page contains no mutation controls."
     ],
     "failed": [],
     "notRun": [
@@ -54,9 +64,9 @@
     ]
   },
   "risks": [
-    "The development database credential was disclosed in chat; the founder explicitly deferred rotation, so it must never be printed, copied into tracked files, logs, or tool output.",
+    "The development database credential was disclosed in chat and then supplied to the initial Vercel production build before .vercelignore was added. Deployment dpl_3TRdMrawZDyP3RzyX39BRZT85epL remains live because deletion requires explicit founder authorization; rotate the password after containment.",
     "The development database connection is not using TLS and currently uses one broad role; it must not be treated as staging or production.",
-    "The private /research route uses fixed synthetic actors without authentication and must never be publicly deployed.",
+    "The local /research route uses fixed synthetic actors without authentication; hosted deployments now render a read-only unavailable state and reject all three server actions.",
     "npm audit retains one low Windows-only esbuild development-server advisory with no installable non-breaking fix reported by npm.",
     "No CI gate or manual VoiceOver/NVDA verification exists yet.",
     "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
@@ -65,6 +75,7 @@
     ".agents/skills/lean-output/",
     ".env.example",
     ".gitignore",
+    ".vercelignore",
     ".harness/manifest.json",
     ".harness/state/work-items.json",
     ".harness/state/handoff.json",
@@ -86,8 +97,8 @@
     "vitest.config.ts"
   ],
   "doNotRepeat": [
-    "Do not print, stage, log, or copy the disclosed database credential; use it only from ignored environment state for authorized development work.",
-    "Do not deploy /research until real authentication, RBAC, re-authentication, CSRF/origin protection, and audit identity are implemented.",
+    "Do not print, stage, log, copy, or send the disclosed database credential to another provider; use it only from ignored local environment state until rotated.",
+    "Do not deploy the functional /research workbench until real authentication, RBAC, re-authentication, CSRF/origin protection, and audit identity are implemented; retain the hosted unavailable state.",
     "Do not use the development database as staging/production until TLS, restricted networking, least-privilege roles, pooling, backups, monitoring, and restore pass.",
     "Do not add live collection, accounts, affiliates, production infrastructure, or automatic critical publication under the representative-slice authorization."
   ],

@@ -1,4 +1,6 @@
-import { prisma } from "@/lib/prisma";
+import { isResearchWorkbenchAvailable } from "@/lib/research-access";
+import { atlasPreview } from "./atlas-preview";
+import type { AtlasProgramView } from "./catalog-types";
 
 const evidenceInclude = {
   claim: {
@@ -12,7 +14,10 @@ const evidenceInclude = {
   },
 } as const;
 
-export async function getAtlasProgram() {
+export async function getAtlasProgram(): Promise<AtlasProgramView> {
+  if (!isResearchWorkbenchAvailable()) return atlasPreview;
+
+  const { prisma } = await import("@/lib/prisma");
   return prisma.cardProgram.findUniqueOrThrow({
     where: { slug: "atlas-card" },
     include: {
@@ -33,6 +38,7 @@ export async function getAtlasProgram() {
 }
 
 export async function getResearchWorkspace() {
+  const { prisma } = await import("@/lib/prisma");
   const [claims, actors, offerings, artifacts] = await Promise.all([
     prisma.claim.findMany({
       where: { status: { in: ["IN_REVIEW", "APPROVED"] } },

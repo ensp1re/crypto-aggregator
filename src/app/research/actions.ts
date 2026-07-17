@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { approveClaim, createCandidateClaim, publishClaim } from "@/modules/publication/publication-service";
+import { assertResearchWorkbenchAvailable } from "@/lib/research-access";
 
 function required(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -18,6 +18,8 @@ function finish(message: string) {
 }
 
 export async function createCandidateAction(formData: FormData) {
+  assertResearchWorkbenchAvailable();
+  const { createCandidateClaim } = await import("@/modules/publication/publication-service");
   const planValue = formData.get("planId");
   await createCandidateClaim({
     offeringId: required(formData, "offeringId"),
@@ -36,11 +38,15 @@ export async function createCandidateAction(formData: FormData) {
 }
 
 export async function approveClaimAction(formData: FormData) {
+  assertResearchWorkbenchAvailable();
+  const { approveClaim } = await import("@/modules/publication/publication-service");
   await approveClaim(required(formData, "claimId"), required(formData, "reviewerId"), required(formData, "reason"));
   finish("Claim independently approved.");
 }
 
 export async function publishClaimAction(formData: FormData) {
+  assertResearchWorkbenchAvailable();
+  const { publishClaim } = await import("@/modules/publication/publication-service");
   await publishClaim(required(formData, "claimId"), required(formData, "publisherId"), required(formData, "reason"));
   finish("Claim published to the public read projection.");
 }

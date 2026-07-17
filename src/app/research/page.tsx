@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClipboardCheck, FilePlus2, ShieldCheck } from "lucide-react";
 import { SubmitButton } from "@/components/submit-button";
+import { isResearchWorkbenchAvailable } from "@/lib/research-access";
 import { getResearchWorkspace } from "@/modules/catalog/queries";
 import { approveClaimAction, createCandidateAction, publishClaimAction } from "./actions";
 
@@ -12,6 +13,25 @@ export const metadata: Metadata = {
 };
 
 export default async function ResearchPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  if (!isResearchWorkbenchAvailable()) {
+    return (
+      <div className="shell page-stack">
+        <header className="page-header">
+          <div>
+            <p className="eyebrow">Read-only preview</p>
+            <h1>Research workspace unavailable</h1>
+            <p className="lede">This hosted preview includes only the public synthetic comparison and evidence surfaces.</p>
+          </div>
+          <ShieldCheck aria-hidden="true" size={42} />
+        </header>
+        <aside className="notice warning">
+          <ShieldCheck aria-hidden="true" />
+          <p><strong>Publication is disabled.</strong> The research workflow requires authenticated staff identities, role-based access, and request protection before deployment.</p>
+        </aside>
+      </div>
+    );
+  }
+
   const [{ claims, actors, offerings, artifacts }, params] = await Promise.all([getResearchWorkspace(), searchParams]);
   const researcher = actors.find((actor) => actor.role === "RESEARCHER")!;
   const verifier = actors.find((actor) => actor.role === "SENIOR_VERIFIER")!;

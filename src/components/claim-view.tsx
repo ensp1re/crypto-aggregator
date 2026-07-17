@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle2, Clock3, FileCheck2, MinusCircle } from "lucide-react";
 import type { ValueState } from "@/generated/prisma/enums";
+import type { PublishedClaimView } from "@/modules/catalog/catalog-types";
 
 const statePresentation: Record<
   ValueState,
@@ -13,23 +14,7 @@ const statePresentation: Record<
   STALE: { label: "Needs recheck", className: "state-warning", Icon: Clock3 },
 };
 
-type EvidenceClaim = {
-  valueState: ValueState;
-  displayValue: string;
-  observedAt: Date;
-  publishedAt: Date;
-  claim: {
-    evidence: Array<{
-      artifact: {
-        locator: string;
-        rightsStatus: string;
-        source: { title: string; authorityTier: string; sourceType: string };
-      };
-    }>;
-  };
-};
-
-export function ClaimValue({ claim, compact = false }: { claim?: EvidenceClaim; compact?: boolean }) {
+export function ClaimValue({ claim, compact = false }: { claim?: PublishedClaimView; compact?: boolean }) {
   if (!claim) {
     return <span className="state-badge state-unknown">No published value</span>;
   }

@@ -46,12 +46,14 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Founder reviews the local closeout commit and either accepts the slice or requests revisions.",
+      "nextAction": "Founder reviews the protected Vercel preview, authorizes removal of the initial credential-bearing deployment, and rotates the development database password.",
       "verification": [
         "Reviewed PostgreSQL migration applied; schema is current and deterministic synthetic seed restored.",
         "npm run check passed lint, strict TypeScript, four policy assertions, one database publication integration test, and the Next.js production build.",
         "Playwright passed five desktop/mobile checks with one intentional duplicate-workflow skip, including axe, 375px, landscape, 200% text, reduced motion, touch targets, and audit-to-publication flow.",
-        "CardStats UI-UX-PRO-MAX design-system workflow, canonical checklist, and visual inspection completed."
+        "CardStats UI-UX-PRO-MAX design-system workflow, canonical checklist, and visual inspection completed.",
+        "Protected Vercel preview deployed from an explicit secret-free manifest; hosted reads use the complete 24-claim synthetic snapshot and the research mutation workbench is unavailable.",
+        "Authenticated live smoke checks passed home, program, comparison, and the read-only research-unavailable state."
       ],
       "completion": null
     }
