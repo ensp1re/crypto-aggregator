@@ -1,6 +1,6 @@
 # CardStats
 
-**CardStats** is a global crypto card analytics and comparison platform. This repository contains its pre-build blueprint; no product code has been written yet. CardStats is designed to help a person answer a deceptively hard question: **which crypto card can I actually obtain, what will it really cost, and what evidence supports those claims?**
+**CardStats** is a global crypto-card analytics and comparison platform. The current application ships a real 42-program discovery index, source-aware program profiles, comparison, and coverage analytics while official field verification is built out. CardStats helps a person answer a deceptively hard question: **which crypto card can I actually obtain, what will it really cost, and what evidence supports those claims?**
 
 Research snapshot: **17 July 2026**. Card terms, availability, regulations, and affiliate programs change frequently; links and market counts in these documents are observations, not permanent facts.
 
@@ -73,11 +73,23 @@ These are recommendations, not procurement commitments. Decision criteria and ex
 
 Sequencing, gates, staffing assumptions, and success metrics are in [implementation-plan.md](docs/implementation-plan.md) and [milestones.md](docs/milestones.md).
 
-## Setup philosophy
+## Local setup
 
-The eventual repository should provide a reproducible local environment, seeded with synthetic or license-safe fixtures—not copied competitor data. A new contributor should be able to run the web app, worker, PostgreSQL, and object-storage emulator with one documented workflow. Production credentials must never be needed locally. Migrations are forward-only, test data is deterministic, source fetches can be replayed from fixtures, and external calls are disabled by default in tests.
+Use Node.js 22 and PostgreSQL. Copy `.env.example` to an ignored local environment file, then run:
 
-No setup instructions exist yet because this phase deliberately produces documentation only.
+```bash
+npm install
+npm run db:migrate
+npm run db:seed
+npm run db:import:discovery
+npm run dev
+```
+
+The web application does not scrape during public requests. Operators run source collection separately;
+`npx tsx scripts/ingest/cryptoagg.ts --output <path>` creates a quarantined discovery observation.
+`npm run db:import:discovery` idempotently persists the checked observation as quarantined candidates.
+PaymentScan ingestion requires `PAYMENTSCAN_API_KEY` and an explicit republication-rights flag. Tests use
+synthetic parser fixtures and do not call either source.
 
 ## Agent harness
 
@@ -86,9 +98,8 @@ The repository includes a portable, project-owned Core harness. Start every engi
 `python3 scripts/harness/verify.py` before review or handoff. [AGENTS.md](AGENTS.md) routes agents to
 the authoritative product, architecture, security, live-state, and verification sources.
 
-The harness remains pre-operational until the [product contract](docs/product-contract.md) and
-[architecture baseline](docs/decisions/0001-architecture-baseline.md) are approved and the first
-representative vertical slice is implemented and behaviorally exercised.
+The product contract, architecture baseline, synthetic validation slice, and first real catalog surface
+have been implemented and behaviorally exercised. Live work state remains in `.harness/state`.
 
 ## Contribution philosophy
 

@@ -11,20 +11,23 @@ network, execute hooks, upload data, or mutate project files.
 
 ## Current verification hierarchy
 
-| Level | Current gate | Status before product code |
+| Level | Current gate | Current status |
 | --- | --- | --- |
-| Formatting/lint | JSON parsing, placeholder/link checks, `git diff --check` | Applicable |
-| Type/schema | Manifest, work-state, and handoff structural validation | Applicable |
-| Unit tests | Harness script syntax and deterministic rule checks | Applicable only to harness |
-| Integration/contract | Context command agrees with Git, work state, and handoff | Applicable only to harness |
-| Build/package | No application manifest or build exists | Not applicable yet |
-| End-to-end journey | First product vertical slice is not authorized or implemented | Required before operational status |
-| Security/policy | Secret-pattern scan and source/path boundary checks | Applicable; full app threat tests later |
-| Delivery gate | Complete diff review and full verification | Applicable; CI/PR not configured yet |
+| Formatting/lint | `npm run lint`, `git diff --check` | Applicable |
+| Type/schema | `npm run typecheck`, `npx prisma validate`, reviewed migration SQL | Applicable |
+| Unit tests | `npm run test -- tests/unit` | Applicable |
+| Integration/contract | `npm run test -- tests/integration` against the dedicated development database | Applicable; external database access required |
+| Build/package | `npm run build` | Applicable; Turbopack may require local worker-port permission |
+| End-to-end journey | `npm run test:e2e` | Applicable; local port, browser, and development database access required |
+| Accessibility/responsive | Playwright + axe, 375px, landscape, 200% text, reduced motion, touch targets | Applicable; manual VoiceOver/NVDA still not run |
+| Security/policy | Harness secret scan, `npm audit`, publication policy/unit/integration assertions | Applicable; production threat/operations gates remain later |
+| Migration/data | `npm run db:migrate`, `npm run db:seed`, `npx prisma migrate status` | Development only; destructive seed must never target production |
+| Delivery gate | Product gates above, `python3 scripts/harness/verify.py`, complete diff review, current handoff | Applicable; CI/PR not configured |
 
-Not-applicable layers are explicit constraints, not passes. When product code is authorized, replace
-these entries with package-owned format, type, unit, integration, build, browser, accessibility,
-security, migration, and delivery commands. Do not weaken the harness checks when native checks arrive.
+The deterministic Python harness does not install dependencies, open network connections, mutate the
+database, start a browser, or bind application ports. It verifies that application gates are routed and
+that their results are recorded in current handoff evidence. Run the native npm/database/browser gates
+explicitly before review; never treat their presence as a pass.
 
 ## State transitions
 

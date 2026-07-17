@@ -1,6 +1,6 @@
 # CardStats product contract
 
-Status: **approval required before product implementation**
+Status: **approved for the representative vertical slice — 17 July 2026**
 
 Owner: repository owner / founder
 

@@ -8,8 +8,13 @@ node_modules/
 .next/
 out/
 coverage/
+playwright-report/
+test-results/
+src/generated/prisma/
+*.tsbuildinfo
 *.log
 
 # Local tooling
 .DS_Store
 *.swp
+.vercel

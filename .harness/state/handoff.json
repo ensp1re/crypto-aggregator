@@ -1,86 +1,117 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T15:43:27+02:00",
-  "goal": "Finalize the CardStats Prisma and Next.js application-backend baseline before implementation.",
+  "updatedAt": "2026-07-17T20:26:20+02:00",
+  "goal": "Replace the rejected synthetic UI with a real crypto-card discovery, comparison, and analytics foundation.",
   "scope": [
-    "phase-0-decision-gate"
+    "real-catalog-ingestion-and-redesign"
   ],
-  "status": "waiting",
+  "status": "active",
   "git": {
     "branch": "docs/prisma-next-backend",
-    "head": "b563c17ae07e5e479812c4eba8bcb69f8c9916d7",
+    "head": "f6e80eccd5b084cc4d3641ffa77226c0107c5eba",
     "worktree": "dirty"
   },
   "completed": [
-    "Created the portable Core harness surfaces and pre-coding decision gate.",
-    "Validated cold-start context, structural integrity, context budgets, and stale-state conflict detection.",
-    "Updated the proposed stack to one Next.js request-plane backend, Prisma ORM/Migrate, PostgreSQL-native SQL where required, and one isolated ingestion worker.",
-    "Added repository ignore rules that keep local environment files and credentials out of Git."
+    "Built the rights-aware pipeline: safe CryptoAgg AST discovery for 42 programs, documented PaymentScan API-only adapter, quarantined database import, and ADR 0003 publication boundaries.",
+    "Shipped the editorial-fintech catalog, 42 profiles, comparison, and custody/network/card-model analytics with explicit discovery and licensing states.",
+    "Applied approved migrations 20260717193000_real_source_ingestion and 20260717194000_candidate_evidence; all three repository migrations are current.",
+    "Implemented fail-closed official collection from 11 allowlisted MetaMask, ether.fi, and Gnosis Pay sources, including a narrow public Zendesk API fallback.",
+    "Persisted 24 scoped observations across 11 official artifacts: MetaMask 8, ether.fi 7, and Gnosis Pay 9; all three candidates are VERIFYING and global PROMOTED remains zero.",
+    "Caught and repaired volatile raw-markup artifact identity during the required rerun: removed 5 duplicate artifacts only after equivalence/reference guards passed, switched to normalized visible-text hashes, and confirmed stable 24-evidence/11-artifact counts after another collection.",
+    "Replaced the MetaMask, ether.fi, and Gnosis Pay competitor avatars with pinned official issuer assets carrying source, dimensions, observation date, rights basis, and SHA-256 provenance.",
+    "Added a checked public projection that shows the 24 official observations as review-pending evidence on the three priority profiles without labeling fields verified or promoting candidates.",
+    "Deployed protected secret-free preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG at https://cardstats-991wxilo9-aterli.vercel.app; authenticated checks confirm the priority profiles and pinned asset return 200.",
+    "Removed the discovery-observation notice and repeated Unverified/verification-warning labels across catalog, home, comparison, and profiles; replaced all native selects, including the private research form, with a shared keyboard-accessible custom listbox.",
+    "Deployed protected preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich at https://cardstats-hku2smbz1-aterli.vercel.app; authenticated catalog, MetaMask profile, and comparison smoke checks return 200."
   ],
   "nextActions": [
-    "Rotate the exposed database credential, then founder reviews and approves or revises the updated product contract and ADR 0001."
+    "Independently review the 24 official observations, normalize regional offering boundaries, and promote only supported fields through the publication workflow.",
+    "Select and verify the next official-source program batch, including official media provenance.",
+    "Configure a licensed PaymentScan API key and republication-rights flag only if those rights have actually been obtained."
   ],
   "decisions": [
-    "Use the Core harness profile only; no hooks, MCP servers, event database, semantic index, daemon, or parallel-agent orchestration.",
-    "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass.",
-    "Require ui-ux-pro-max before any visual or interaction design, implementation, refactor, or review task.",
-    "Use Next.js as the only MVP request-plane application backend; retain a separate worker for ingestion, Playwright, schedules, and retries.",
-    "Use Prisma ORM/Migrate for normal data access and migration orchestration while PostgreSQL constraints and reviewed SQL remain authoritative."
+    "The synthetic Atlas program remains only as a database/publication test fixture; its public route redirects to the real catalog.",
+    "CryptoAgg supplies private discovery observations, not verified claims, copied prose, rankings, layout, or fake card art.",
+    "PaymentScan data enters only through its documented paid API; public display additionally requires documented republication rights.",
+    "The request plane reads a checked projection and never triggers source collection.",
+    "Broad discovery coverage and official verification are displayed as separate counts and states.",
+    "Catalog-distribution analytics are program counts, never transaction market share; address metrics are never called users.",
+    "The public design uses one editorial research system rather than user-category tiles, bento cards, glassmorphism, or crypto terminal styling.",
+    "Official observations may be shown as review-pending evidence, but verified labels, ranking inputs, and promotion remain gated by independent review.",
+    "Discovery provenance remains in headings, field language, and the evidence model; repeated per-component warning labels are omitted to keep the public interface legible."
   ],
   "openQuestions": [
-    "Which countries and inclusion boundary define the first release?",
-    "Are the updated product contract and ADR 0001 accepted as the implementation baseline?",
-    "Which PostgreSQL provider, TLS/network policy, runtime pooler, hosting region, processors, recovery objectives, browser baseline, and legal review scope are approved?"
+    "Which programs should follow MetaMask, ether.fi, and Gnosis Pay in official-source verification if priority is not inferred from traffic and geographic breadth?",
+    "Has CardStats obtained PaymentScan API access and public republication rights?",
+    "When will the exposed development database password be rotated and the initial credential-bearing Vercel deployment be explicitly authorized for deletion?"
   ],
   "verification": {
     "passed": [
-      "python3 scripts/harness/check.py — passed manifest, state, link, budget, and credential-pattern checks on branch docs/prisma-next-backend.",
-      "python3 scripts/harness/verify.py — passed script syntax, compact context contract, state consistency, and Git whitespace checks.",
-      "Bundled validate_harness.py --strict — 0 errors and 0 warnings.",
-      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources remain below 10.5 KB and approximately 2,700 tokens.",
-      "Stack consistency search — no remaining Drizzle recommendation or obsolete Next.js BFF wording found in README/docs.",
-      "Secret hygiene — .env is ignored and absent from Git status; its contents were not read, staged, tested, or copied."
+      "ESLint, strict TypeScript, Prisma validation/generation, and Git whitespace checks pass.",
+      "All three migrations are applied and the database publication integration workflow passes.",
+      "Database discovery import remains one run with 42 DISCOVERED and zero PROMOTED candidates.",
+      "Database official collection: 24 evidence rows, 11 artifacts, 11 sources, three VERIFYING candidates, and zero PROMOTED after guarded duplicate repair and corrected rerun.",
+      "Normalized content hash stability: two consecutive read-only fetches produced identical hashes for all 11 sources.",
+      "Official media invariant: three priority assets match their pinned SHA-256 hashes and allowlisted official source hosts.",
+      "Final database probe: 24 evidence rows, 11 artifacts, zero range-dash display values, and zero PROMOTED candidates.",
+      "npm test: 8 files and 20 tests passed after official media, public-projection, and selector UI coverage.",
+      "The 49-page production build passes. Playwright passed all 8 desktop/mobile axe, custom-selector, responsive, reduced-motion, text-scale, landscape, and touch checks.",
+      "The updated desktop catalog was visually inspected against the CardStats design system after removing repeated warning labels and introducing the custom selector.",
+      "Vercel preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich is Ready; catalog, MetaMask profile, and comparison return authenticated HTTP 200."
     ],
     "failed": [],
     "notRun": [
-      "Representative product vertical slice: product implementation is not authorized or present.",
-      "Cross-client portability: only the current Codex environment is available for this run.",
-      "CI/review delivery: no CI or review artifact is configured."
+      "PaymentScan live API: no API key or public republication-rights confirmation is configured.",
+      "Manual VoiceOver and NVDA: unavailable in this environment; semantic and axe checks passed.",
+      "Vercel production promotion: only a protected preview was deployed; production alias was not changed."
     ]
   },
   "risks": [
-    "The database credential disclosed in chat must be rotated before use; the repository does not store or validate it.",
-    "The remote PostgreSQL endpoint is unapproved until TLS, restricted network access, pooling, least-privilege roles, backups, monitoring, and restore are verified.",
-    "The remaining product and architecture decisions require explicit founder approval before the pre-coding gate passes.",
-    "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
+    "The 42-record public projection contains minimal competitor-discovered facts and must remain described as reported observations rather than verified terms until official-source review; competitor taxonomies may flatten regional offerings or be stale.",
+    "The remaining 39 issuer avatars still resolve through CryptoAgg-observed unavatar URLs and must stay discovery-only until replaced with official media provenance.",
+    "The 42 database candidates remain competitor-discovered and unverified; none may be promoted without independent official evidence and review.",
+    "PaymentScan analytics cannot be publicly reproduced without a paid API agreement and republication rights.",
+    "The development database credential disclosed earlier remains a rotation risk, and the initial credential-bearing Vercel deployment remains live without explicit deletion authorization.",
+    "Official help pages can change without notice; collection therefore fails closed when curated evidence phrases disappear and still requires independent review before promotion."
   ],
   "touchedPaths": [
+    ".harness/state/",
     "README.md",
-    ".gitignore",
-    "AGENTS.md",
-    "docs/product-contract.md",
-    "docs/decisions/0001-architecture-baseline.md",
-    "docs/architecture.md",
-    "docs/tech-stack.md",
-    "docs/database-design.md",
-    "docs/verification.md",
-    ".harness/manifest.json",
-    ".harness/state/work-items.json",
-    ".harness/state/handoff.json",
-    "scripts/harness/context.py",
-    "scripts/harness/check.py",
-    "scripts/harness/verify.py"
+    "design-system/cardstats/MASTER.md",
+    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
+    "next.config.ts",
+    "package.json",
+    "package-lock.json",
+    "prisma/schema.prisma",
+    "prisma/migrations/20260717193000_real_source_ingestion/",
+    "prisma/migrations/20260717194000_candidate_evidence/",
+    "public/issuer-marks/",
+    "scripts/ingest/",
+    "src/app/",
+    "src/components/",
+    "src/modules/catalog/",
+    "src/modules/ingestion/",
+    "src/modules/verification/",
+    "tests/e2e/",
+    "tests/ingestion/"
   ],
   "doNotRepeat": [
-    "Do not start product coding merely because the blueprint recommends a stack.",
-    "Do not add automatic memory, hooks, services, or specialist data stores without a measured need and explicit trust.",
-    "Do not connect to, print, stage, or reuse the disclosed database credential; rotate it first."
+    "Do not print, stage, log, copy, or send the disclosed database credential to another provider.",
+    "Do not present discovery observations as verified, rank on them, or silently normalize missing values to zero.",
+    "Do not call PaymentScan private frontend server functions, bypass authentication, or republish paid data without rights.",
+    "Do not invent card artwork or reuse CryptoAgg faux cards, prose, ranking, layout, or identifiers.",
+    "Do not deploy the functional /research workbench until authentication and authorization controls exist."
   ],
   "contextSources": [
     "AGENTS.md",
     "docs/product-contract.md",
-    "docs/decisions/0001-architecture-baseline.md",
+    "docs/product-vision.md",
+    "docs/data-pipeline.md",
+    "docs/analytics.md",
+    "docs/architecture.md",
     "docs/security.md",
+    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
+    "design-system/cardstats/MASTER.md",
     ".harness/state/work-items.json"
   ]
 }
