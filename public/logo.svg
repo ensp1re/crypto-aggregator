@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none">
+  <title>CardStats</title>
+  <style>
+    .word { fill: #151515; }
+    .tag { fill: #57544C; }
+    @media (prefers-color-scheme: dark) {
+      .word { fill: #FFFFFF; }
+      .tag { fill: #A3A096; }
+    }
+  </style>
+
+  <!-- Icon mark -->
+  <rect x="2" y="2" width="44" height="44" rx="9" fill="#D7FF43"/>
+  <text x="24" y="25" text-anchor="middle" dominant-baseline="central"
+        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="800"
+        font-size="20" letter-spacing="-0.5" fill="#151515">CS</text>
+
+  <!-- Wordmark -->
+  <text x="60" y="23" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="800" font-size="21" letter-spacing="-0.3" class="word">CardStats</text>
+  <text x="60" y="36" font-family="'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace"
+        font-weight="500" font-size="9.5" letter-spacing="1.6" class="tag">CRYPTO CARD INTELLIGENCE</text>
+</svg>
