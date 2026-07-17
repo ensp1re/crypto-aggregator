@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ActorRole {
+  RESEARCHER
+  SENIOR_VERIFIER
+  ADMINISTRATOR
+  COMMERCIAL_OPERATOR
+}
+
+enum OrganizationType {
+  BRAND
+  ISSUER
+  NETWORK
+  PROGRAM_MANAGER
+}
+
+enum Lifecycle {
+  LIVE
+  WAITLIST
+  PAUSED
+  SUNSET
+}
+
+enum ValueState {
+  KNOWN
+  NOT_OFFERED
+  NOT_DISCLOSED
+  NOT_APPLICABLE
+  CONFLICTING
+  STALE
+}
+
+enum ClaimField {
+  ELIGIBILITY
+  CARD_TYPE
+  FUNDING_MODEL
+  ISSUANCE_FEE
+  MONTHLY_FEE
+  FX_FEE
+  ATM_FEE
+  REWARD_RATE
+  REWARD_CAP
+  SPEND_LIMIT
+}
+
+enum ClaimStatus {
+  CANDIDATE
+  IN_REVIEW
+  APPROVED
+  PUBLISHED
+  REJECTED
+}
+
+enum ReviewAction {
+  SUBMITTED
+  APPROVED
+  REJECTED
+  PUBLISHED
+}
+
+enum AuthorityTier {
+  A
+  B
+  C
+  D
+}
+
+enum EvidenceRelation {
+  SUPPORTS
+  CONTRADICTS
+}
+
+model Actor {
+  id                 String                @id @default(uuid()) @db.Uuid
+  email              String                @unique
+  displayName        String
+  role               ActorRole
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  claimsCreated      Claim[]               @relation("ClaimCreator")
+  claimsApproved     Claim[]               @relation("ClaimApprover")
+  reviews            ReviewEvent[]
+  publicationRecords PublicationRevision[]
+}
+
+model Organization {
+  id               String           @id @default(uuid()) @db.Uuid
+  slug             String           @unique
+  name             String
+  type             OrganizationType
+  jurisdictionCode String?          @db.VarChar(2)
+  createdAt        DateTime         @default(now()) @db.Timestamptz(3)
+  programs         CardProgram[]    @relation("ProgramOwner")
+  issuedOfferings  CardOffering[]   @relation("OfferingIssuer")
+}
+
+model CardProgram {
+  id                  String         @id @default(uuid()) @db.Uuid
+  slug                String         @unique
+  name                String
+  ownerOrganizationId String         @db.Uuid
+  ownerOrganization   Organization   @relation("ProgramOwner", fields: [ownerOrganizationId], references: [id])
+  createdAt           DateTime       @default(now()) @db.Timestamptz(3)
+  offerings           CardOffering[]
+}
+
+model CardOffering {
+  id              String           @id @default(uuid()) @db.Uuid
+  slug            String           @unique
+  programId       String           @db.Uuid
+  issuerId        String           @db.Uuid
+  label           String
+  countryCode     String           @db.VarChar(2)
+  lifecycle       Lifecycle
+  cardType        String
+  fundingModel    String
+  settlementModel String
+  baseCurrency    String           @db.VarChar(3)
+  network         String
+  validFrom       DateTime         @db.Date
+  validTo         DateTime?        @db.Date
+  createdAt       DateTime         @default(now()) @db.Timestamptz(3)
+  program         CardProgram      @relation(fields: [programId], references: [id], onDelete: Restrict)
+  issuer          Organization     @relation("OfferingIssuer", fields: [issuerId], references: [id], onDelete: Restrict)
+  plans           Plan[]
+  claims          Claim[]
+  publishedClaims PublishedClaim[]
+
+  @@index([countryCode, lifecycle])
+}
+
+model Plan {
+  id              String           @id @default(uuid()) @db.Uuid
+  slug            String           @unique
+  offeringId      String           @db.Uuid
+  name            String
+  tierOrder       Int
+  qualification   String
+  lifecycle       Lifecycle
+  offering        CardOffering     @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  claims          Claim[]
+  publishedClaims PublishedClaim[]
+
+  @@unique([offeringId, tierOrder])
+}
+
+model Source {
+  id            String           @id @default(uuid()) @db.Uuid
+  slug          String           @unique
+  title         String
+  url           String
+  sourceType    String
+  authorityTier AuthorityTier
+  rightsStatus  String
+  countryCode   String?          @db.VarChar(2)
+  artifacts     SourceArtifact[]
+}
+
+model SourceArtifact {
+  id            String          @id @default(uuid()) @db.Uuid
+  sourceId      String          @db.Uuid
+  observedAt    DateTime        @db.Timestamptz(3)
+  contentHash   String          @unique
+  locator       String
+  mimeType      String
+  rightsStatus  String
+  fixturePath   String?
+  source        Source          @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  claimEvidence ClaimEvidence[]
+}
+
+model Claim {
+  id             String          @id @default(uuid()) @db.Uuid
+  offeringId     String          @db.Uuid
+  planId         String?         @db.Uuid
+  field          ClaimField
+  valueState     ValueState
+  displayValue   String
+  valueJson      Json?
+  countryCode    String          @db.VarChar(2)
+  critical       Boolean         @default(true)
+  status         ClaimStatus     @default(CANDIDATE)
+  effectiveFrom  DateTime        @db.Date
+  effectiveTo    DateTime?       @db.Date
+  observedAt     DateTime        @db.Timestamptz(3)
+  createdById    String          @db.Uuid
+  approvedById   String?         @db.Uuid
+  publishedAt    DateTime?       @db.Timestamptz(3)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
+  offering       CardOffering    @relation(fields: [offeringId], references: [id], onDelete: Restrict)
+  plan           Plan?           @relation(fields: [planId], references: [id], onDelete: Restrict)
+  createdBy      Actor           @relation("ClaimCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedBy     Actor?          @relation("ClaimApprover", fields: [approvedById], references: [id], onDelete: Restrict)
+  evidence       ClaimEvidence[]
+  reviewEvents   ReviewEvent[]
+  publishedClaim PublishedClaim?
+
+  @@index([offeringId, planId, field, status])
+  @@index([countryCode, status, effectiveTo])
+}
+
+model ClaimEvidence {
+  claimId     String           @db.Uuid
+  artifactId  String           @db.Uuid
+  relation    EvidenceRelation @default(SUPPORTS)
+  excerptHash String
+  claim       Claim            @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  artifact    SourceArtifact   @relation(fields: [artifactId], references: [id], onDelete: Restrict)
+
+  @@id([claimId, artifactId])
+}
+
+model ReviewEvent {
+  id        String       @id @default(uuid()) @db.Uuid
+  claimId   String       @db.Uuid
+  actorId   String       @db.Uuid
+  action    ReviewAction
+  reason    String
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+  claim     Claim        @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  actor     Actor        @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([claimId, createdAt])
+}
+
+model PublicationRevision {
+  id              String           @id @default(uuid()) @db.Uuid
+  version         Int              @unique
+  summary         String
+  publishedAt     DateTime         @default(now()) @db.Timestamptz(3)
+  publishedById   String           @db.Uuid
+  publishedBy     Actor            @relation(fields: [publishedById], references: [id], onDelete: Restrict)
+  publishedClaims PublishedClaim[]
+}
+
+model PublishedClaim {
+  id                    String              @id @default(uuid()) @db.Uuid
+  claimId               String              @unique @db.Uuid
+  offeringId            String              @db.Uuid
+  planId                String?             @db.Uuid
+  field                 ClaimField
+  valueState            ValueState
+  displayValue          String
+  valueJson             Json?
+  countryCode           String              @db.VarChar(2)
+  effectiveFrom         DateTime            @db.Date
+  effectiveTo           DateTime?           @db.Date
+  observedAt            DateTime            @db.Timestamptz(3)
+  publishedAt           DateTime            @db.Timestamptz(3)
+  publicationRevisionId String              @db.Uuid
+  claim                 Claim               @relation(fields: [claimId], references: [id], onDelete: Restrict)
+  offering              CardOffering        @relation(fields: [offeringId], references: [id], onDelete: Restrict)
+  plan                  Plan?               @relation(fields: [planId], references: [id], onDelete: Restrict)
+  publicationRevision   PublicationRevision @relation(fields: [publicationRevisionId], references: [id], onDelete: Restrict)
+
+  @@index([offeringId, planId, field])
+  @@index([countryCode, field])
+}

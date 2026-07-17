@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Run the complete verification currently applicable to the pre-code CardStats repository."""
+"""Verify CardStats harness state and the presence of routed application delivery gates."""
 
 import ast
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -61,6 +62,35 @@ def main() -> int:
     if diff.returncode != 0:
         failures.append("git diff --check failed\n" + (diff.stdout + diff.stderr).strip())
 
+    package_path = ROOT / "package.json"
+    product_gate_summary = "not configured"
+    if package_path.is_file():
+        try:
+            package = json.loads(package_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            failures.append(f"package.json is unreadable: {exc}")
+        else:
+            scripts = package.get("scripts") if isinstance(package, dict) else None
+            required_scripts = ("lint", "typecheck", "test", "test:e2e", "build", "db:migrate", "db:seed")
+            missing_scripts = [
+                name for name in required_scripts
+                if not isinstance(scripts, dict) or not isinstance(scripts.get(name), str)
+            ]
+            if missing_scripts:
+                failures.append("package.json is missing delivery scripts: " + ", ".join(missing_scripts))
+            required_product_paths = (
+                ROOT / "prisma/schema.prisma",
+                ROOT / "prisma/migrations",
+                ROOT / "src/app",
+                ROOT / "tests/unit",
+                ROOT / "tests/integration",
+                ROOT / "tests/e2e",
+            )
+            missing_paths = [str(path.relative_to(ROOT)) for path in required_product_paths if not path.exists()]
+            if missing_paths:
+                failures.append("application delivery paths are missing: " + ", ".join(missing_paths))
+            product_gate_summary = "configured (execute npm/database/browser gates separately)"
+
     if failures:
         print(f"CardStats verification: failing ({len(failures)} failure(s))")
         for failure in failures:
@@ -73,10 +103,8 @@ def main() -> int:
     print("- Manifest/state/handoff/link/budget/security checks: passed")
     print(f"- Compact context contract: passed ({context_bytes} bytes)")
     print("- Git whitespace check: passed")
-    print(
-        "- Product build, unit/integration/E2E, deployment, and CI: not applicable; "
-        "no product code or delivery configuration exists"
-    )
+    print(f"- Application delivery gates: {product_gate_summary}")
+    print("- Product gate execution: recorded separately because database/browser access is external to this deterministic harness command")
     print("- Cross-client portability: not run; only the current Codex environment is available")
     return 0
 

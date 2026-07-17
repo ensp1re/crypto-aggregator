@@ -1,6 +1,6 @@
 # ADR 0001: CardStats architecture baseline
 
-Status: **proposed — Next.js backend and Prisma selected; remaining launch decisions require founder approval**
+Status: **accepted for the representative vertical slice — 17 July 2026**
 
 Date: 17 July 2026
 

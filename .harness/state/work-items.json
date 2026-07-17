@@ -14,17 +14,45 @@
     {
       "id": "phase-0-decision-gate",
       "title": "Approve the CardStats product contract and architecture baseline",
-      "status": "not_started",
+      "status": "passing",
       "owner": "founder",
       "sources": [
         "docs/product-contract.md",
         "docs/decisions/0001-architecture-baseline.md",
+        "docs/decisions/0002-phase-0-approval-record.md",
         "docs/implementation-plan.md"
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Founder reviews and explicitly approves or revises the ten pre-coding decisions in docs/product-contract.md.",
-      "verification": [],
+      "nextAction": "Implement the approved representative vertical slice.",
+      "verification": [
+        "Founder explicitly approved Decision 0002 on 17 July 2026.",
+        "Product contract and ADR 0001 marked accepted for the representative vertical slice."
+      ],
+      "completion": "Approved by founder on 17 July 2026."
+    },
+    {
+      "id": "representative-vertical-slice",
+      "title": "Implement the approved synthetic CardStats representative vertical slice",
+      "status": "active",
+      "owner": "engineering",
+      "sources": [
+        "docs/product-contract.md",
+        "docs/decisions/0001-architecture-baseline.md",
+        "docs/decisions/0002-phase-0-approval-record.md",
+        "docs/database-design.md",
+        "docs/ui-ux.md",
+        "docs/verification.md"
+      ],
+      "plan": "docs/implementation-plan.md",
+      "blocker": null,
+      "nextAction": "Founder reviews the local closeout commit and either accepts the slice or requests revisions.",
+      "verification": [
+        "Reviewed PostgreSQL migration applied; schema is current and deterministic synthetic seed restored.",
+        "npm run check passed lint, strict TypeScript, four policy assertions, one database publication integration test, and the Next.js production build.",
+        "Playwright passed five desktop/mobile checks with one intentional duplicate-workflow skip, including axe, 375px, landscape, 200% text, reduced motion, touch targets, and audit-to-publication flow.",
+        "CardStats UI-UX-PRO-MAX design-system workflow, canonical checklist, and visual inspection completed."
+      ],
       "completion": null
     }
   ]

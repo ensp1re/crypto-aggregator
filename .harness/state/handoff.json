@@ -1,86 +1,104 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T15:43:27+02:00",
-  "goal": "Finalize the CardStats Prisma and Next.js application-backend baseline before implementation.",
+  "updatedAt": "2026-07-17T17:34:06+02:00",
+  "goal": "Implement the approved synthetic CardStats representative vertical slice.",
   "scope": [
-    "phase-0-decision-gate"
+    "representative-vertical-slice"
   ],
-  "status": "waiting",
+  "status": "active",
   "git": {
     "branch": "docs/prisma-next-backend",
-    "head": "b563c17ae07e5e479812c4eba8bcb69f8c9916d7",
+    "head": "4886505cb039f9a9d8188a8f095e47f185ca96b6",
     "worktree": "dirty"
   },
   "completed": [
-    "Created the portable Core harness surfaces and pre-coding decision gate.",
-    "Validated cold-start context, structural integrity, context budgets, and stale-state conflict detection.",
-    "Updated the proposed stack to one Next.js request-plane backend, Prisma ORM/Migrate, PostgreSQL-native SQL where required, and one isolated ingestion worker.",
-    "Added repository ignore rules that keep local environment files and credentials out of Git."
+    "Founder approved Decision 0002; the product contract and ADR 0001 are accepted for the representative vertical slice.",
+    "Persisted the CardStats design system and scaffolded pinned Next.js 16, React 19, TypeScript, Tailwind CSS 4, Prisma 7, PostgreSQL, Vitest, and Playwright tooling.",
+    "Implemented the organization-program-offering-plan domain, explicit claim value states, evidence provenance, independent approval, audit history, atomic publication revisions, and published read projections.",
+    "Applied the reviewed migration to the empty development database and restored one program, two offerings, four plans, 24 published claims, and one review candidate from license-safe fixtures.",
+    "Built server-rendered home, program evidence, responsive comparison, and private synthetic research workflow surfaces using the mandatory UI-UX-PRO-MAX design and pre-delivery workflow.",
+    "Completed unit, database integration, production build, desktop/mobile browser, responsive, touch-target, accessibility, visual, harness, and migration verification."
   ],
   "nextActions": [
-    "Rotate the exposed database credential, then founder reviews and approves or revises the updated product contract and ADR 0001."
+    "Founder reviews the local closeout commit and either accepts the slice or requests revisions."
   ],
   "decisions": [
-    "Use the Core harness profile only; no hooks, MCP servers, event database, semantic index, daemon, or parallel-agent orchestration.",
-    "Keep the harness pre-operational until an authorized representative vertical slice and resume tests pass.",
-    "Require ui-ux-pro-max before any visual or interaction design, implementation, refactor, or review task.",
-    "Use Next.js as the only MVP request-plane application backend; retain a separate worker for ingestion, Playwright, schedules, and retries.",
-    "Use Prisma ORM/Migrate for normal data access and migration orchestration while PostgreSQL constraints and reviewed SQL remain authoritative."
+    "Decision 0002 authorizes only the synthetic representative slice; scraping, accounts, affiliates, and production infrastructure remain excluded.",
+    "Use one Next.js App Router request plane with Server Components by default and a small client boundary only for mutation pending feedback.",
+    "Use Prisma 7 with the PostgreSQL driver adapter, capped development pool, reviewed migration SQL, native integrity constraints, and rebuildable published projections.",
+    "Use the founder-owned self-hosted PostgreSQL instance as development only; it is not approved as staging or production.",
+    "Keep public reads isolated to published projections and require independently approved, evidenced critical claims before transactional publication.",
+    "Use the persisted CardStats design system over off-topic generated style matches: calm light-first financial research UI, explicit uncertainty, restrained motion, and mobile-stacked comparison."
   ],
   "openQuestions": [
-    "Which countries and inclusion boundary define the first release?",
-    "Are the updated product contract and ADR 0001 accepted as the implementation baseline?",
-    "Which PostgreSQL provider, TLS/network policy, runtime pooler, hosting region, processors, recovery objectives, browser baseline, and legal review scope are approved?"
+    "Will the founder accept the local closeout commit as the representative-slice baseline?",
+    "When should authenticated research access, TLS, least-privilege database roles, backup/restore, and CI become the next authorized work item?"
   ],
   "verification": {
     "passed": [
-      "python3 scripts/harness/check.py — passed manifest, state, link, budget, and credential-pattern checks on branch docs/prisma-next-backend.",
-      "python3 scripts/harness/verify.py — passed script syntax, compact context contract, state consistency, and Git whitespace checks.",
-      "Bundled validate_harness.py --strict — 0 errors and 0 warnings.",
-      "Bundled evaluate_context_budget.py — all five budgets passed; startup sources remain below 10.5 KB and approximately 2,700 tokens.",
-      "Stack consistency search — no remaining Drizzle recommendation or obsolete Next.js BFF wording found in README/docs.",
-      "Secret hygiene — .env is ignored and absent from Git status; its contents were not read, staged, tested, or copied."
+      "npm run check — passed ESLint, strict TypeScript, 5 Vitest assertions across 2 files, Prisma generation, and optimized Next.js production build.",
+      "Database integration — rejected unauthorized/self approval, published with an independent verifier, asserted the read projection and SUBMITTED→APPROVED→PUBLISHED audit sequence, and cleaned up.",
+      "npm run test:e2e — 5 passed and 1 intentional duplicate-workflow skip across desktop Chromium and exact 375px mobile Chromium.",
+      "Accessibility/responsive — axe found no violations; keyboard semantics, 44px targets, reduced motion, landscape, 200% text scaling, explicit unknowns, and no mobile horizontal overflow passed.",
+      "Visual review — desktop program evidence and mobile comparison match the persisted CardStats design system and product brief.",
+      "Prisma migrate status — one reviewed migration applied and database schema current; final deterministic seed restored.",
+      "npm audit — moderate advisories resolved with same-major overrides; only one low Windows-only esbuild development-server advisory remains without an installable npm fix.",
+      "python3 scripts/harness/check.py and verify.py — harness structure, state, links, budgets, credential patterns, script syntax, compact context, and Git whitespace pass."
     ],
     "failed": [],
     "notRun": [
-      "Representative product vertical slice: product implementation is not authorized or present.",
-      "Cross-client portability: only the current Codex environment is available for this run.",
-      "CI/review delivery: no CI or review artifact is configured."
+      "Manual VoiceOver and NVDA sessions: those clients are unavailable in this environment; semantic and axe checks passed.",
+      "Cross-client agent portability: only the current Codex environment is available.",
+      "CI/review delivery: no CI workflow or review artifact is configured.",
+      "Backup/restore, TLS verification, and production operations: the database is development-only and those gates are not yet authorized."
     ]
   },
   "risks": [
-    "The database credential disclosed in chat must be rotated before use; the repository does not store or validate it.",
-    "The remote PostgreSQL endpoint is unapproved until TLS, restricted network access, pooling, least-privilege roles, backups, monitoring, and restore are verified.",
-    "The remaining product and architecture decisions require explicit founder approval before the pre-coding gate passes.",
+    "The development database credential was disclosed in chat; the founder explicitly deferred rotation, so it must never be printed, copied into tracked files, logs, or tool output.",
+    "The development database connection is not using TLS and currently uses one broad role; it must not be treated as staging or production.",
+    "The private /research route uses fixed synthetic actors without authentication and must never be publicly deployed.",
+    "npm audit retains one low Windows-only esbuild development-server advisory with no installable non-breaking fix reported by npm.",
+    "No CI gate or manual VoiceOver/NVDA verification exists yet.",
     "CardStats has an active-name collision identified during naming research; trademark and domain clearance remain required."
   ],
   "touchedPaths": [
-    "README.md",
+    ".agents/skills/lean-output/",
+    ".env.example",
     ".gitignore",
-    "AGENTS.md",
-    "docs/product-contract.md",
-    "docs/decisions/0001-architecture-baseline.md",
-    "docs/architecture.md",
-    "docs/tech-stack.md",
-    "docs/database-design.md",
-    "docs/verification.md",
     ".harness/manifest.json",
     ".harness/state/work-items.json",
     ".harness/state/handoff.json",
-    "scripts/harness/context.py",
-    "scripts/harness/check.py",
-    "scripts/harness/verify.py"
+    "design-system/cardstats/MASTER.md",
+    "docs/product-contract.md",
+    "docs/decisions/0001-architecture-baseline.md",
+    "docs/decisions/0002-phase-0-approval-record.md",
+    "package.json",
+    "package-lock.json",
+    "prisma.config.ts",
+    "prisma/",
+    "src/",
+    "tests/",
+    "next.config.ts",
+    "eslint.config.mjs",
+    "postcss.config.mjs",
+    "playwright.config.ts",
+    "tsconfig.json",
+    "vitest.config.ts"
   ],
   "doNotRepeat": [
-    "Do not start product coding merely because the blueprint recommends a stack.",
-    "Do not add automatic memory, hooks, services, or specialist data stores without a measured need and explicit trust.",
-    "Do not connect to, print, stage, or reuse the disclosed database credential; rotate it first."
+    "Do not print, stage, log, or copy the disclosed database credential; use it only from ignored environment state for authorized development work.",
+    "Do not deploy /research until real authentication, RBAC, re-authentication, CSRF/origin protection, and audit identity are implemented.",
+    "Do not use the development database as staging/production until TLS, restricted networking, least-privilege roles, pooling, backups, monitoring, and restore pass.",
+    "Do not add live collection, accounts, affiliates, production infrastructure, or automatic critical publication under the representative-slice authorization."
   ],
   "contextSources": [
     "AGENTS.md",
     "docs/product-contract.md",
     "docs/decisions/0001-architecture-baseline.md",
+    "docs/decisions/0002-phase-0-approval-record.md",
     "docs/security.md",
+    "design-system/cardstats/MASTER.md",
+    "prisma/schema.prisma",
     ".harness/state/work-items.json"
   ]
 }
