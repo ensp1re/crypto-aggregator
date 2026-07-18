@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T15:21:26+02:00",
+  "updatedAt": "2026-07-18T15:34:18+02:00",
   "goal": "Refine the isolated comparison PR into a direct consumer card experience with program-level plans, benefits, and tier-aware comparisons.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "feat/profile-compare-workflow",
-    "head": "28244d5cb5c4e6ff2ab1433338419ff34d614bae",
+    "head": "1c2b2e1535bd1a8ef73cf9fe0224b85b12682161",
     "worktree": "dirty"
   },
   "completed": [
@@ -22,7 +22,7 @@
     "Updated the CardStats UI blueprint and persisted design system with the program-plan-benefit interaction contract."
   ],
   "nextActions": [
-    "Refresh and smoke-test the protected Vercel preview, then review pull request 6; merge it if accepted or close it without changing main if rejected.",
+    "Review pull request 6 on protected preview dpl_m58LFgYqfNDJKDrULXU1m1SgWyg2; merge it if accepted or close it without changing main if rejected.",
     "Source exact tier economics before enabling selectors for Wirex, Crypto.com, COCA, Cypher, Deblock, KAST, and other tiered programs."
   ],
   "decisions": [
@@ -41,12 +41,13 @@
       "Desktop Ready Metal profile and 375px Ready/Wirex/MetaMask tier comparison were visually inspected against the persisted design system.",
       "The required ui-ux-pro-max validation search and accessibility, touch, responsive, interaction, and Next.js guidance were applied.",
       "The frontend taste redesign audit informed direct copy, program-first hierarchy, sparse benefit layout, and the no-duplicate-card decision.",
-      "An initial concurrent final run hit a Playwright/ESLint test-results directory race; the sequential npm run check rerun and four focused desktop/mobile browser regressions passed."
+      "An initial concurrent final run hit a Playwright/ESLint test-results directory race; the sequential npm run check rerun and four focused desktop/mobile browser regressions passed.",
+      "Protected Vercel preview dpl_m58LFgYqfNDJKDrULXU1m1SgWyg2 is READY; authenticated Ready Metal profile and Ready/Wirex/MetaMask plan-aware comparison smoke checks return HTTP 200."
     ],
     "failed": [],
     "notRun": [
       "Manual VoiceOver and NVDA testing is unavailable in this environment; native semantics, keyboard behavior, focus management, and axe passed.",
-      "The existing protected preview has not yet been refreshed with this worktree revision; production remains untouched."
+      "No production deployment was created; production remains untouched."
     ]
   },
   "risks": [
