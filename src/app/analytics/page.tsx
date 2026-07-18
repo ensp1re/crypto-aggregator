@@ -14,7 +14,7 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="shell page-stack analytics-page">
-      <header className="analytics-header"><p className="kicker">Market structure / {total} cards</p><h1>How is the current catalog structured?</h1><p><strong>{disclosedFunding} of {total}</strong> cards have a collected funding-model description. Issuer evidence takes priority; catalog leads remain clearly provisional.</p></header>
+      <header className="analytics-header"><p className="kicker">Market structure / {total} cards</p><h1>How is the current catalog structured?</h1><p><strong>{disclosedFunding} of {total}</strong> cards have a collected funding-model description. Source links remain available on researched card profiles.</p></header>
       <div className="analytics-controls"><span>Cards: {total}</span><span>Unit: card count</span><span>Method: current database observations</span></div>
       <DistributionChart title="Funding models" description="Broad working categories make unlike issuer language comparable without turning missing values into assumptions." data={custody} total={total} />
       <div className="analytics-split">

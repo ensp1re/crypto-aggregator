@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T20:22:05+02:00",
-  "goal": "Review the isolated responsive UI and database-projection repair before any production merge.",
+  "updatedAt": "2026-07-18T21:09:03+02:00",
+  "goal": "Replace provisional consumer labels, repair live tier switching, and redesign catalog search, comparison controls, and card profiles.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "feat/site-ui-data-polish",
-    "head": "0cf2bcf5ff69ebfcfe4021392709fbbe625976a3",
+    "branch": "feat/live-catalog-profile-ux",
+    "head": "faabde1f5b0478cc52d56d66f637acee96cffdc7",
     "worktree": "dirty"
   },
   "completed": [
@@ -27,10 +27,16 @@
     "Repaired the public database projection so structured tier economics no longer repeat one summary across unrelated fee, FX, ATM, and reward rows.",
     "Added marked catalog-lead fallback fields, resilient issuer marks, normalized analytics categories, mobile navigation, and an adaptive one-card-at-a-time comparison table with native tier selectors.",
     "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison.",
-    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged."
+    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged.",
+    "Squash-merged PR 7 as 0b526522 before beginning the follow-up work, then created feat/live-catalog-profile-ux as the requested isolated review branch.",
+    "Removed consumer-facing catalog-lead and provisional labels, added instant in-memory catalog search, and reused the accessible custom selector for catalog filters, profile options, and comparison options.",
+    "Tier and plan changes now update comparison facts immediately before synchronizing shareable URL state; the Ready Metal-to-Lite browser assertion proves plan-scoped rows change.",
+    "Reworked profile hierarchy around card setup, facts, benefits, and a collapsed source ledger while preserving source provenance in the database projection.",
+    "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance.",
+    "Opened PR 8 at https://github.com/ensp1re/crypto-aggregator/pull/8; Vercel preview 9zmAKC9ooVt9arDQH3qkShEMb6ge is READY at https://cardstats-git-feat-live-catalog-profile-ux-aterli.vercel.app."
   ],
   "nextActions": [
-    "Open and inspect the isolated preview for feat/site-ui-data-polish before deciding whether to merge it.",
+    "Review PR 8 and its protected Vercel preview; merge only after founder approval.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -55,10 +61,13 @@
       ,"ESLint, strict TypeScript, 28 Vitest checks, the PostgreSQL-backed Next.js production build, 10 previously passing desktop/mobile Playwright checks, and the corrected two-project Ready tier interaction check pass."
       ,"Axe, 44px mobile targets, horizontal table containment, landscape, reduced motion, and 200% text reflow passed in Chromium; desktop home/profile and Pixel 7 catalog/comparison screenshots were visually inspected."
       ,"Vercel preview deployment dpl_5qvnPUwKVDVd2885R2st3LgAtUBW reached READY and authenticated home, Ready profile, and Ready/Bybit/Solflare comparison smoke checks returned HTTP 200."
+      ,"ESLint, strict TypeScript, all 28 Vitest checks with approved PostgreSQL access, and the database-backed Next.js production build pass on feat/live-catalog-profile-ux."
+      ,"All 12 desktop/mobile Playwright checks pass, including axe, 44px mobile targets, live search without Apply, Ready profile plan changes, Ready comparison plan changes, horizontal table containment, landscape, reduced motion, and 200% text reflow."
+      ,"Desktop and Pixel 5 screenshots of the catalog, Ready profile, and Ready/MetaMask comparison were inspected against the ui-ux-pro-max checklist and the taste-skill preserve-mode hierarchy."
+      ,"PR 8 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for the catalog, Ready profile, and Ready/MetaMask comparison."
     ],
     "failed": [],
     "notRun": [
-      "The current sandbox blocked the two PostgreSQL integration tests with connect EPERM; 26 non-database tests passed and the database-backed projection was verified earlier before the final cache/documentation-only edits.",
       "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Vercel Turbopack build and local Webpack production compile passed.",
       "Manual VoiceOver and NVDA testing is unavailable in this environment.",
       "The first Vitest command used an unsupported Jest-only flag and was rerun successfully with the repository command; the first sandboxed integration run was blocked by network EPERM and passed with approved database access.",
@@ -85,6 +94,8 @@
     "scripts/ingest/collect-priority-official.ts",
     "src/app",
     "src/components",
+    "src/components/catalog-explorer.tsx",
+    "src/components/profile-plan-selector.tsx",
     "src/modules/catalog",
     "src/modules/publication/publication-service.ts",
     "src/modules/verification",

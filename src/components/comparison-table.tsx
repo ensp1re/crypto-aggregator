@@ -5,14 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { IssuerMark } from "./issuer-mark";
+import { CustomSelect } from "./custom-select";
 import { comparisonHref } from "@/modules/catalog/comparison";
 import type { DiscoveryCard } from "@/modules/catalog/discovery";
 import {
   benefitSummary,
   getCardFact,
-  getCardFactSource,
   getProgramName,
-  getSelectedOptions,
   selectionKey,
   type BenefitKind,
   type CardFactKey,
@@ -30,6 +29,7 @@ type ComparisonKey = CardFactKey | Exclude<BenefitKind, "rewards">;
 
 export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plans: Record<string, string> }) {
   const router = useRouter();
+  const [localPlans, setLocalPlans] = useState(plans);
   const [differencesOnly, setDifferencesOnly] = useState(false);
   const [activeCard, setActiveCard] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -37,12 +37,18 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
   const visibleGroups = useMemo(() => groups.map((group) => ({
     ...group,
     rows: group.rows.filter(([, key]) => {
-      const values = cards.map((card) => displayValue(card, key, plans));
+      const values = cards.map((card) => displayValue(card, key, localPlans));
       if (isBenefitKey(key) && values.every((value) => value === "Not disclosed")) return false;
       return !differencesOnly || new Set(values).size > 1;
     }),
-  })).filter((group) => group.rows.length > 0), [cards, differencesOnly, plans]);
+  })).filter((group) => group.rows.length > 0), [cards, differencesOnly, localPlans]);
   const visibleRowCount = visibleGroups.reduce((total, group) => total + group.rows.length, 0);
+
+  const changePlan = (cardSlug: string, dimensionId: string, optionId: string) => {
+    const nextPlans = { ...localPlans, [selectionKey(cardSlug, dimensionId)]: optionId };
+    setLocalPlans(nextPlans);
+    router.replace(comparisonHref(cards.map((item) => item.slug), nextPlans), { scroll: false });
+  };
 
   const scrollTable = (direction: -1 | 1) => {
     const container = scrollRef.current;
@@ -73,6 +79,7 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
         </div>
       </div>
       <div ref={scrollRef} id={scrollId} className="compare-table-scroll" tabIndex={0} aria-label="Scrollable card comparison" onScroll={trackCard}>
+        <span className="sr-only" aria-live="polite">Comparison values update when a card option changes.</span>
         <table className="compare-table" style={{ minWidth: `${160 + cards.length * 240}px` }}>
           <caption>Crypto card comparison</caption>
           <colgroup><col className="factor-col" />{cards.map((card) => <col className="card-col" key={card.id} />)}</colgroup>
@@ -80,26 +87,29 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
             <tr>
               <th className="factor-column" scope="col">Decision factor</th>
               {cards.map((card) => {
-                const selectedOptions = getSelectedOptions(card, plans);
                 const remainingCards = cards.filter((item) => item.slug !== card.slug);
-                const remainingPlans = Object.fromEntries(Object.entries(plans).filter(([key]) => !key.startsWith(`${card.slug}.`)));
+                const remainingPlans = Object.fromEntries(Object.entries(localPlans).filter(([key]) => !key.startsWith(`${card.slug}.`)));
                 const name = getProgramName(card);
                 return <th id={`card-${card.slug}`} scope="col" key={card.id}>
                   <div className="compare-card-heading">
                     <IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} size={42} />
-                    <span><strong><Link href={`/cards/${card.slug}`}>{name}</Link></strong><small>{selectedOptions.length ? selectedOptions.map(({ option }) => option.name).join(" + ") : card.issuer}</small></span>
+                    <span className="compare-card-copy"><strong><Link href={`/cards/${card.slug}`}>{name}</Link></strong><small>{card.issuer}</small>
+                      {card.dimensions.map((dimension) => <div className="compare-plan-control" key={dimension.id}>
+                        <span>{dimension.label}</span>
+                        <CustomSelect
+                          compact
+                          hideLabel
+                          label={`${name} ${dimension.label}`}
+                          options={dimension.options.map((option) => ({ label: option.name, value: option.id }))}
+                          value={localPlans[selectionKey(card.slug, dimension.id)] ?? dimension.options[0]?.id}
+                          onValueChange={(optionId) => changePlan(card.slug, dimension.id, optionId)}
+                        />
+                      </div>)}
+                    </span>
                     <span className="compare-card-actions">
                       <Link href={comparisonHref(remainingCards.map((item) => item.slug), remainingPlans)} aria-label={`Remove ${name} from comparison`}><X aria-hidden="true" size={16} /></Link>
                     </span>
                   </div>
-                  {card.dimensions.map((dimension) => <div className="compare-plan-control" key={dimension.id}>
-                    <label htmlFor={`${scrollId}-${card.slug}-${dimension.id}`}>{dimension.label}</label>
-                    <select
-                      id={`${scrollId}-${card.slug}-${dimension.id}`}
-                      value={plans[selectionKey(card.slug, dimension.id)] ?? dimension.options[0]?.id}
-                      onChange={(event) => router.push(comparisonHref(cards.map((item) => item.slug), { ...plans, [selectionKey(card.slug, dimension.id)]: event.target.value }), { scroll: false })}
-                    >{dimension.options.map((option) => <option value={option.id} key={option.id}>{option.name}</option>)}</select>
-                  </div>)}
                 </th>;
               })}
             </tr>
@@ -110,7 +120,7 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
               const rowId = `factor-${key}`;
               return <tr key={key}>
                 <th id={rowId} className="factor-column" scope="row">{label}</th>
-                {cards.map((card) => <td headers={`${rowId} card-${card.slug}`} key={card.id}><span className="compare-value">{displayValue(card, key, plans)}{!isBenefitKey(key) && getCardFactSource(card, key, plans) === "catalog-lead" ? <small>Catalog lead</small> : null}</span></td>)}
+                {cards.map((card) => <td headers={`${rowId} card-${card.slug}`} key={card.id}><span className="compare-value">{displayValue(card, key, localPlans)}</span></td>)}
               </tr>;
             })}
           </tbody>)}

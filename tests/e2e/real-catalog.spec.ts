@@ -23,8 +23,13 @@ test("home and catalog expose the full card index", async ({ page }, testInfo) =
   await page.keyboard.press("v");
   await page.keyboard.press("Enter");
   await expect(network).toContainText("Visa");
-  await page.getByRole("button", { name: /Apply/ }).click();
   await expect(page).toHaveURL(/network=Visa/);
+  await network.click();
+  await page.getByRole("option", { name: "All networks" }).click();
+  await page.getByRole("searchbox", { name: "Search cards" }).fill("MetaMask");
+  await expect(page.getByText("1 of 60 cards")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "MetaMask Card" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Apply/ })).toHaveCount(0);
   await expectNoOverflow(page);
 
   const accessibility = await new AxeBuilder({ page }).analyze();
@@ -47,8 +52,8 @@ test("program detail exposes card details and the card website", async ({ page }
   await page.goto("/cards/metamask-card");
   await expect(page.getByRole("heading", { level: 1, name: "MetaMask Card" })).toBeVisible();
   await expect(page.getByAltText("MetaMask fox symbol")).toBeVisible();
+  await page.getByText(/Review \d+ sourced details/).click();
   await expect(page.getByRole("heading", { name: "Latest card details" })).toBeVisible();
-  await expect(page.getByText("8 details")).toBeVisible();
   await expect(page.getByText(/New U.S. and U.K. sign-ups temporarily paused/)).toBeVisible();
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Visit website/ })).toHaveAttribute("href", /^https:/);
@@ -94,8 +99,10 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
 test("one Ready Card profile controls Lite and Metal plan details", async ({ page }) => {
   await page.goto("/cards/ready-card");
   await expect(page.getByRole("heading", { level: 1, name: "Ready Card" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Lite", exact: true })).toHaveAttribute("aria-current", "page");
-  await page.getByRole("link", { name: "Metal", exact: true }).click();
+  const profilePlan = page.getByRole("combobox", { name: /Card plan/ });
+  await expect(profilePlan).toContainText("Lite");
+  await profilePlan.click();
+  await page.getByRole("option", { name: "Metal" }).click();
   await expect(page).toHaveURL(/plans=card_plan%3Ametal/);
   await expect(page.getByRole("heading", { name: "Benefits & perks / Metal" })).toBeVisible();
   await expect(page.getByText(/Metal: \$120\/year/).first()).toBeVisible();
@@ -106,10 +113,15 @@ test("one Ready Card profile controls Lite and Metal plan details", async ({ pag
   await dialog.getByRole("checkbox", { name: /MetaMask Card/ }).check();
   await dialog.getByRole("button", { name: "Compare 2 cards" }).click();
   await expect(page).toHaveURL(/plans=ready-card%3Acard_plan%3Ametal/);
-  await expect(page.locator("#card-ready-card").getByRole("combobox", { name: "Card plan" })).toHaveValue("metal");
+  const comparePlan = page.locator("#card-ready-card").getByRole("combobox", { name: /Ready Card Card plan/ });
+  await expect(comparePlan).toContainText("Metal");
   await expect(page.getByText("$120/year", { exact: true })).toBeVisible();
   await expect(page.getByText("No issuer FX fee", { exact: true })).toBeVisible();
   await expect(page.getByText("$800/month without issuer ATM fees", { exact: true })).toBeVisible();
+  await comparePlan.click();
+  await page.locator("#card-ready-card").getByRole("option", { name: "Lite" }).click();
+  await expect(page.getByText("$120/year", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("$800/month without issuer ATM fees", { exact: true })).toHaveCount(0);
 });
 
 test("real comparison uses a contained semantic table on mobile", async ({ page }, testInfo) => {
