@@ -75,7 +75,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Complete and review the isolated SEO foundation PR for cardstats.xyz before any production merge.",
+      "nextAction": "Review PR 9 and its protected Vercel preview; merge only after founder approval, then submit the canonical sitemap in Search Console.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
@@ -114,7 +114,8 @@
         "The isolated live-catalog and plan-selector branch passes ESLint, strict TypeScript, all 28 Vitest checks with PostgreSQL access, the production build, all 12 desktop/mobile Playwright checks, axe, touch targets, horizontal table containment, landscape, reduced motion, and 200% text reflow.",
         "The catalog, Ready profile, and Ready/MetaMask comparison were visually inspected on desktop and Pixel 5 after the ui-ux-pro-max and design-taste-frontend audits.",
         "PR 8 is open at https://github.com/ensp1re/crypto-aggregator/pull/8; its Vercel check passes and authenticated preview smoke checks return HTTP 200 for catalog, Ready profile, and Ready/MetaMask comparison routes.",
-        "The isolated SEO foundation adds canonical metadata, social previews, crawl directives, a database-backed sitemap, safe route-specific structured data, and an AI-readable site summary; lint, strict TypeScript, 31 Vitest assertions, the production build, and all 14 desktop/mobile browser checks pass."
+        "The isolated SEO foundation adds canonical metadata, social previews, crawl directives, a database-backed sitemap, safe route-specific structured data, and an AI-readable site summary; lint, strict TypeScript, 31 Vitest assertions, the production build, and all 14 desktop/mobile browser checks pass.",
+        "PR 9 is open at https://github.com/ensp1re/crypto-aggregator/pull/9; its Vercel deployment passes and authenticated preview smoke checks return HTTP 200 for app and crawler routes."
       ],
       "completion": null
     }
