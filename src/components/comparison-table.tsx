@@ -17,14 +17,14 @@ import {
 } from "@/modules/catalog/program-details";
 
 const groups = [
-  { label: "Access", rows: [["Regions", "regions"], ["KYC", "kyc"]] },
-  { label: "Funding and card model", rows: [["Funding model", "custody"], ["Card model", "type"], ["Network", "network"], ["Supported assets", "supportedAssets"]] },
+  { label: "Access", rows: [["Current status", "availability"], ["Product scope", "scope"], ["Regions", "regions"], ["KYC", "kyc"]] },
+  { label: "Funding and card model", rows: [["Funding model", "custody"], ["Funding or top-up fee", "fundingFee"], ["Card model", "type"], ["Network", "network"], ["Supported assets", "supportedAssets"]] },
   { label: "Cost and access limits", rows: [["Annual fee", "annualFee"], ["FX fee", "fxFee"], ["ATM limit", "atmLimit"]] },
   { label: "Rewards and requirements", rows: [["Rewards", "cashbackMax"], ["Requirements", "stakingRequired"]] },
   { label: "Benefits and perks", rows: [["Travel", "travel"], ["Subscriptions", "subscriptions"], ["Partner offers", "partner"], ["Mobile wallets", "wallet"]] },
 ] as const;
 
-type ComparisonKey = CardFactKey | Exclude<BenefitKind, "rewards">;
+type ComparisonKey = CardFactKey | Exclude<BenefitKind, "rewards"> | "availability" | "scope";
 
 export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plans: Record<string, string> }) {
   const [differencesOnly, setDifferencesOnly] = useState(false);
@@ -79,7 +79,7 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
                       <Link href={comparisonHref(remainingCards.map((item) => item.slug), remainingPlans)} aria-label={`Remove ${name} from comparison`}><X aria-hidden="true" size={16} /></Link>
                     </span>
                   </div>
-                  {details?.plans?.length ? <div className="compare-plan-tabs" aria-label={`${name} plan`}>
+                  {details?.plans?.length ? <div className="compare-plan-tabs" aria-label={`${name} ${details.selectionLabel ?? "card option"}`}>
                     {details.plans.map((plan) => <Link
                       aria-current={selectedPlan?.id === plan.id ? "true" : undefined}
                       href={comparisonHref(cards.map((item) => item.slug), { ...plans, [card.slug]: plan.id })}
@@ -107,6 +107,9 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
 }
 
 function displayValue(card: DiscoveryCard, key: ComparisonKey, planId?: string) {
+  if (key === "availability" || key === "scope") {
+    return getProgramDetails(card.slug)?.[key] ?? "Details unavailable";
+  }
   if (isBenefitKey(key)) {
     return benefitSummary(card.slug, planId, key);
   }

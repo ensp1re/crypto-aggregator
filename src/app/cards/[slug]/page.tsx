@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, BadgePercent, Check, Gift, Plane, Smartphone, WalletCards } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BadgePercent, Check, CircleAlert, Gift, Plane, Smartphone, WalletCards } from "lucide-react";
 import { IssuerMark } from "@/components/issuer-mark";
 import { ComparePicker } from "@/components/compare-picker";
 import { getCompareOptions } from "@/modules/catalog/comparison-server";
@@ -45,6 +45,7 @@ export default async function CardDetailPage({
     ["Card model", getCardFact(card, "type", selectedPlan?.id)],
     ["Payment network", getCardFact(card, "network", selectedPlan?.id)],
     ["Funding model", getCardFact(card, "custody", selectedPlan?.id)],
+    ["Funding or top-up fee", getCardFact(card, "fundingFee", selectedPlan?.id)],
     ["Regions", getCardFact(card, "regions", selectedPlan?.id)],
     ["Annual fee", getCardFact(card, "annualFee", selectedPlan?.id)],
     ["FX fee", getCardFact(card, "fxFee", selectedPlan?.id)],
@@ -60,23 +61,32 @@ export default async function CardDetailPage({
       <header className="profile-header">
         <div className="profile-identity"><IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} size={72} /><div><p className="kicker">{card.issuer} / card profile</p><h1>{name}</h1><p>{card.network} / {getCardFact(card, "type", selectedPlan?.id)} / {card.custody}</p></div></div>
         <div className="profile-actions">
-          <a className="button primary" href={details?.officialUrl ?? card.officialLink} rel="noreferrer" target="_blank">Visit website <ArrowUpRight aria-hidden="true" size={17} /></a>
+          {details?.officialUrl ? <a className="button primary" href={details.officialUrl} rel="noreferrer" target="_blank">Visit website <ArrowUpRight aria-hidden="true" size={17} /></a> : <span className="button unavailable" aria-disabled="true">Website unresolved</span>}
           <ComparePicker cards={compareOptions} anchorSlug={card.slug} initialSelected={[card.slug]} initialPlans={selectedPlan ? { [card.slug]: selectedPlan.id } : {}} buttonLabel="Compare" />
         </div>
       </header>
+      {details ? <section className={`program-context ${details.availabilityTone}`} aria-labelledby="program-context-title">
+        <CircleAlert aria-hidden="true" />
+        <div>
+          <p className="kicker" id="program-context-title">Current program status</p>
+          <h2>{details.availability}</h2>
+          <p>{details.scope}</p>
+        </div>
+        {details.sourceUrl ? <a className="text-link" href={details.sourceUrl} rel="noreferrer" target="_blank">{details.sourceLabel} <ArrowUpRight aria-hidden="true" size={16} /></a> : null}
+      </section> : null}
       {details?.plans?.length ? <section className="plan-selector" aria-labelledby="plan-selector-title">
-        <div><p className="kicker">Card options</p><h2 id="plan-selector-title">Choose a plan</h2></div>
+        <div><p className="kicker">Card options</p><h2 id="plan-selector-title">Choose a {details.selectionLabel ?? "card option"}</h2></div>
         <div className="plan-tabs" aria-label={`${name} plans`}>
           {details.plans.map((plan) => <Link key={plan.id} href={`/cards/${card.slug}?plan=${plan.id}`} aria-current={selectedPlan?.id === plan.id ? "page" : undefined}>{plan.name}</Link>)}
         </div>
         <p>{selectedPlan?.summary}</p>
       </section> : null}
       {benefits.length > 0 || details?.planNote ? <section className="benefits-section" aria-labelledby="benefits-title">
-        <div className="section-title"><div><p className="kicker">Included value</p><h2 id="benefits-title">Benefits &amp; perks{selectedPlan ? ` / ${selectedPlan.name}` : ""}</h2></div>{details ? <a className="text-link" href={details.sourceUrl} rel="noreferrer" target="_blank">View current terms <ArrowUpRight aria-hidden="true" size={16} /></a> : null}</div>
+        <div className="section-title"><div><p className="kicker">Included value</p><h2 id="benefits-title">Benefits &amp; perks{selectedPlan ? ` / ${selectedPlan.name}` : ""}</h2></div>{details?.sourceUrl ? <a className="text-link" href={details.sourceUrl} rel="noreferrer" target="_blank">View current terms <ArrowUpRight aria-hidden="true" size={16} /></a> : null}</div>
         {details?.planNote ? <p className="plan-note">{details.planNote}</p> : null}
         <div className="benefit-list">{benefits.map((benefit) => <article key={`${benefit.kind}-${benefit.title}`}>
           {benefitIcon(benefit.kind)}
-          <div><p>{benefit.kind}</p><h3>{benefit.title}{benefit.status === "coming-soon" ? <span>Coming soon</span> : null}</h3><p>{benefit.description}</p></div>
+          <div><p>{benefit.kind}</p><h3>{benefit.title}{benefit.status ? <span>{benefit.status === "coming-soon" ? "Coming soon" : benefit.validUntil ? `Through ${benefit.validUntil}` : "Time-limited"}</span> : null}</h3><p>{benefit.description}</p></div>
         </article>)}</div>
       </section> : null}
       {officialObservations.length > 0 ? <section className="fact-sheet official-evidence" aria-labelledby="official-evidence-title">

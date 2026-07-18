@@ -81,13 +81,13 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
   await page.goto("/cards/metamask-card");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Compare MetaMask Card" });
-  await dialog.getByRole("checkbox", { name: /Ether.fi Cash/ }).check();
+  await dialog.getByRole("checkbox", { name: /ether.fi Cash/ }).check();
   await dialog.getByRole("checkbox", { name: /Gnosis Pay/ }).check();
   await dialog.getByRole("button", { name: "Compare 3 cards" }).click();
   await expect(page).toHaveURL(/cards=metamask-card&cards=etherfi-card&cards=gnosis-card/);
   await expect(page.getByRole("table", { name: "Crypto card comparison" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /MetaMask Card/ })).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: /Ether.fi Cash/ })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /ether.fi Cash/ })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /Gnosis Pay/ })).toBeVisible();
 });
 
@@ -107,7 +107,7 @@ test("one Ready Card profile controls Lite and Metal plan details", async ({ pag
   await dialog.getByRole("checkbox", { name: /MetaMask Card/ }).check();
   await dialog.getByRole("button", { name: "Compare 2 cards" }).click();
   await expect(page).toHaveURL(/plans=ready-lite%3Ametal/);
-  await expect(page.getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
+  await expect(page.getByLabel("Ready Card plan").getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
   await expect(page.getByText("120 USDC for the first year")).toBeVisible();
 });
 

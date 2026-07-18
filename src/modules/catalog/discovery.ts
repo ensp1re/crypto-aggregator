@@ -1,5 +1,6 @@
 import snapshot from "./discovery-snapshot.json";
 import { officialIssuerMedia, type OfficialIssuerMedia } from "./official-media";
+import { getProgramResearch } from "./program-research";
 
 export type DiscoveryCard = (typeof snapshot.cards)[number] & {
   slug: string;
@@ -13,14 +14,19 @@ export type CatalogQuery = {
   network?: string;
 };
 
-const cards: DiscoveryCard[] = snapshot.cards.map((card) => ({
-  ...card,
-  name: card.id === "Kripicard" ? "Kripicard Premium" : card.id === "ready-lite" ? "Ready Card" : card.name,
-  logo: officialIssuerMedia[card.id]?.path ?? card.logo,
-  slug: card.id.toLowerCase(),
-  verification: "discovery",
-  media: officialIssuerMedia[card.id],
-}));
+const cards: DiscoveryCard[] = snapshot.cards.map((card) => {
+  const slug = card.id.toLowerCase();
+  const research = getProgramResearch(slug);
+  return {
+    ...card,
+    name: research?.name ?? card.name,
+    officialLink: research?.officialUrl ?? card.officialLink,
+    logo: officialIssuerMedia[card.id]?.path ?? card.logo,
+    slug,
+    verification: "discovery",
+    media: officialIssuerMedia[card.id],
+  };
+});
 
 export function getDiscoverySnapshot() {
   return { ...snapshot, cards };
