@@ -10,7 +10,8 @@ The canonical hierarchy is:
 Issuer/brand
   -> Card program (consumer concept)
       -> Regional/legal offering
-          -> Plan or tier
+          -> Plan dimensions (subscription, card plan, reward tier, loyalty level)
+              -> Selectable options, which may combine across dimensions
               -> Time-bound claims and evidence
 ```
 
@@ -53,9 +54,17 @@ A legally and operationally coherent regional variant. Fields include program, r
 
 An offering must split when legal issuer, eligibility rule, fee schedule, network, card type, or settlement model materially differs.
 
-**plans**
+**plan_dimensions** and **plans**
 
-Subscription, stake, loyalty, or physical-card tiers belonging to an offering. Includes tier order, qualification model, and current lifecycle. A plan is not inferred from card color alone.
+An offering can have multiple independent dimensions, such as a paid subscription, physical-card
+plan, account/VIP level, and earned reward tier. A plan row is one selectable option inside exactly
+one dimension and includes order, qualification, and lifecycle. Dimensions declare whether their
+options combine with another dimension. A plan is not inferred from card color alone.
+
+Do not duplicate the consumer program for every option. Ready is one program whose offering can
+have Lite and Metal card-plan options; Bybit is one regional offering whose reward-tier dimension
+contains Base through Infinite. When a benefit depends on both a subscription and a reward tier,
+the claim scopes to that combination through `claim_plan_scopes`.
 
 ### Geography and eligibility
 
@@ -115,6 +124,7 @@ The normalized factual unit:
 - stable field path or claim type;
 - normalized typed value and unit;
 - offering/plan/country scope;
+- stable subject key for repeatable benefits or promotions, plus a canonical scope key;
 - `valid_from` / `valid_to`: when the fact applies in the world;
 - `observed_at` / system revision: when the platform learned it;
 - value state: known, not offered, not disclosed, not applicable, conflicting, stale;
@@ -126,6 +136,18 @@ This bitemporal structure answers both “what were the terms on 1 March?” and
 **claim_evidence**
 
 Many-to-many link from claim to source artifact with source locator (heading, table row, page, selector, or structured-data path), a short rights-safe excerpt or excerpt hash, extraction method, and support/contradict relationship.
+
+### Research staging for catalog and plan discovery
+
+`discovery_candidates`, `discovery_candidate_evidence`, `candidate_plan_dimensions`, and
+`candidate_plan_options` preserve issuer-page research before canonical entity resolution and claim
+review. A candidate can be `structured`, `partial`, `no_public_matrix`, or `blocked`; missing plan
+details therefore never become a zero or an invented tier. Independent dimensions such as a paid
+subscription and a loyalty level remain separately selectable and can be combined.
+
+These staging rows are not published truth. Promotion must resolve the program, regional offering,
+scope, dates, and evidence into canonical claims and pass the normal independent verification and
+publication workflow. Production public projections must never read candidate tables directly.
 
 **verification_events**
 
@@ -164,10 +186,10 @@ Queue type, source/claim/subject, severity, assignee, due time, state, conflict 
 ```text
 organization 1--N card_program
 card_program 1--N card_offering
-card_offering 1--N plan
+card_offering 1--N plan_dimension 1--N plan
 card_offering N--N organization (typed, temporal relationships)
 card_offering 1--N eligibility_rule / fee_term / limit / funding_option
-plan 1--N reward_term / fee_term / benefit
+plan N--N scoped claim through claim_plan_scope
 any scoped subject 1--N claim
 claim N--N source_artifact through claim_evidence
 claim 1--N verification_event

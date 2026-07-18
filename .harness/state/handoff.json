@@ -1,117 +1,101 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-17T20:26:20+02:00",
-  "goal": "Replace the rejected synthetic UI with a real crypto-card discovery, comparison, and analytics foundation.",
+  "updatedAt": "2026-07-18T19:27:00+02:00",
+  "goal": "Deliver the isolated database-backed 60-card catalog, complete official-source plan research, and program-first comparison workflow for founder review.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "docs/prisma-next-backend",
-    "head": "f6e80eccd5b084cc4d3641ffa77226c0107c5eba",
+    "branch": "feat/profile-compare-workflow",
+    "head": "d481de9da65b067b9eec3a1318fc004701e5647b",
     "worktree": "dirty"
   },
   "completed": [
-    "Built the rights-aware pipeline: safe CryptoAgg AST discovery for 42 programs, documented PaymentScan API-only adapter, quarantined database import, and ADR 0003 publication boundaries.",
-    "Shipped the editorial-fintech catalog, 42 profiles, comparison, and custody/network/card-model analytics with explicit discovery and licensing states.",
-    "Applied approved migrations 20260717193000_real_source_ingestion and 20260717194000_candidate_evidence; all three repository migrations are current.",
-    "Implemented fail-closed official collection from 11 allowlisted MetaMask, ether.fi, and Gnosis Pay sources, including a narrow public Zendesk API fallback.",
-    "Persisted 24 scoped observations across 11 official artifacts: MetaMask 8, ether.fi 7, and Gnosis Pay 9; all three candidates are VERIFYING and global PROMOTED remains zero.",
-    "Caught and repaired volatile raw-markup artifact identity during the required rerun: removed 5 duplicate artifacts only after equivalence/reference guards passed, switched to normalized visible-text hashes, and confirmed stable 24-evidence/11-artifact counts after another collection.",
-    "Replaced the MetaMask, ether.fi, and Gnosis Pay competitor avatars with pinned official issuer assets carrying source, dimensions, observation date, rights basis, and SHA-256 provenance.",
-    "Added a checked public projection that shows the 24 official observations as review-pending evidence on the three priority profiles without labeling fields verified or promoting candidates.",
-    "Deployed protected secret-free preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG at https://cardstats-991wxilo9-aterli.vercel.app; authenticated checks confirm the priority profiles and pinned asset return 200.",
-    "Removed the discovery-observation notice and repeated Unverified/verification-warning labels across catalog, home, comparison, and profiles; replaced all native selects, including the private research form, with a shared keyboard-accessible custom listbox.",
-    "Deployed protected preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich at https://cardstats-hku2smbz1-aterli.vercel.app; authenticated catalog, MetaMask profile, and comparison smoke checks return 200."
+    "Expanded the catalog from 42 imported candidates to 60 database candidates, including Solflare, Trustee Plus, Kraken, Bybit, and Ready Card.",
+    "Collected 280 scoped observations from 64 official sources for 52 candidates and recorded explicit blockers for the other 8 instead of inventing values.",
+    "Persisted research status, 38 plan dimensions, and 125 selectable options in PostgreSQL candidate staging; no candidate was promoted or published.",
+    "Normalized 30 structured and 4 partial plan programs, including all six Bybit reward tiers and composable Wirex, Nexo, and Plutus dimensions.",
+    "Kept Ready as one card program with Lite and Metal options; removed local hard-coded research modules from the public runtime.",
+    "Changed catalog, analytics, profile, picker, and comparison surfaces to read the database projection and show benefits and plan-scoped facts.",
+    "Added a profile Compare action with a searchable multi-select dialog that pins the current card and carries selected options into a shareable comparison URL.",
+    "Kept mobile comparison as a semantic horizontally scrollable table with a sticky factor column and explicit scroll controls; it never changes to card grids.",
+    "Removed reported, Confirm with issuer, and the requested eligibility/regional normalization copy from consumer surfaces.",
+    "Documented that candidate plan research is staging data and must not become a production public projection without canonical resolution and independent publication review."
   ],
   "nextActions": [
-    "Independently review the 24 official observations, normalize regional offering boundaries, and promote only supported fields through the publication workflow.",
-    "Select and verify the next official-source program batch, including official media provenance.",
-    "Configure a licensed PaymentScan API key and republication-rights flag only if those rights have actually been obtained."
+    "Obtain explicit founder approval to copy the existing DATABASE_URL into Vercel as a sensitive preview-only variable, then redeploy and inspect the new preview routes.",
+    "Founder reviews pull request 6 and either approves further canonical publication work or closes the PR without changing main."
   ],
   "decisions": [
-    "The synthetic Atlas program remains only as a database/publication test fixture; its public route redirects to the real catalog.",
-    "CryptoAgg supplies private discovery observations, not verified claims, copied prose, rankings, layout, or fake card art.",
-    "PaymentScan data enters only through its documented paid API; public display additionally requires documented republication rights.",
-    "The request plane reads a checked projection and never triggers source collection.",
-    "Broad discovery coverage and official verification are displayed as separate counts and states.",
-    "Catalog-distribution analytics are program counts, never transaction market share; address metrics are never called users.",
-    "The public design uses one editorial research system rather than user-category tiles, bento cards, glassmorphism, or crypto terminal styling.",
-    "Official observations may be shown as review-pending evidence, but verified labels, ranking inputs, and promotion remain gated by independent review.",
-    "Discovery provenance remains in headings, field language, and the evidence model; repeated per-component warning labels are omitted to keep the public interface legible."
+    "The catalog unit is a card program; plans, subscriptions, membership levels, reward tiers, loyalty levels, and card modes are separate selectable dimensions inside that program.",
+    "Benefits & perks is the consumer label; time-bound promotions retain dates and conditions and do not overwrite durable economics.",
+    "A selector appears only when official evidence supplies an option matrix; partial, unavailable, and blocked research remain explicit states.",
+    "Candidate evidence can drive this isolated research preview, but production public projections must continue to require reviewed canonical claims.",
+    "The source-backed semantic table is the comparison model on every viewport; mobile uses localized horizontal scrolling rather than a card grid."
   ],
-  "openQuestions": [
-    "Which programs should follow MetaMask, ether.fi, and Gnosis Pay in official-source verification if priority is not inferred from traffic and geographic breadth?",
-    "Has CardStats obtained PaymentScan API access and public republication rights?",
-    "When will the exposed development database password be rotated and the initial credential-bearing Vercel deployment be explicitly authorized for deletion?"
-  ],
+  "openQuestions": [],
   "verification": {
     "passed": [
-      "ESLint, strict TypeScript, Prisma validation/generation, and Git whitespace checks pass.",
-      "All three migrations are applied and the database publication integration workflow passes.",
-      "Database discovery import remains one run with 42 DISCOVERED and zero PROMOTED candidates.",
-      "Database official collection: 24 evidence rows, 11 artifacts, 11 sources, three VERIFYING candidates, and zero PROMOTED after guarded duplicate repair and corrected rerun.",
-      "Normalized content hash stability: two consecutive read-only fetches produced identical hashes for all 11 sources.",
-      "Official media invariant: three priority assets match their pinned SHA-256 hashes and allowlisted official source hosts.",
-      "Final database probe: 24 evidence rows, 11 artifacts, zero range-dash display values, and zero PROMOTED candidates.",
-      "npm test: 8 files and 20 tests passed after official media, public-projection, and selector UI coverage.",
-      "The 49-page production build passes. Playwright passed all 8 desktop/mobile axe, custom-selector, responsive, reduced-motion, text-scale, landscape, and touch checks.",
-      "The updated desktop catalog was visually inspected against the CardStats design system after removing repeated warning labels and introducing the custom selector.",
-      "Vercel preview dpl_9KcpwS4vvCqMarD4SqrSjfSeeich is Ready; catalog, MetaMask profile, and comparison return authenticated HTTP 200."
+      "ESLint and strict TypeScript pass.",
+      "26 deterministic unit, ingestion, policy, and access tests pass.",
+      "Prisma schema validation and client generation pass.",
+      "Next.js production compilation passes with the Webpack builder.",
+      "Harness check and full deterministic harness verification pass.",
+      "Database migrations were applied earlier in this session; the collector stored 60 candidates, 280 observations, 38 dimensions, and 125 options.",
+      "The required ui-ux-pro-max workflow and taste audit were applied; prior Chromium evidence confirms the searchable dialog and localized mobile table interaction."
     ],
     "failed": [],
     "notRun": [
-      "PaymentScan live API: no API key or public republication-rights confirmation is configured.",
-      "Manual VoiceOver and NVDA: unavailable in this environment; semantic and axe checks passed.",
-      "Vercel production promotion: only a protected preview was deployed; production alias was not changed."
+      "The current sandbox blocked the two PostgreSQL integration tests with connect EPERM; 26 non-database tests passed and the database-backed projection was verified earlier before the final cache/documentation-only edits.",
+      "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Webpack production compile passed.",
+      "Vercel deployment dpl_BcHE3447dxCeDkt83AUv95Jpu4W8 compiled and passed TypeScript, then failed page-data collection because the project has no DATABASE_URL; adding the local credential externally requires fresh explicit founder approval.",
+      "The final current-commit Playwright and hosted smoke checks await a database-enabled Vercel preview.",
+      "Manual VoiceOver and NVDA testing is unavailable in this environment.",
+      "No production deployment or merge was performed."
     ]
   },
   "risks": [
-    "The 42-record public projection contains minimal competitor-discovered facts and must remain described as reported observations rather than verified terms until official-source review; competitor taxonomies may flatten regional offerings or be stale.",
-    "The remaining 39 issuer avatars still resolve through CryptoAgg-observed unavatar URLs and must stay discovery-only until replaced with official media provenance.",
-    "The 42 database candidates remain competitor-discovered and unverified; none may be promoted without independent official evidence and review.",
-    "PaymentScan analytics cannot be publicly reproduced without a paid API agreement and republication rights.",
-    "The development database credential disclosed earlier remains a rotation risk, and the initial credential-bearing Vercel deployment remains live without explicit deletion authorization.",
-    "Official help pages can change without notice; collection therefore fails closed when curated evidence phrases disappear and still requires independent review before promotion."
+    "Candidate research is not canonical published truth; this PR must not merge to production until entity resolution and the independent claim publication workflow are completed.",
+    "Binance, BitPay, Coinbase, Deblock, Kripicard, Revolut, TapX, and Xapo remain explicit research blockers.",
+    "Four programs remain partial because the issuer exposes an incomplete, image-only, in-app, or otherwise non-reproducible option matrix.",
+    "Issuer terms and promotions can change; scheduled revalidation and stale-state projection are not yet complete.",
+    "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release."
   ],
   "touchedPaths": [
-    ".harness/state/",
-    "README.md",
-    "design-system/cardstats/MASTER.md",
-    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
-    "next.config.ts",
-    "package.json",
-    "package-lock.json",
+    ".harness/state/handoff.json",
+    ".harness/state/work-items.json",
+    "docs/database-design.md",
+    "docs/ui-ux.md",
+    "playwright.config.ts",
     "prisma/schema.prisma",
-    "prisma/migrations/20260717193000_real_source_ingestion/",
-    "prisma/migrations/20260717194000_candidate_evidence/",
-    "public/issuer-marks/",
-    "scripts/ingest/",
-    "src/app/",
-    "src/components/",
-    "src/modules/catalog/",
-    "src/modules/ingestion/",
-    "src/modules/verification/",
-    "tests/e2e/",
-    "tests/ingestion/"
+    "prisma/migrations/20260718170000_catalog_plan_dimensions/migration.sql",
+    "prisma/migrations/20260718190000_candidate_plan_research/migration.sql",
+    "prisma/seed.ts",
+    "scripts/ingest/collect-priority-official.ts",
+    "src/app",
+    "src/components",
+    "src/modules/catalog",
+    "src/modules/publication/publication-service.ts",
+    "src/modules/verification",
+    "tests"
   ],
   "doNotRepeat": [
-    "Do not print, stage, log, copy, or send the disclosed database credential to another provider.",
-    "Do not present discovery observations as verified, rank on them, or silently normalize missing values to zero.",
-    "Do not call PaymentScan private frontend server functions, bypass authentication, or republish paid data without rights.",
-    "Do not invent card artwork or reuse CryptoAgg faux cards, prose, ranking, layout, or identifiers.",
-    "Do not deploy the functional /research workbench until authentication and authorization controls exist."
+    "Do not split one card program into duplicate catalog entries for plans or tiers.",
+    "Do not flatten independent plan dimensions into one generic tier selector.",
+    "Do not infer missing fees, rewards, eligibility, or benefits as zero.",
+    "Do not use reported, Confirm with issuer, or internal publication language in consumer UI.",
+    "Do not replace the mobile comparison table with card grids or allow horizontal page overflow.",
+    "Do not promote candidate evidence, merge this branch, or deploy to production without the required review and explicit founder approval."
   ],
   "contextSources": [
     "AGENTS.md",
     "docs/product-contract.md",
-    "docs/product-vision.md",
-    "docs/data-pipeline.md",
-    "docs/analytics.md",
-    "docs/architecture.md",
-    "docs/security.md",
-    "docs/decisions/0003-source-ingestion-and-rights-boundary.md",
+    "docs/database-design.md",
+    "docs/ui-ux.md",
     "design-system/cardstats/MASTER.md",
+    "src/modules/verification/priority-official-sources.ts",
+    "src/modules/verification/official-catalog-targets.ts",
     ".harness/state/work-items.json"
   ]
 }

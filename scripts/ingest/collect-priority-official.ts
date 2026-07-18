@@ -16,7 +16,7 @@ try {
     console.log(`Validated ${evidenceCount} field observations from ${fetched.length} official sources without database writes`);
   } else {
     const result = await collectPriorityOfficialEvidence();
-    console.log(`Collected ${result.evidenceCount} field observations from ${result.sourceCount} official sources for ${result.candidateCount} candidates`);
+    console.log(`Collected ${result.evidenceCount} field observations from ${result.sourceCount} official sources for ${result.candidateCount} candidates; normalized plans for ${result.structuredPlanCandidateCount} candidates, left ${result.partialPlanCandidateCount} partial, and recorded ${result.blockerCount} research blockers`);
   }
 } finally {
   await prisma.$disconnect();

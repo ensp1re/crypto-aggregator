@@ -80,7 +80,7 @@ This direction applies the UI-UX-PRO-MAX methodology—mobile-first hierarchy, a
 5. Apply hard eligibility/lifecycle filters.
 6. Return 3–6 options with “why it fits,” principal tradeoff, evidence confidence, and effective-value range.
 7. Show excluded near-matches and why.
-8. Let users adjust assumptions, compare, confirm with issuer, save, or choose none.
+8. Let users adjust assumptions, compare, open the current source, save, or choose none.
 
 Target: useful result in under three minutes and no more than five mandatory questions.
 
@@ -94,13 +94,21 @@ Target: useful result in under three minutes and no more than five mandatory que
 
 ### Compare
 
-1. Resolve one shared residency/scenario at the top.
-2. Show a compact verdict strip: eligibility, effective cost/value range, funding model, critical caveat, confidence.
-3. Toggle “differences only.”
-4. Group rows: access, funding/custody, cost, rewards, use, benefits, limits, recourse, evidence/history.
-5. Expand evidence at the field level.
-6. Adjust scenario inputs and visibly mark recomputed values.
-7. Remove/add alternatives without losing context.
+1. Select two to four card programs; never duplicate a program because it has multiple plans.
+2. Choose the relevant plan inside each program column before comparing plan-dependent values.
+3. Keep card and plan choices in the URL so the comparison can be shared and restored.
+4. Toggle “differences only.”
+5. Group rows: access, funding/custody, cost, rewards, requirements, benefits, and limits.
+6. Remove/add alternatives or switch a plan without losing the other selections.
+
+### Program, plan, and benefit model
+
+- The catalog contains one entry per card program. Ready Lite and Ready Metal appear as Ready Card, not two cards.
+- A plan selector sits directly below the profile header and updates fees, rewards, limits, material, and benefits together.
+- The comparison table keeps one column per program and places a compact plan switch inside that column header.
+- “Benefits & perks” is the stable consumer label. Travel rates, subscription rebates, partner offers, rewards, and wallet support are benefit types.
+- A promotion is a time-bound benefit with dates and conditions. Do not use “promotion” as the catch-all label for permanent plan features.
+- Do not offer a plan selector until plan-specific values are available. A list of tier names without comparable terms is not useful.
 
 ### Evidence and correction
 
@@ -144,13 +152,13 @@ Generic plastic-card art is optional and secondary. Do not show fake card number
 
 ### Program detail
 
-Header: program, scoped offering selector, live/paused status, responsible issuer/network, evidence freshness, official confirmation action.
+Header: program, issuer/network, card website action, and compare action. A plan selector follows immediately when the program has multiple plans.
 
 Next: eligibility callout and “how money moves” diagram. Then a sticky in-page section navigation.
 
-Sections: overview; fees and conversion; rewards/caps/exclusions; limits; assets/chains/wallets; benefits; support/recourse; provider relationships; change history; evidence coverage; alternatives; corrections/disclosure.
+Sections: overview; plan options; fees and conversion; rewards/caps/exclusions; limits; assets/chains/wallets; benefits and perks; support; and sources.
 
-Critical warnings stay near affected terms. Affiliate CTA cannot visually outrank official confirmation.
+Critical warnings stay near affected terms. Affiliate actions cannot visually outrank the direct card website action.
 
 ### Country page
 
@@ -169,13 +177,13 @@ Three-pane desktop workspace: queue; normalized before/after and scope; safe art
 Never use an unreadably scaled matrix. On mobile:
 
 - a bottom comparison tray shows up to three selected programs;
-- sticky program tabs choose the current focal pair/set;
-- each attribute renders as a labeled stacked row with values side by side;
+- the semantic comparison table keeps readable column widths inside one localized horizontal scroller;
+- the decision-factor column stays visible while card columns move, and visible 44px controls supplement touch scrolling;
 - section accordions reduce length while preserving headings;
 - “differences only” hides equal rows but exposes a count and reset;
 - unknown/conflicting values have text labels and explanation;
 - source actions are at least 44×44px;
-- no essential content requires horizontal page scrolling.
+- no essential content requires horizontal page scrolling, and comparison data never becomes a card grid.
 
 Desktop can use sticky column headers and a matrix for up to four offerings. Preserve program/context labels while scrolling.
 

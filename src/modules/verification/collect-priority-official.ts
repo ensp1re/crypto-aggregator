@@ -1,9 +1,14 @@
 import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
+import { officialCatalogTargets } from "./official-catalog-targets";
+import { officialCatalogResearchBlockers } from "./final-catalog-sources";
 import { priorityOfficialSources, type OfficialSourceDefinition } from "./priority-official-sources";
+import { normalizeCandidatePlanResearch } from "./candidate-plan-normalizer";
 
-const ALLOWED_HOSTS = new Set(["support.metamask.io", "help.ether.fi", "help.gnosispay.com"]);
+const ALLOWED_HOSTS = new Set(priorityOfficialSources.map(({ url }) => new URL(url).hostname));
 const RIGHTS = "Official public source; retain factual extraction, hashes, and link for editorial verification";
+const INVENTORY_RIGHTS = "Official product URL used for independent catalog coverage and verification planning";
+const RESEARCH_USER_AGENT = "Mozilla/5.0 (compatible; CardStatsResearch/0.1; +https://cardstats.app/methodology)";
 
 type FetchedOfficialSource = {
   definition: OfficialSourceDefinition;
@@ -20,6 +25,7 @@ function decodeHtml(value: string) {
     .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
     .replace(/&#([0-9]+);/g, (_, decimal: string) => String.fromCodePoint(Number.parseInt(decimal, 10)))
     .replaceAll("&amp;", "&").replaceAll("&quot;", '"').replaceAll("&#39;", "'").replaceAll("&nbsp;", " ")
+    .replaceAll("&euro;", "€").replaceAll("&pound;", "£")
     .replaceAll("&ndash;", "–").replaceAll("&mdash;", "—").replaceAll("&rsquo;", "’");
 }
 
@@ -34,22 +40,29 @@ export function officialContentHash(text: string) {
 
 async function safeFetch(definition: OfficialSourceDefinition) {
   let url = new URL(definition.url);
+  const timeoutMs = url.hostname === "www.bybit.com" ? 60_000 : 20_000;
+  const userAgent = url.hostname === "www.bybit.com" ? "CardStatsResearch/0.1" : RESEARCH_USER_AGENT;
   for (let redirects = 0; redirects <= 3; redirects += 1) {
     if (url.protocol !== "https:" || !ALLOWED_HOSTS.has(url.hostname)) throw new Error(`Blocked official-source URL: ${url.href}`);
     let response = await fetch(url, {
       redirect: "manual",
-      signal: AbortSignal.timeout(20_000),
-      headers: { "user-agent": "CardStatsResearch/0.1 (+https://cardstats-hu1c4q02f-aterli.vercel.app)" },
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: {
+        "accept-language": "en-US,en;q=0.9",
+        "user-agent": userAgent,
+      },
     });
-    const gnosisArticleId = url.hostname === "help.gnosispay.com"
-      ? url.pathname.match(/\/articles\/(\d+)/)?.[1]
-      : undefined;
-    if (response.status === 403 && gnosisArticleId) {
-      const apiUrl = new URL(`/api/v2/help_center/en-us/articles/${gnosisArticleId}.json`, url);
+    const helpCenterArticleId = url.pathname.match(/\/articles\/(\d+)/)?.[1];
+    if ((response.status === 401 || response.status === 403) && helpCenterArticleId) {
+      const helpCenterLocale = url.pathname.match(/\/hc\/([a-z]{2}-[a-z]{2})\//i)?.[1] ?? "en-us";
+      const apiUrl = new URL(`/api/v2/help_center/${helpCenterLocale}/articles/${helpCenterArticleId}.json`, url);
       response = await fetch(apiUrl, {
         redirect: "manual",
-        signal: AbortSignal.timeout(20_000),
-        headers: { "user-agent": "CardStatsResearch/0.1 (+https://cardstats-hu1c4q02f-aterli.vercel.app)" },
+        signal: AbortSignal.timeout(timeoutMs),
+        headers: {
+          "accept-language": "en-US,en;q=0.9",
+          "user-agent": userAgent,
+        },
       });
     }
     if (response.status >= 300 && response.status < 400) {
@@ -92,19 +105,75 @@ async function safeFetch(definition: OfficialSourceDefinition) {
 
 export async function fetchPriorityOfficialSources(): Promise<FetchedOfficialSource[]> {
   const fetched: FetchedOfficialSource[] = [];
-  for (const definition of priorityOfficialSources) fetched.push({ definition, response: await safeFetch(definition) });
+  for (const definition of priorityOfficialSources) {
+    try {
+      fetched.push({ definition, response: await safeFetch(definition) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${definition.slug} fetch failed: ${message}`, { cause: error });
+    }
+  }
   return fetched;
 }
 
 export async function collectPriorityOfficialEvidence() {
   const observedAt = new Date();
   const fetched = await fetchPriorityOfficialSources();
+  const blockerKeys = new Set(officialCatalogResearchBlockers.map(({ candidateKey }) => candidateKey));
+  const planProfiles = normalizeCandidatePlanResearch(priorityOfficialSources, blockerKeys);
 
   return prisma.$transaction(async (tx) => {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('cardstats:priority-official-evidence'))`;
+    const inventorySource = await tx.source.upsert({
+      where: { slug: "cardstats-official-catalog-targets" },
+      update: {},
+      create: {
+        slug: "cardstats-official-catalog-targets",
+        title: "CardStats official-source coverage targets",
+        url: "https://cardstats.app/methodology",
+        sourceType: "editorial official-source inventory",
+        authorityTier: "D",
+        rightsStatus: INVENTORY_RIGHTS,
+      },
+    });
+    let inventoryRun = await tx.sourceImportRun.findFirst({
+      where: { sourceId: inventorySource.id, collector: "official-catalog-targets", collectorVersion: "1" },
+    });
+    inventoryRun ??= await tx.sourceImportRun.create({
+      data: {
+        sourceId: inventorySource.id,
+        status: "QUARANTINED",
+        collector: "official-catalog-targets",
+        collectorVersion: "1",
+        finishedAt: observedAt,
+        observedCount: officialCatalogTargets.length,
+        acceptedCount: 0,
+      },
+    });
+    for (const target of officialCatalogTargets) {
+      const existing = await tx.discoveryCandidate.findFirst({ where: { externalKey: target.key } });
+      if (!existing) {
+        await tx.discoveryCandidate.create({
+          data: {
+            importRunId: inventoryRun.id,
+            externalKey: target.key,
+            canonicalHint: target.name,
+            issuerHint: target.issuer,
+            officialUrl: target.officialUrl,
+            observation: { discoveryBasis: "official product URL", officialUrl: target.officialUrl },
+            status: "DISCOVERED",
+            rightsBasis: INVENTORY_RIGHTS,
+            discoveredAt: observedAt,
+          },
+        });
+      }
+    }
     let evidenceCount = 0;
     for (const { definition, response } of fetched) {
-      const candidate = await tx.discoveryCandidate.findFirstOrThrow({ where: { externalKey: definition.candidateKey } });
+      const candidate = await tx.discoveryCandidate.findFirstOrThrow({
+        where: { externalKey: definition.candidateKey },
+        orderBy: { discoveredAt: "desc" },
+      });
       const source = await tx.source.upsert({
         where: { slug: definition.slug },
         update: { title: definition.title, url: response.finalUrl, sourceType: definition.sourceType, authorityTier: definition.authorityTier, rightsStatus: RIGHTS },
@@ -133,7 +202,69 @@ export async function collectPriorityOfficialEvidence() {
         data: { status: "VERIFYING", reviewReason: "Official evidence collected; normalization and independent review required before promotion." },
       });
     }
-    return { sourceCount: fetched.length, evidenceCount, candidateCount: new Set(fetched.map(({ definition }) => definition.candidateKey)).size };
+    for (const blocker of officialCatalogResearchBlockers) {
+      const candidate = await tx.discoveryCandidate.findFirstOrThrow({
+        where: { externalKey: blocker.candidateKey },
+        orderBy: { discoveredAt: "desc" },
+      });
+      await tx.discoveryCandidate.update({
+        where: { id: candidate.id },
+        data: {
+          status: "TRIAGED",
+          planResearchStatus: "BLOCKED",
+          planResearchReason: blocker.reason,
+          officialUrl: blocker.officialUrl,
+          reviewedAt: observedAt,
+          reviewReason: blocker.reason,
+        },
+      });
+    }
+    for (const profile of planProfiles) {
+      const candidate = await tx.discoveryCandidate.findFirstOrThrow({
+        where: { externalKey: profile.candidateKey },
+        orderBy: { discoveredAt: "desc" },
+      });
+      await tx.candidatePlanDimension.deleteMany({ where: { candidateId: candidate.id } });
+      await tx.discoveryCandidate.update({
+        where: { id: candidate.id },
+        data: {
+          planResearchStatus: profile.status,
+          planResearchReason: profile.reason,
+          planDimensions: {
+            create: profile.dimensions.map((dimension) => ({
+              slug: dimension.slug,
+              label: dimension.label,
+              kind: dimension.kind,
+              combinable: dimension.combinable,
+              displayOrder: dimension.displayOrder,
+              observedAt,
+              options: {
+                create: dimension.options.map((option) => ({
+                  slug: option.slug,
+                  name: option.name,
+                  tierOrder: option.tierOrder,
+                  qualification: option.qualification,
+                  lifecycle: option.lifecycle,
+                  displayValue: option.displayValue,
+                  valueJson: option.valueJson,
+                  scopeJson: option.scopeJson,
+                  sourceFieldKeys: option.sourceFieldKeys,
+                  observedAt,
+                })),
+              },
+            })),
+          },
+        },
+      });
+    }
+    return {
+      sourceCount: fetched.length,
+      evidenceCount,
+      candidateCount: new Set(fetched.map(({ definition }) => definition.candidateKey)).size,
+      blockerCount: officialCatalogResearchBlockers.length,
+      structuredPlanCandidateCount: planProfiles.filter(({ status }) => status === "STRUCTURED").length,
+      partialPlanCandidateCount: planProfiles.filter(({ status }) => status === "PARTIAL").length,
+    };
   }, { isolationLevel: "Serializable", timeout: 30_000 });
 }
 

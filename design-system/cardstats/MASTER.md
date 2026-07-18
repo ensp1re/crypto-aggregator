@@ -56,13 +56,20 @@ with the data. Never imply that a competitor observation is issuer-verified.
   discovery-only and must be replaced by official issuer assets with provenance.
 - **Catalog row:** identity, four decision facts, and profile action. Do not repeat status labels on every
   row; source context belongs in the surrounding page and evidence surfaces.
-- **Profile fact sheet:** pair each label with its observed value. Reserve row-level evidence links for
-  official-source observations that a reader can inspect.
+- **Profile fact sheet:** use direct consumer labels such as Rewards, Regions, Card details, and Visit
+  website. Keep source links available without adding “reported” or “observed” to routine labels.
+- **Plan selector:** one program owns its plans. Place a square segmented selector below the profile
+  header and a compact version inside its comparison column. Switching plan updates every dependent
+  fee, reward, limit, format, and benefit together and remains addressable in the URL.
+- **Benefits and perks:** group travel, subscription, partner, reward, and wallet benefits in a sparse
+  two-column list on desktop and one column on mobile. Mark time-bound or future offers with text.
 - **Selector:** use the square custom listbox with a persistent label, current value, checkmark, and cobalt
   active rule. It must preserve form submission and support arrows, Home, End, Enter, Space, Escape, Tab,
   type-ahead, outside click, visible focus, and 44px touch targets.
-- **Comparison:** one shared context, no winner before eligibility and economics verification; stack each
-  card value under the factor on mobile.
+- **Comparison:** one shared context, no winner before eligibility and economics verification; compare
+  each factor across cards in a semantic table. On mobile, preserve readable card columns inside a
+  localized horizontal scroller with a sticky factor column and visible scroll controls; never replace
+  the matrix with card grids.
 - **Charts:** horizontal bars for categorical counts, exact direct labels, denominator and method above,
   accessible table below. Do not use pie charts for the custody taxonomy.
 - **Caveats:** amber surface with icon plus text. Color never carries meaning alone.
@@ -77,8 +84,9 @@ with the data. Never imply that a competitor observation is issuer-verified.
 
 ## Content rules
 
-- Use “reported” and “observed” for discovery data without repeating warning labels on each component.
-- Reserve “verified” for independent official evidence that passed publication review.
+- Public copy uses direct product language. Avoid “reported,” “observed,” “confirm with issuer,” and
+  publication-workflow terminology in normal browsing and comparison surfaces.
+- Link to current card terms with “Visit website,” “View current terms,” or “View source.”
 - Never turn unknown into zero or rank on mismatched regional offerings.
 - Use “address” rather than “user” for onchain address counts.
 - Do not use em or en dashes in visible product copy.
