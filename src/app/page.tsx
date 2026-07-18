@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, CircleDot, Database, ScanSearch } from "lucide-react";
 import { IssuerMark } from "@/components/issuer-mark";
+import { pageMetadata, SITE_DESCRIPTION } from "@/lib/seo";
 import { distribution, getDiscoverySnapshot, maximumReward } from "@/modules/catalog/discovery";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Compare Crypto Cards, Fees & Rewards",
+  description: SITE_DESCRIPTION,
+  path: "/",
+});
 
 export default async function HomePage() {
   const snapshot = await getDiscoverySnapshot();

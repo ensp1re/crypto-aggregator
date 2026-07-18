@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T21:09:03+02:00",
-  "goal": "Replace provisional consumer labels, repair live tier switching, and redesign catalog search, comparison controls, and card profiles.",
+  "updatedAt": "2026-07-18T22:49:01+02:00",
+  "goal": "Implement the crawlability, canonical metadata, structured data, and AI-discovery foundation for cardstats.xyz after domain and Search Console setup.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "feat/live-catalog-profile-ux",
-    "head": "faabde1f5b0478cc52d56d66f637acee96cffdc7",
+    "branch": "feat/seo-foundation",
+    "head": "4f099946b3ec91dbc5e56debb7abc78e9a5c5312",
     "worktree": "dirty"
   },
   "completed": [
@@ -27,16 +27,16 @@
     "Repaired the public database projection so structured tier economics no longer repeat one summary across unrelated fee, FX, ATM, and reward rows.",
     "Added marked catalog-lead fallback fields, resilient issuer marks, normalized analytics categories, mobile navigation, and an adaptive one-card-at-a-time comparison table with native tier selectors.",
     "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison.",
-    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged.",
     "Squash-merged PR 7 as 0b526522 before beginning the follow-up work, then created feat/live-catalog-profile-ux as the requested isolated review branch.",
     "Removed consumer-facing catalog-lead and provisional labels, added instant in-memory catalog search, and reused the accessible custom selector for catalog filters, profile options, and comparison options.",
     "Tier and plan changes now update comparison facts immediately before synchronizing shareable URL state; the Ready Metal-to-Lite browser assertion proves plan-scoped rows change.",
     "Reworked profile hierarchy around card setup, facts, benefits, and a collapsed source ledger while preserving source provenance in the database projection.",
     "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance.",
-    "Opened PR 8 at https://github.com/ensp1re/crypto-aggregator/pull/8; Vercel preview 9zmAKC9ooVt9arDQH3qkShEMb6ge is READY at https://cardstats-git-feat-live-catalog-profile-ux-aterli.vercel.app."
+    "Implemented the first technical SEO pass for the canonical www.cardstats.xyz host: route metadata, canonical and social tags, robots.txt, database-backed sitemap filtering out blocked profiles, generated social artwork, and llms.txt.",
+    "Added safe Organization, WebSite, CollectionPage, ItemList, BreadcrumbList, WebPage, FinancialProduct, and Dataset JSON-LD that reflects visible database-backed content."
   ],
   "nextActions": [
-    "Review PR 8 and its protected Vercel preview; merge only after founder approval.",
+    "Complete technical and browser verification, then open the isolated SEO foundation PR and review its protected Vercel preview before any production merge.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -64,14 +64,18 @@
       ,"ESLint, strict TypeScript, all 28 Vitest checks with approved PostgreSQL access, and the database-backed Next.js production build pass on feat/live-catalog-profile-ux."
       ,"All 12 desktop/mobile Playwright checks pass, including axe, 44px mobile targets, live search without Apply, Ready profile plan changes, Ready comparison plan changes, horizontal table containment, landscape, reduced motion, and 200% text reflow."
       ,"Desktop and Pixel 5 screenshots of the catalog, Ready profile, and Ready/MetaMask comparison were inspected against the ui-ux-pro-max checklist and the taste-skill preserve-mode hierarchy."
-      ,"PR 8 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for the catalog, Ready profile, and Ready/MetaMask comparison."
+      ,"PR 8 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for the catalog, Ready profile, and Ready/MetaMask comparison.",
+      "ESLint, strict TypeScript, all 31 Vitest assertions, and the PostgreSQL-backed Next.js production build pass on feat/seo-foundation.",
+      "Playwright passed the existing 12 desktop/mobile product checks plus crawler endpoint checks in both projects; rendered canonical, social, and JSON-LD output was separately parsed across home, catalog, profile, comparison, and analytics routes.",
+      "Local production smoke checks returned HTTP 200 for robots.txt, sitemap.xml, llms.txt, and the generated PNG social image."
     ],
     "failed": [],
     "notRun": [
       "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Vercel Turbopack build and local Webpack production compile passed.",
       "Manual VoiceOver and NVDA testing is unavailable in this environment.",
       "The first Vitest command used an unsupported Jest-only flag and was rerun successfully with the repository command; the first sandboxed integration run was blocked by network EPERM and passed with approved database access.",
-      "The first two Playwright passes exposed stale copy expectations, a narrow mobile navigation target, text-zoom overflow, and a strict selector; each defect was corrected and the affected desktop/mobile checks passed on rerun."
+      "The first two Playwright passes exposed stale copy expectations, a narrow mobile navigation target, text-zoom overflow, and a strict selector; each defect was corrected and the affected desktop/mobile checks passed on rerun.",
+      "Search Console performance data is not exposed through the current workspace connectors, so query-led content expansion was intentionally not started."
     ]
   },
   "risks": [
@@ -79,7 +83,8 @@
     "Binance, BitPay, Coinbase, Deblock, Kripicard, Revolut, TapX, and Xapo remain explicit research blockers.",
     "Four programs remain partial because the issuer exposes an incomplete, image-only, in-app, or otherwise non-reproducible option matrix.",
     "Issuer terms and promotions can change; scheduled revalidation and stale-state projection are not yet complete.",
-    "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release."
+    "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release.",
+    "The domain is newly connected to Search Console and may not have actionable query data yet; rankings cannot be guaranteed and content expansion should wait for measured impressions rather than publishing thin pages."
   ],
   "touchedPaths": [
     ".harness/state/handoff.json",
@@ -100,7 +105,14 @@
     "src/modules/publication/publication-service.ts",
     "src/modules/verification",
     "tests"
-    ,"next.config.ts"
+    ,"next.config.ts",
+    "public/llms.txt",
+    "src/app/opengraph-image.tsx",
+    "src/app/robots.ts",
+    "src/app/sitemap.ts",
+    "src/components/json-ld.tsx",
+    "src/lib/seo.ts",
+    "tests/unit/seo.test.ts"
   ],
   "doNotRepeat": [
     "Do not split one card program into duplicate catalog entries for plans or tiers.",
