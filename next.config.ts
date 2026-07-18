@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "unavatar.io", pathname: "/twitter/**" }],
+    remotePatterns: [{ protocol: "https", hostname: "unavatar.io", pathname: "/**" }],
   },
 };
 

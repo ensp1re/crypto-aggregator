@@ -1,5 +1,7 @@
 import type { DiscoveryCard, DiscoveryPlanDimension, DiscoveryPlanOption } from "./discovery";
 
+export const unavailable = "Not disclosed";
+
 export type CardFactKey =
   | "regions"
   | "kyc"
@@ -70,7 +72,12 @@ export function getCardFact(card: DiscoveryCard, key: CardFactKey, selections: P
     .filter((value): value is string => Boolean(value));
   const values = [...new Set(selectedValues)];
   if (values.length > 0) return values.join(" / ");
-  return card.facts[key] ?? "Details unavailable";
+  return card.facts[key] ?? unavailable;
+}
+
+export function getCardFactSource(card: DiscoveryCard, key: CardFactKey, selections: PlanSelections = {}) {
+  const hasPlanValue = getSelectedOptions(card, selections).some(({ option }) => Boolean(option.facts[key]));
+  return hasPlanValue ? "official" : card.factSources[key];
 }
 
 export function getProgramBenefits(card: DiscoveryCard, selections: PlanSelections = {}) {
@@ -81,7 +88,7 @@ export function getProgramBenefits(card: DiscoveryCard, selections: PlanSelectio
 
 export function benefitSummary(card: DiscoveryCard, selections: PlanSelections, kind: Exclude<BenefitKind, "rewards">) {
   const matching = getProgramBenefits(card, selections).filter((benefit) => benefit.kind === kind);
-  return matching.length ? matching.map(({ title }) => title).join("; ") : "No details yet";
+  return matching.length ? matching.map(({ title }) => title).join("; ") : unavailable;
 }
 
 export function resolveProgramPlans(cards: readonly DiscoveryCard[], raw: string | string[] | undefined) {

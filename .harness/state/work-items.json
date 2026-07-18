@@ -75,7 +75,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Monitor the merged production catalog, resolve the eight research blockers, and independently review candidate evidence before canonical claim promotion.",
+      "nextAction": "Review the isolated feat/site-ui-data-polish preview, then merge only after visual approval; continue independent evidence review separately.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
@@ -108,7 +108,8 @@
         "One database-backed runtime projection replaces local research modules and keeps Ready as one program while exposing Solflare, Trustee Plus, Kraken, Bybit, and 55 other cards.",
         "ESLint, strict TypeScript, Prisma validation/generation, 26 deterministic tests, the Next.js Webpack production compile, and both harness verification commands pass; the restricted sandbox blocked only database connectivity and Turbopack's internal helper port.",
         "Founder approved sensitive Vercel Preview and Production database access and the production merge; PR 6 squash-merged as f7aad76.",
-        "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready; six authenticated production smoke routes returned HTTP 200 with expected database-backed card, tier, and comparison content."
+        "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready; six authenticated production smoke routes returned HTTP 200 with expected database-backed card, tier, and comparison content.",
+        "The isolated UI/data repair passes ESLint, strict TypeScript, 28 Vitest checks, a PostgreSQL-backed production build, desktop/mobile axe checks, mobile table containment, landscape, reduced motion, 44px targets, and 200% text reflow; affected Ready tier checks pass in both browser projects."
       ],
       "completion": null
     }

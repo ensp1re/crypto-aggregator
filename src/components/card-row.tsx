@@ -5,11 +5,13 @@ import { maximumReward, type DiscoveryCard } from "@/modules/catalog/discovery";
 import { comparisonHref } from "@/modules/catalog/comparison";
 
 export function CardRow({ card }: { card: DiscoveryCard }) {
+  const hasCatalogLead = (["custody", "network", "cashbackMax", "regions"] as const).some((key) => card.factSources[key] === "catalog-lead");
+  const optionCount = card.dimensions.reduce((total, dimension) => total + dimension.options.length, 0);
   return (
     <article className="catalog-row">
       <div className="catalog-identity">
         <IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} />
-        <div><h2><Link href={`/cards/${card.slug}`}>{card.name}</Link></h2><p>{card.issuer}</p></div>
+        <div><h2><Link href={`/cards/${card.slug}`}>{card.name}</Link></h2><p>{card.issuer}{optionCount ? ` / ${optionCount} options` : ""}</p>{hasCatalogLead ? <small className="catalog-lead-note">Includes provisional catalog data</small> : null}</div>
       </div>
       <dl className="catalog-facts">
         <div><dt>Funding model</dt><dd>{card.custody}</dd></div>
