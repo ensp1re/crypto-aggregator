@@ -6,7 +6,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "CardStats", template: "%s / CardStats" },
-  description: "Independent crypto-card comparison, evidence, and market analytics.",
+  description: "Compare crypto cards, fees, rewards, plans, and benefits.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Link className="header-search" href="/cards" aria-label="Search card index"><Search aria-hidden="true" size={17} /><span>Search</span><kbd>/</kbd></Link>
       </div></header>
       <main id="main-content">{children}</main>
-      <footer className="site-footer"><div className="shell footer-grid"><div><Link className="brand footer-brand" href="/"><Image className="brand-mark" src="/icon.svg" alt="" width={34} height={34} /><span>CardStats</span></Link><p>Independent crypto-card research. No ranking is influenced by commercial status.</p></div><div><h2>Research</h2><Link href="/cards">Card index</Link><Link href="/compare">Compare</Link><Link href="/analytics">Analytics</Link></div><div><h2>Data boundary</h2><p>Discovery observations are not financial advice or verified issuer terms. Confirm before acting.</p></div></div></footer>
+      <footer className="site-footer"><div className="shell footer-grid"><div><Link className="brand footer-brand" href="/"><Image className="brand-mark" src="/icon.svg" alt="" width={34} height={34} /><span>CardStats</span></Link><p>Independent crypto-card comparison. Commercial status never changes card order.</p></div><div><h2>Explore</h2><Link href="/cards">Card index</Link><Link href="/compare">Compare</Link><Link href="/analytics">Analytics</Link></div><div><h2>Before you apply</h2><p>Card prices, rewards, and benefits can change. Open the linked card website for current terms.</p></div></div></footer>
     </body></html>
   );
 }

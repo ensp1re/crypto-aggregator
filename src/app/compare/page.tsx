@@ -3,30 +3,31 @@ import { ComparePicker } from "@/components/compare-picker";
 import { ComparisonTable } from "@/components/comparison-table";
 import { MAX_COMPARE_CARDS } from "@/modules/catalog/comparison";
 import { getCompareOptions, resolveComparisonCards } from "@/modules/catalog/comparison-server";
+import { resolveProgramPlans } from "@/modules/catalog/program-details";
 
-export const metadata: Metadata = { title: "Compare crypto cards", description: "Compare real crypto-card discovery observations without hiding verification gaps." };
+export const metadata: Metadata = { title: "Compare crypto cards", description: "Compare crypto-card fees, rewards, plans, and benefits side by side." };
 
-export default async function ComparePage({ searchParams }: { searchParams: Promise<{ cards?: string | string[] }> }) {
-  const cards = resolveComparisonCards((await searchParams).cards);
+export default async function ComparePage({ searchParams }: { searchParams: Promise<{ cards?: string | string[]; plans?: string | string[] }> }) {
+  const query = await searchParams;
+  const cards = resolveComparisonCards(query.cards);
   const compareOptions = getCompareOptions();
   const selectedSlugs = cards.map((card) => card.slug);
+  const plans = resolveProgramPlans(selectedSlugs, query.plans);
   return (
     <div className="shell page-stack compare-page">
-      <header className="editorial-header"><div><p className="kicker">Side-by-side / discovery data</p><h1>Selected cards, without a fake winner.</h1></div><p>Compare how each program is described, then confirm every consequential term with the issuer. Shared region and scenario logic will follow official verification.</p></header>
+      <header className="editorial-header"><div><p className="kicker">Card comparison</p><h1>Compare cards side by side.</h1></div><p>Choose up to four cards. For cards with multiple plans, pick the plan directly in the table.</p></header>
       {cards.length >= 2 ? <>
         <div className="compare-selection-bar">
           <p><strong>{cards.length} selected</strong><span>Up to four on desktop and three when starting on mobile.</span></p>
-          {cards.length < MAX_COMPARE_CARDS ? <ComparePicker cards={compareOptions} initialSelected={selectedSlugs} buttonLabel="Add or change cards" /> : <span className="compare-limit">Four-card limit reached</span>}
+          {cards.length < MAX_COMPARE_CARDS ? <ComparePicker cards={compareOptions} initialSelected={selectedSlugs} initialPlans={plans} buttonLabel="Add or change cards" /> : <span className="compare-limit">Four-card limit reached</span>}
         </div>
-        <section className="compare-scope" aria-labelledby="compare-scope-title"><p className="kicker">Scope boundary</p><h2 id="compare-scope-title">Regional offerings are not normalized yet.</h2><p>Reported regions travel with each card below. CardStats will not infer shared eligibility or rank mismatched offerings until official review is complete.</p></section>
-        <ComparisonTable cards={cards} />
+        <ComparisonTable cards={cards} plans={plans} />
       </> : <section className="compare-empty" aria-labelledby="compare-empty-title">
         <p className="kicker">Start a comparison</p>
-        <h2 id="compare-empty-title">Select at least two programs.</h2>
-        <p>Choose the cards you want to inspect. No program is preselected or commercially preferred.</p>
-        <ComparePicker cards={compareOptions} initialSelected={selectedSlugs} buttonLabel={cards.length === 1 ? "Add another card" : "Choose cards"} buttonClassName="button primary" />
+        <h2 id="compare-empty-title">Select at least two cards.</h2>
+        <p>Choose the cards you want to compare.</p>
+        <ComparePicker cards={compareOptions} initialSelected={selectedSlugs} initialPlans={plans} buttonLabel={cards.length === 1 ? "Add another card" : "Choose cards"} buttonClassName="button primary" />
       </section>}
-      <section className="method-strip"><p className="kicker">Why no ranking?</p><h2>Eligibility and verified economics come first.</h2><p>The source does not model regional legal offerings or consistently separate headline rewards from base rewards, caps, staking, and exclusions. Ranking this data would manufacture confidence, so CardStats does not.</p></section>
     </div>
   );
 }

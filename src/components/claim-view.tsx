@@ -39,7 +39,7 @@ export function ClaimValue({ claim, compact = false }: { claim?: PublishedClaimV
           <summary>Inspect evidence</summary>
           <div className="evidence-panel">
             <p>
-              Observed {observed}. Published from revision evidence; synthetic fixture only.
+              Added {observed}. Published from revision evidence; synthetic fixture only.
             </p>
             {claim.claim.evidence.map(({ artifact }) => (
               <dl key={`${artifact.source.title}-${artifact.locator}`}>

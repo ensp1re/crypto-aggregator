@@ -8,6 +8,7 @@ import { comparisonHref, type CompareOption } from "@/modules/catalog/comparison
 type ComparePickerProps = {
   cards: CompareOption[];
   initialSelected?: string[];
+  initialPlans?: Record<string, string>;
   anchorSlug?: string;
   buttonLabel?: string;
   buttonClassName?: string;
@@ -17,6 +18,7 @@ type ComparePickerProps = {
 export function ComparePicker({
   cards,
   initialSelected = [],
+  initialPlans = {},
   anchorSlug,
   buttonLabel = "Add card",
   buttonClassName = "button secondary",
@@ -64,7 +66,7 @@ export function ComparePicker({
   const submitComparison = () => {
     if (selected.length < 2) return;
     closePicker();
-    router.push(comparisonHref(selected));
+    router.push(comparisonHref(selected, initialPlans));
   };
 
   const atLimit = selected.length >= limit;
@@ -87,7 +89,7 @@ export function ComparePicker({
             <div>
               <p className="kicker">Build comparison</p>
               <h2 id={titleId}>{anchor ? `Compare ${anchor.name}` : "Choose cards to compare"}</h2>
-              <p id={descriptionId}>Select at least two programs. Reported regions and funding models remain discovery observations.</p>
+              <p id={descriptionId}>Select at least two cards. You can choose a plan for cards with multiple options on the next screen.</p>
             </div>
             <button className="icon-button" type="button" onClick={closePicker} aria-label="Close card picker">
               <X aria-hidden="true" size={20} />
@@ -130,7 +132,7 @@ export function ComparePicker({
                   <span className="picker-card-copy">
                     <strong>{card.name}</strong>
                     <small>{card.issuer} / {card.custody} / {card.network}</small>
-                    <small>Reported region: {card.regions}</small>
+                    <small>Regions: {card.regions}</small>
                   </span>
                   {isPinned ? <span className="picker-included">Included</span> : null}
                 </label>

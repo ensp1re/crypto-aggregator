@@ -151,6 +151,25 @@ h3 { margin-bottom: 0; font-size: 1.08rem; }
 .profile-identity h1 { font-size: clamp(2.7rem, 6vw, 5.4rem); }
 .profile-identity p:last-child { margin: .5rem 0 0; color: var(--ink-soft); }
 .profile-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .65rem; }
+.plan-selector { display: grid; grid-template-columns: minmax(12rem, .7fr) auto minmax(15rem, 1fr); align-items: center; gap: 1rem 1.5rem; padding: 1rem 1.2rem; border: 1px solid var(--ink); background: var(--surface); }
+.plan-selector h2 { font-size: 1.55rem; }
+.plan-selector > p { margin: 0; color: var(--ink-soft); font-size: .82rem; }
+.plan-tabs { display: inline-grid; grid-auto-columns: minmax(5.5rem, 1fr); grid-auto-flow: column; border: 1px solid var(--ink); }
+.plan-tabs a { min-height: 44px; display: grid; place-items: center; padding: .55rem 1rem; color: var(--ink); font-size: .76rem; font-weight: 760; text-decoration: none; }
+.plan-tabs a + a { border-left: 1px solid var(--ink); }
+.plan-tabs a[aria-current="page"] { background: var(--ink); color: white; }
+.benefits-section { border: 1px solid var(--ink); background: var(--surface); }
+.benefits-section .section-title h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
+.plan-note { margin: 0; padding: 1rem 1.25rem; border-bottom: 1px solid var(--rule); color: var(--ink-soft); font-size: .82rem; }
+.benefit-list { display: grid; grid-template-columns: 1fr 1fr; }
+.benefit-list article { min-width: 0; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: .8rem; padding: 1.2rem 1.25rem; border-top: 1px solid var(--rule); }
+.benefit-list article:nth-child(even) { border-left: 1px solid var(--rule); }
+.benefit-list article:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.benefit-list article > svg { margin-top: .15rem; color: var(--blue-dark); }
+.benefit-list article p { margin: 0; color: var(--ink-soft); font-size: .78rem; line-height: 1.5; }
+.benefit-list article div > p:first-child { margin-bottom: .3rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .62rem; font-weight: 720; letter-spacing: .06em; text-transform: uppercase; }
+.benefit-list h3 { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .45rem; }
+.benefit-list h3 span { padding: .22rem .38rem; border: 1px solid var(--blue); color: var(--blue-dark); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .58rem; letter-spacing: .03em; text-transform: uppercase; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(17rem, .5fr); gap: 1.5rem; }
 .fact-sheet, .profile-aside section { border: 1px solid var(--ink); background: var(--surface); }
 .section-title { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; padding: 1.25rem; border-bottom: 1px solid var(--ink); }
@@ -216,9 +235,6 @@ h3 { margin-bottom: 0; font-size: 1.08rem; }
 .compare-selection-bar p strong { font-size: .92rem; }
 .compare-selection-bar p span { color: var(--ink-soft); font-size: .75rem; }
 .compare-limit { color: var(--ink-soft); font-size: .75rem; font-weight: 700; }
-.compare-scope { padding: 1.2rem 1.25rem; border-left: 5px solid var(--warning); background: var(--warning-bg); }
-.compare-scope h2 { max-width: 35ch; font-size: 1.45rem; }
-.compare-scope > p:last-child { max-width: 62rem; margin: .65rem 0 0; color: var(--warning); font-size: .82rem; }
 .compare-empty { display: grid; justify-items: start; gap: .8rem; min-height: 20rem; align-content: center; padding: 2rem; border: 1px solid var(--ink); background: var(--surface); }
 .compare-empty h2 { max-width: 18ch; font-size: clamp(2rem, 5vw, 3.5rem); }
 .compare-empty > p:not(.kicker) { max-width: 40rem; margin: 0; color: var(--ink-soft); }
@@ -247,6 +263,10 @@ h3 { margin-bottom: 0; font-size: 1.08rem; }
 .compare-card-heading small { overflow: hidden; color: #d8d8d8; font-size: .68rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .compare-card-actions { display: flex; align-items: center; }
 .compare-card-actions a { min-width: 44px; min-height: 44px; display: grid; place-items: center; color: white; }
+.compare-plan-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .65rem; border: 1px solid #737373; }
+.compare-plan-tabs a { min-height: 44px; display: grid; place-items: center; padding: .4rem; color: #dedede; font-size: .68rem; text-decoration: none; }
+.compare-plan-tabs a + a { border-left: 1px solid #737373; }
+.compare-plan-tabs a[aria-current="true"] { background: white; color: var(--ink); }
 .compare-group th { padding: .55rem 1rem; background: var(--paper-deep); color: var(--blue-dark); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
 .compare-table td { font-size: .82rem; font-weight: 680; }
 
@@ -337,6 +357,11 @@ textarea { min-height: 7rem; }
   .profile-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
   .profile-actions .button { width: 100%; }
   .profile-identity { align-items: flex-start; }
+  .plan-selector { grid-template-columns: 1fr; align-items: start; }
+  .plan-tabs { width: 100%; }
+  .benefit-list { grid-template-columns: 1fr; }
+  .benefit-list article:nth-child(even) { border-left: 0; }
+  .benefit-list article:last-child:nth-child(odd) { grid-column: auto; }
   .section-title { align-items: flex-start; flex-direction: column; gap: .75rem; }
   .fact-sheet dl > div { grid-template-columns: 1fr; gap: .25rem; }
   .fact-sheet .fact-status { margin-top: .15rem; }

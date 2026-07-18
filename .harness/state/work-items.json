@@ -74,7 +74,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Review the isolated comparison-workflow pull request; if accepted, merge it, then normalize regional offering boundaries before any promotion.",
+      "nextAction": "Refresh the protected preview and review the tier-aware comparison pull request; if accepted, merge it, then source exact economics for the next multi-tier programs.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
@@ -96,7 +96,8 @@
         "Vitest passes 20 assertions, the 49-page build passes, Playwright passes all 8 desktop/mobile checks plus the targeted mobile rerun, and protected preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG is ready with authenticated 200 smoke checks.",
         "Removed repeated discovery-warning and Unverified labels from public components; replaced all native selects with one accessible custom listbox; lint, strict TypeScript, 20 tests, the 49-page build, 8 desktop/mobile Playwright checks, axe, touch targets, visual inspection, and authenticated preview smoke checks pass.",
         "Profile-to-comparison selection now uses an accessible searchable dialog and shareable URL state; the semantic desktop/mobile table, 23-test unit/integration suite, 50-page production build, 10 Playwright checks, axe, landscape, reduced-motion, localized scroll, and 200% text checks pass.",
-        "Protected preview dpl_G5xxfvXCbRgBXYrFgQoEGbdDD47G is READY; authenticated MetaMask profile and shareable comparison smoke checks return HTTP 200."
+        "Protected preview dpl_G5xxfvXCbRgBXYrFgQoEGbdDD47G is READY; authenticated MetaMask profile and shareable comparison smoke checks return HTTP 200.",
+        "Program-first plan and benefit modeling keeps Ready as one card with Lite/Metal selectors on profile and comparison; Ready/Wirex benefits use current official pages, 24 Vitest assertions pass, the production build passes, and all 12 desktop/mobile Playwright checks pass."
       ],
       "completion": null
     }

@@ -1,55 +1,58 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T14:43:58+02:00",
-  "goal": "Ship an isolated, reviewable card-profile-to-comparison workflow with an accessible picker and a readable mobile comparison table.",
+  "updatedAt": "2026-07-18T15:21:26+02:00",
+  "goal": "Refine the isolated comparison PR into a direct consumer card experience with program-level plans, benefits, and tier-aware comparisons.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
     "branch": "feat/profile-compare-workflow",
-    "head": "5db37d9f81cf7e68a08c581441dd2f70ea9c107c",
+    "head": "28244d5cb5c4e6ff2ab1433338419ff34d614bae",
     "worktree": "dirty"
   },
   "completed": [
-    "Added a secondary Compare action to every card profile while preserving Confirm with issuer as the primary action.",
-    "Built a reusable native-dialog card picker with search, selected-card pinning, multi-selection, responsive three/four-card limits, Escape handling, focus return, and explicit discovery scope.",
-    "Made repeated cards query parameters the canonical comparison state, with allowlist validation, deduplication, stable ordering, a four-card cap, and shareable URLs.",
-    "Replaced the hard-coded three-card div matrix with an add/remove comparison flow and a semantic HTML table grouped by access, funding, cost, rewards, and qualification.",
-    "Replaced the mobile stacked-card layout with a localized horizontal table scroller, sticky factor column, visible 44px scroll controls, and no horizontal page overflow.",
-    "Updated the UI blueprint and persisted CardStats design system to record the approved mobile comparison behavior.",
-    "Deployed protected Vercel preview dpl_G5xxfvXCbRgBXYrFgQoEGbdDD47G for pull-request review."
+    "Removed the Confirm with issuer, reported/observed, regional-normalization, publication-boundary, and eligibility/economics language from normal public browsing and comparison surfaces.",
+    "Removed the regional scope callout and comparison methodology strip, plus the profile publication-boundary strip.",
+    "Modeled one catalog entry per card program with optional plans and plan-scoped facts and benefits; program slugs remain stable.",
+    "Ready now appears once as Ready Card with URL-addressable Lite and Metal choices that update cost, FX, rewards, ATM terms, card format, benefits, profile Compare state, and comparison values together.",
+    "Added source-backed Ready travel, rewards, partner, subscription, and wallet benefits and Wirex cashback, subscription-refund, wallet, and five-tier summary details.",
+    "Added Benefits & perks to profiles and benefits rows to the semantic comparison table.",
+    "Kept the mobile comparison as a localized horizontal table with a sticky factor column and compact plan controls inside program columns.",
+    "Updated the CardStats UI blueprint and persisted design system with the program-plan-benefit interaction contract."
   ],
   "nextActions": [
-    "Review the isolated comparison-workflow pull request; merge it if accepted or close it without changing main if rejected.",
-    "After that review, resume independent review of the 24 official observations and normalize regional offering boundaries before promotion."
+    "Refresh and smoke-test the protected Vercel preview, then review pull request 6; merge it if accepted or close it without changing main if rejected.",
+    "Source exact tier economics before enabling selectors for Wirex, Crypto.com, COCA, Cypher, Deblock, KAST, and other tiered programs."
   ],
   "decisions": [
-    "The profile picker is a bounded selection dialog, not primary navigation; navigation occurs only after the user confirms at least two cards.",
-    "Comparison state lives in repeated URL parameters so it is shareable, restorable, and server-rendered rather than hidden in transient client state.",
-    "Program slugs are validated against the published discovery catalog and never silently converted into placeholder or zero values.",
-    "Mobile preserves a real data table with readable columns inside a contained horizontal scroller; comparison data never becomes a grid of cards.",
-    "Regional offering and scenario matching remain explicitly unavailable until official review; the UI does not infer eligibility or rank mismatched observations."
+    "The catalog unit is a card program, not a card-plan combination; Ready Lite and Ready Metal are not separate list entries.",
+    "Plan selection lives directly below the profile header and inside the relevant comparison column, and it travels in shareable URL state.",
+    "Benefits & perks is the durable consumer label. Promotions are time-bound benefits and must carry dates and conditions when added.",
+    "A tier selector is enabled only when plan-specific comparable values exist; showing tier names without their economics is not useful.",
+    "Public product copy uses direct labels such as Rewards, Regions, Visit website, View current terms, and Card details while keeping source links available.",
+    "Ready and Wirex additions use current official product/help pages checked on 18 July 2026; no unsupported Solflare discount claim was added."
   ],
   "openQuestions": [],
   "verification": {
     "passed": [
-      "npm run check passes ESLint, strict TypeScript, 9 Vitest files with 23 tests including the database publication workflow, Prisma generation, and the 50-page Next.js production build.",
-      "Full Playwright suite passes 10 desktop/mobile tests covering picker selection, Escape and focus return, shareable URL navigation, semantic table structure, axe, reduced motion, localized scrolling, 375px, 812x375 landscape, and 200% text.",
-      "Desktop comparison, 375px mobile comparison, and desktop picker were visually inspected against the persisted CardStats design system.",
-      "The required ui-ux-pro-max validation search and canonical accessibility, touch, responsive, and interaction checklist were applied.",
-      "Git whitespace validation passes.",
-      "Protected preview cardstats-qvu8ae65m-aterli.vercel.app is READY; authenticated profile and shareable comparison smoke checks return HTTP 200."
+      "npm run check passes ESLint, strict TypeScript, 9 Vitest files with 24 tests including database publication integration, Prisma generation, and the Next.js production build.",
+      "Full Playwright suite passes 12 desktop/mobile tests covering Ready Lite/Metal switching, benefits, plan-aware comparison URLs, picker behavior, axe, reduced motion, localized scrolling, 375px, landscape, and 200% text.",
+      "Desktop Ready Metal profile and 375px Ready/Wirex/MetaMask tier comparison were visually inspected against the persisted design system.",
+      "The required ui-ux-pro-max validation search and accessibility, touch, responsive, interaction, and Next.js guidance were applied.",
+      "The frontend taste redesign audit informed direct copy, program-first hierarchy, sparse benefit layout, and the no-duplicate-card decision.",
+      "An initial concurrent final run hit a Playwright/ESLint test-results directory race; the sequential npm run check rerun and four focused desktop/mobile browser regressions passed."
     ],
     "failed": [],
     "notRun": [
       "Manual VoiceOver and NVDA testing is unavailable in this environment; native semantics, keyboard behavior, focus management, and axe passed.",
-      "No production deployment or alias promotion was performed; the isolated preview is review-only."
+      "The existing protected preview has not yet been refreshed with this worktree revision; production remains untouched."
     ]
   },
   "risks": [
-    "The comparison still displays competitor-discovered observations, not verified regional offering terms; the scope boundary must remain visible until independent review.",
-    "The URL currently identifies card programs rather than normalized legal offering IDs; future regional modeling must migrate comparison identity without breaking shared links.",
+    "Exact tier thresholds and plan economics still need official-source work for most multi-tier programs; the UI intentionally does not invent selectors for them.",
+    "Ready terms and benefits can change; profile and comparison link directly to current Ready terms, but automated revalidation is not yet configured for this module.",
+    "Profile routes are server-rendered on demand after adding shareable plan query state; they remain indexable but are no longer emitted as individual static routes in the build summary.",
     "Native dialog behavior passed Chromium automation but still needs manual VoiceOver and NVDA confirmation before production release."
   ],
   "touchedPaths": [
@@ -57,27 +60,40 @@
     ".harness/state/work-items.json",
     "design-system/cardstats/MASTER.md",
     "docs/ui-ux.md",
+    "src/app/analytics/page.tsx",
     "src/app/cards/[slug]/page.tsx",
+    "src/app/cards/page.tsx",
     "src/app/compare/page.tsx",
     "src/app/globals.css",
+    "src/app/layout.tsx",
+    "src/app/page.tsx",
+    "src/components/card-row.tsx",
+    "src/components/claim-view.tsx",
     "src/components/compare-picker.tsx",
     "src/components/comparison-table.tsx",
-    "src/modules/catalog/comparison-server.ts",
     "src/modules/catalog/comparison.ts",
+    "src/modules/catalog/discovery.ts",
+    "src/modules/catalog/program-details.ts",
     "tests/e2e/real-catalog.spec.ts",
     "tests/unit/comparison-selection.test.ts"
   ],
   "doNotRepeat": [
-    "Do not present discovery observations as verified, rank on them, or silently normalize missing values to zero.",
-    "Do not replace the comparison table with mobile card grids or allow the table to create horizontal page overflow.",
-    "Do not add default comparison programs that could imply commercial preference.",
-    "Do not deploy or merge this branch unless the user approves the pull-request result."
+    "Do not split one card program into duplicate catalog entries merely because it has Lite, Metal, stake, or membership plans.",
+    "Do not expose a tier selector until plan-specific fees, rewards, requirements, and benefits are sourced.",
+    "Do not use reported, observed, Confirm with issuer, or internal publication language in normal consumer UI.",
+    "Do not replace the mobile comparison table with card grids or allow it to create horizontal page overflow.",
+    "Do not deploy to production or merge this branch unless the user approves the pull-request result."
   ],
   "contextSources": [
     "AGENTS.md",
     "docs/product-contract.md",
+    "docs/database-design.md",
     "docs/ui-ux.md",
     "design-system/cardstats/MASTER.md",
+    "https://www.cryptoagg.io/",
+    "https://www.ready.co/card",
+    "https://www.ready.co/blog/card-faqs",
+    "https://www.wirexapp.com/en-sg/stablecoin-and-crypto-card",
     ".harness/state/work-items.json"
   ]
 }

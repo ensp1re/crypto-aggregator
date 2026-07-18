@@ -14,12 +14,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="shell page-stack analytics-page">
-      <header className="analytics-header"><p className="kicker">Market structure / discovery coverage</p><h1>How much of the observed crypto-card market keeps users in control?</h1><p><strong>{selfControlled} of {total}</strong> discovered programs are labelled self-custody or non-custodial by the source. This describes catalog labels, not verified legal custody or transaction volume.</p></header>
-      <div className="analytics-controls"><span>Observation: 17 Jul 2026</span><span>Universe: 42 discovered programs</span><span>Unit: program count</span><span>Method: source labels</span></div>
-      <DistributionChart title="Funding control labels" description="Program count by source-reported custody label. Self-custody and non-custodial remain separate because the source does not define equivalence." data={custody} total={total} />
+      <header className="analytics-header"><p className="kicker">Market structure / 42 cards</p><h1>How many crypto cards keep users in control?</h1><p><strong>{selfControlled} of {total}</strong> cards are listed as self-custody or non-custodial. This is a catalog breakdown, not transaction market share.</p></header>
+      <div className="analytics-controls"><span>Updated: 17 Jul 2026</span><span>Cards: 42</span><span>Unit: card count</span><span>Method: catalog labels</span></div>
+      <DistributionChart title="Funding models" description="Card count by custody label. Self-custody and non-custodial remain separate categories." data={custody} total={total} />
       <div className="analytics-split">
         <DistributionChart title="Payment networks" description="Program count, not spend or transaction share. Dual-network programs are not split." data={distribution("network")} total={total} />
-        <DistributionChart title="Card models" description="Source-reported debit, prepaid, or credit label. Regional variants may differ." data={distribution("type")} total={total} />
+        <DistributionChart title="Card models" description="Card count by debit, prepaid, or credit label." data={distribution("type")} total={total} />
       </div>
       <section className="locked-data">
         <DatabaseZap aria-hidden="true" size={28} />

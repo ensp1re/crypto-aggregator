@@ -6,14 +6,14 @@ async function expectNoOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
 }
 
-test("home and catalog expose real discovery coverage without false verification", async ({ page }, testInfo) => {
+test("home and catalog expose the full card index", async ({ page }, testInfo) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Compare the card");
-  await expect(page.getByText("Programs discovered")).toBeVisible();
-  await expect(page.getByText("Officially verified fields")).toBeVisible();
-  await page.getByRole("link", { name: /Explore 42 programs/ }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Forty-two programs");
-  await expect(page.getByText("42 of 42 programs")).toBeVisible();
+  await expect(page.getByText("Cards indexed")).toBeVisible();
+  await expect(page.getByText("Card profiles")).toBeVisible();
+  await page.getByRole("link", { name: /Explore 42 cards/ }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Forty-two cards");
+  await expect(page.getByText("42 of 42 cards")).toBeVisible();
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
   const fundingControl = page.getByRole("combobox", { name: /Funding control/ });
   await fundingControl.focus();
@@ -43,15 +43,16 @@ test("home and catalog expose real discovery coverage without false verification
   }
 });
 
-test("program detail keeps observed terms and official confirmation distinct", async ({ page }) => {
+test("program detail exposes card details and the card website", async ({ page }) => {
   await page.goto("/cards/metamask-card");
   await expect(page.getByRole("heading", { level: 1, name: "MetaMask Card" })).toBeVisible();
   await expect(page.getByAltText("MetaMask fox symbol")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Observations awaiting independent review" })).toBeVisible();
-  await expect(page.getByText("8 observations")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Latest card details" })).toBeVisible();
+  await expect(page.getByText("8 details")).toBeVisible();
   await expect(page.getByText(/New U.S. and U.K. sign-ups temporarily paused/)).toBeVisible();
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: /Confirm with issuer/ })).toHaveAttribute("href", /^https:/);
+  await expect(page.getByRole("link", { name: /Visit website/ })).toHaveAttribute("href", /^https:/);
+  await expect(page.locator("body")).not.toContainText(/reported|confirm with issuer/i);
   const compareButton = page.getByRole("button", { name: "Compare", exact: true });
   await compareButton.click();
   const dialog = page.getByRole("dialog", { name: "Compare MetaMask Card" });
@@ -68,9 +69,9 @@ test("program detail keeps observed terms and official confirmation distinct", a
 
 test("analytics provides accessible custody data and an explicit licensed-data boundary", async ({ page }) => {
   await page.goto("/analytics");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("keeps users in control");
-  await expect(page.getByRole("heading", { name: "Funding control labels" })).toBeVisible();
-  await expect(page.getByRole("table", { name: "Funding control labels data" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("keep users in control");
+  await expect(page.getByRole("heading", { name: "Funding models" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Funding models data" })).toBeVisible();
   await expect(page.getByText("Payment volume is not imported yet.")).toBeVisible();
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
@@ -90,11 +91,32 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
   await expect(page.getByRole("columnheader", { name: /Gnosis Pay/ })).toBeVisible();
 });
 
+test("one Ready Card profile controls Lite and Metal plan details", async ({ page }) => {
+  await page.goto("/cards/ready-lite");
+  await expect(page.getByRole("heading", { level: 1, name: "Ready Card" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Lite", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("link", { name: "Metal", exact: true }).click();
+  await expect(page).toHaveURL(/plan=metal/);
+  await expect(page.getByRole("heading", { name: "Benefits & perks / Metal" })).toBeVisible();
+  await expect(page.getByText("120 USDC for the first year")).toBeVisible();
+  await expect(page.getByText("Ready Travel", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Subscription savings/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Visit website" })).toHaveAttribute("href", "https://www.ready.co/card");
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Compare Ready Card" });
+  await dialog.getByRole("checkbox", { name: /MetaMask Card/ }).check();
+  await dialog.getByRole("button", { name: "Compare 2 cards" }).click();
+  await expect(page).toHaveURL(/plans=ready-lite%3Ametal/);
+  await expect(page.getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
+  await expect(page.getByText("120 USDC for the first year")).toBeVisible();
+});
+
 test("real comparison uses a contained semantic table on mobile", async ({ page }, testInfo) => {
   await page.goto("/compare?cards=metamask-card&cards=etherfi-card&cards=gnosis-card");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("without a fake winner");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Compare cards side by side");
   await expect(page.getByRole("table", { name: "Crypto card comparison" })).toBeVisible();
   await expect(page.getByRole("checkbox", { name: "Differences only" })).toBeVisible();
+  await expect(page.locator("body")).not.toContainText(/reported|regional offerings are not normalized|eligibility and verified economics/i);
   await expect(page.getByText("Unverified observation")).toHaveCount(0);
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

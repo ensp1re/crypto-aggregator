@@ -15,7 +15,7 @@ export type CatalogQuery = {
 
 const cards: DiscoveryCard[] = snapshot.cards.map((card) => ({
   ...card,
-  name: card.id === "Kripicard" ? "Kripicard Premium" : card.name,
+  name: card.id === "Kripicard" ? "Kripicard Premium" : card.id === "ready-lite" ? "Ready Card" : card.name,
   logo: officialIssuerMedia[card.id]?.path ?? card.logo,
   slug: card.id.toLowerCase(),
   verification: "discovery",
@@ -49,5 +49,5 @@ export function distribution(field: "custody" | "network" | "type") {
 
 export function maximumReward(card: DiscoveryCard) {
   if (typeof card.cashbackMax === "number") return `${card.cashbackMax}%`;
-  return card.cashbackMax ?? "Undisclosed";
+  return card.cashbackMax ?? "Details unavailable";
 }

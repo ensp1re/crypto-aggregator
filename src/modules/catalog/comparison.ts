@@ -28,9 +28,13 @@ export function normalizeComparisonSlugs(
   return selected;
 }
 
-export function comparisonHref(slugs: readonly string[]) {
+export function comparisonHref(slugs: readonly string[], plans: Readonly<Record<string, string>> = {}) {
   const params = new URLSearchParams();
   for (const slug of slugs) params.append("cards", slug);
+  for (const slug of slugs) {
+    const plan = plans[slug];
+    if (plan) params.append("plans", `${slug}:${plan}`);
+  }
   const query = params.toString();
   return query ? `/compare?${query}` : "/compare";
 }
