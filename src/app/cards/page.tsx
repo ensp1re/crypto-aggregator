@@ -24,7 +24,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Search
       </header>
       <form className="filter-bar" action="/cards" method="get">
         <label className="search-field"><span className="sr-only">Search cards</span><Search aria-hidden="true" size={18} /><input name="q" defaultValue={query} placeholder="Search card, issuer, region, asset" /></label>
-        <CustomSelect label="Network" name="network" defaultValue={network} options={[{ value: "all", label: "All networks" }, { value: "Visa", label: "Visa" }, { value: "Mastercard", label: "Mastercard" }, { value: "Visa/Mastercard", label: "Visa/Mastercard" }]} />
+        <CustomSelect label="Network" name="network" defaultValue={network} options={[{ value: "all", label: "All networks" }, { value: "Visa", label: "Visa" }, { value: "Mastercard", label: "Mastercard" }, { value: "Visa / Mastercard", label: "Visa / Mastercard" }]} />
         <button className="button primary" type="submit"><SlidersHorizontal aria-hidden="true" size={17} /> Apply</button>
       </form>
       <div className="result-line"><p><strong>{results.length}</strong> of {snapshot.cards.length} cards</p><p>Sorted alphabetically. Commercial status has no effect.</p></div>

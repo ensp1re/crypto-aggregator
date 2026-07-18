@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, DatabaseZap } from "lucide-react";
 import { DistributionChart } from "@/components/distribution-chart";
-import { distribution, getDiscoverySnapshot } from "@/modules/catalog/discovery";
+import { distribution, getDiscoverySnapshot, unavailable } from "@/modules/catalog/discovery";
 
 export const metadata: Metadata = { title: "Crypto card market analytics", description: "Coverage-aware crypto-card infrastructure and funding analytics." };
 
@@ -10,16 +10,16 @@ export default async function AnalyticsPage() {
   const snapshot = await getDiscoverySnapshot();
   const total = snapshot.cards.length;
   const custody = distribution(snapshot.cards, "custody");
-  const disclosedFunding = snapshot.cards.filter(({ custody: model }) => model !== "Details unavailable").length;
+  const disclosedFunding = snapshot.cards.filter(({ custody: model }) => model !== unavailable).length;
 
   return (
     <div className="shell page-stack analytics-page">
-      <header className="analytics-header"><p className="kicker">Market structure / {total} cards</p><h1>What do current official sources disclose?</h1><p><strong>{disclosedFunding} of {total}</strong> cards currently have a collected funding-model description. Missing values remain missing.</p></header>
+      <header className="analytics-header"><p className="kicker">Market structure / {total} cards</p><h1>How is the current catalog structured?</h1><p><strong>{disclosedFunding} of {total}</strong> cards have a collected funding-model description. Issuer evidence takes priority; catalog leads remain clearly provisional.</p></header>
       <div className="analytics-controls"><span>Cards: {total}</span><span>Unit: card count</span><span>Method: current database observations</span></div>
-      <DistributionChart title="Funding descriptions" description="Each distinct official funding description remains separate until a reviewed taxonomy is published." data={custody} total={total} />
+      <DistributionChart title="Funding models" description="Broad working categories make unlike issuer language comparable without turning missing values into assumptions." data={custody} total={total} />
       <div className="analytics-split">
-        <DistributionChart title="Payment networks" description="Program count, not spend or transaction share. Dual-network programs are not split." data={distribution(snapshot.cards, "network")} total={total} />
-        <DistributionChart title="Card models" description="Card count by the current official product description." data={distribution(snapshot.cards, "type")} total={total} />
+        <DistributionChart title="Payment networks" description="Program count, not spend or transaction share. Dual-network programs remain a separate category." data={distribution(snapshot.cards, "network")} total={total} />
+        <DistributionChart title="Card models" description="Broad categories normalized from current catalog descriptions." data={distribution(snapshot.cards, "type")} total={total} />
       </div>
       <section className="locked-data">
         <DatabaseZap aria-hidden="true" size={28} />

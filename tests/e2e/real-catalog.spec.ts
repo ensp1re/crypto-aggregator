@@ -69,9 +69,9 @@ test("program detail exposes card details and the card website", async ({ page }
 
 test("analytics provides accessible catalog data and an explicit licensed-data boundary", async ({ page }) => {
   await page.goto("/analytics");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("official sources disclose");
-  await expect(page.getByRole("heading", { name: "Funding descriptions" })).toBeVisible();
-  await expect(page.getByRole("table", { name: "Funding descriptions data" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("current catalog structured");
+  await expect(page.getByRole("heading", { name: "Funding models" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Funding models data" })).toBeVisible();
   await expect(page.getByText("Payment volume is not imported yet.")).toBeVisible();
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
@@ -87,7 +87,7 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
   await expect(page).toHaveURL(/cards=metamask-card&cards=etherfi-card&cards=gnosis-card/);
   await expect(page.getByRole("table", { name: "Crypto card comparison" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /MetaMask Card/ })).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: /ether.fi Cash/ })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /Ether\.fi Cash/i })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /Gnosis Pay/ })).toBeVisible();
 });
 
@@ -106,8 +106,10 @@ test("one Ready Card profile controls Lite and Metal plan details", async ({ pag
   await dialog.getByRole("checkbox", { name: /MetaMask Card/ }).check();
   await dialog.getByRole("button", { name: "Compare 2 cards" }).click();
   await expect(page).toHaveURL(/plans=ready-card%3Acard_plan%3Ametal/);
-  await expect(page.getByLabel("Ready Card Card plan").getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
-  await expect(page.getByText(/Metal: \$120\/year/).first()).toBeVisible();
+  await expect(page.locator("#card-ready-card").getByRole("combobox", { name: "Card plan" })).toHaveValue("metal");
+  await expect(page.getByText("$120/year", { exact: true })).toBeVisible();
+  await expect(page.getByText("No issuer FX fee", { exact: true })).toBeVisible();
+  await expect(page.getByText("$800/month without issuer ATM fees", { exact: true })).toBeVisible();
 });
 
 test("real comparison uses a contained semantic table on mobile", async ({ page }, testInfo) => {

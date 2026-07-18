@@ -8,6 +8,7 @@ import { getCompareOptions } from "@/modules/catalog/comparison-server";
 import { getDiscoveryCard } from "@/modules/catalog/discovery";
 import {
   getCardFact,
+  getCardFactSource,
   getProgramBenefits,
   getProgramDetails,
   getProgramName,
@@ -39,19 +40,9 @@ export default async function CardDetailPage({
   const benefits = getProgramBenefits(card, selections);
   const officialObservations = card.observations;
   const compareOptions = await getCompareOptions();
-  const facts = [
-    ["Card model", getCardFact(card, "type", selections)],
-    ["Payment network", getCardFact(card, "network", selections)],
-    ["Funding model", getCardFact(card, "custody", selections)],
-    ["Funding or top-up fee", getCardFact(card, "fundingFee", selections)],
-    ["Regions", getCardFact(card, "regions", selections)],
-    ["Annual fee", getCardFact(card, "annualFee", selections)],
-    ["FX fee", getCardFact(card, "fxFee", selections)],
-    ["Rewards", getCardFact(card, "cashbackMax", selections)],
-    ["ATM fees and limits", getCardFact(card, "atmLimit", selections)],
-    ["Requirements", getCardFact(card, "stakingRequired", selections)],
-    ["KYC", getCardFact(card, "kyc", selections)],
-  ];
+  const facts = ([
+    ["Card model", "type"], ["Payment network", "network"], ["Funding model", "custody"], ["Funding or top-up fee", "fundingFee"], ["Regions", "regions"], ["Annual fee", "annualFee"], ["FX fee", "fxFee"], ["Rewards", "cashbackMax"], ["ATM fees and limits", "atmLimit"], ["Requirements", "stakingRequired"], ["KYC", "kyc"],
+  ] as const).map(([label, key]) => ({ label, key, value: getCardFact(card, key, selections), source: getCardFactSource(card, key, selections) }));
 
   return (
     <div className="shell page-stack detail-page">
@@ -98,12 +89,12 @@ export default async function CardDetailPage({
       <div className="detail-grid">
         <section className="fact-sheet" aria-labelledby="terms-title">
           <div className="section-title"><div><p className="kicker">At a glance</p><h2 id="terms-title">Card details</h2></div></div>
-          <dl>{facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+          <dl>{facts.map(({ label, value, source }) => <div key={label}><dt>{label}</dt><dd>{value}{source === "catalog-lead" ? <small className="fact-origin">Provisional catalog data</small> : null}</dd></div>)}</dl>
         </section>
         <aside className="profile-aside">
           {card.media ? <section><Check aria-hidden="true" /><h2>Issuer logo</h2><p>Logo added on {card.media.observedAt}.</p><a className="text-link" href={card.media.sourcePage} rel="noreferrer" target="_blank">View logo source <ArrowUpRight aria-hidden="true" size={16} /></a></section> : null}
           <section><WalletCards aria-hidden="true" /><h2>Assets and currencies</h2><p>{getCardFact(card, "supportedAssets", selections)}</p>{card.supportedCurrencies.length ? <ul>{card.supportedCurrencies.map((currency) => <li key={currency}>{currency}</li>)}</ul> : null}</section>
-          <section><Check aria-hidden="true" /><h2>Card format</h2><p>{card.mobilePay ? "Mobile wallet support available" : "Mobile wallet details unavailable"}</p><p>{getCardFact(card, "type", selections)}</p></section>
+          <section><Check aria-hidden="true" /><h2>Card format</h2><p>{card.mobilePay ? "Mobile wallet support available" : "Mobile wallet support not documented"}</p><p>{getCardFact(card, "type", selections)}</p></section>
         </aside>
       </div>
     </div>

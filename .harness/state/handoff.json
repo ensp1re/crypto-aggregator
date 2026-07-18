@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T19:37:53+02:00",
-  "goal": "Operate the merged database-backed 60-card catalog and continue canonical review of its official-source research.",
+  "updatedAt": "2026-07-18T20:22:05+02:00",
+  "goal": "Review the isolated responsive UI and database-projection repair before any production merge.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "main",
-    "head": "f7aad76de767787fc46b4e43fab026022e684398",
+    "branch": "feat/site-ui-data-polish",
+    "head": "0cf2bcf5ff69ebfcfe4021392709fbbe625976a3",
     "worktree": "dirty"
   },
   "completed": [
@@ -23,10 +23,14 @@
     "Removed reported, Confirm with issuer, and the requested eligibility/regional normalization copy from consumer surfaces.",
     "Documented that candidate plan research remains staging data and does not change canonical claim publication status.",
     "Founder explicitly approved sensitive Vercel Preview and Production database access and the production merge; PR 6 was squash-merged as f7aad76.",
-    "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and serves the 60-card catalog."
+    "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and serves the 60-card catalog.",
+    "Repaired the public database projection so structured tier economics no longer repeat one summary across unrelated fee, FX, ATM, and reward rows.",
+    "Added marked catalog-lead fallback fields, resilient issuer marks, normalized analytics categories, mobile navigation, and an adaptive one-card-at-a-time comparison table with native tier selectors.",
+    "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison.",
+    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged."
   ],
   "nextActions": [
-    "Monitor production route health and database latency after the catalog rollout.",
+    "Open and inspect the isolated preview for feat/site-ui-data-polish before deciding whether to merge it.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -48,12 +52,17 @@
       "The required ui-ux-pro-max workflow and taste audit were applied; prior Chromium evidence confirms the searchable dialog and localized mobile table interaction.",
       "Vercel preview dpl_4qH3Ph9MA54pH5fLNni9hsE1qc7B passed its deployment check and six authenticated database-backed smoke routes returned HTTP 200.",
       "PR 6 is squash-merged as f7aad76; production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and six production smoke routes returned HTTP 200 with expected Solflare, Bybit, Ready, Kraken, and comparison content."
+      ,"ESLint, strict TypeScript, 28 Vitest checks, the PostgreSQL-backed Next.js production build, 10 previously passing desktop/mobile Playwright checks, and the corrected two-project Ready tier interaction check pass."
+      ,"Axe, 44px mobile targets, horizontal table containment, landscape, reduced motion, and 200% text reflow passed in Chromium; desktop home/profile and Pixel 7 catalog/comparison screenshots were visually inspected."
+      ,"Vercel preview deployment dpl_5qvnPUwKVDVd2885R2st3LgAtUBW reached READY and authenticated home, Ready profile, and Ready/Bybit/Solflare comparison smoke checks returned HTTP 200."
     ],
     "failed": [],
     "notRun": [
       "The current sandbox blocked the two PostgreSQL integration tests with connect EPERM; 26 non-database tests passed and the database-backed projection was verified earlier before the final cache/documentation-only edits.",
       "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Vercel Turbopack build and local Webpack production compile passed.",
-      "Manual VoiceOver and NVDA testing is unavailable in this environment."
+      "Manual VoiceOver and NVDA testing is unavailable in this environment.",
+      "The first Vitest command used an unsupported Jest-only flag and was rerun successfully with the repository command; the first sandboxed integration run was blocked by network EPERM and passed with approved database access.",
+      "The first two Playwright passes exposed stale copy expectations, a narrow mobile navigation target, text-zoom overflow, and a strict selector; each defect was corrected and the affected desktop/mobile checks passed on rerun."
     ]
   },
   "risks": [
@@ -80,6 +89,7 @@
     "src/modules/publication/publication-service.ts",
     "src/modules/verification",
     "tests"
+    ,"next.config.ts"
   ],
   "doNotRepeat": [
     "Do not split one card program into duplicate catalog entries for plans or tiers.",

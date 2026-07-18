@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { officialIssuerMedia, type OfficialIssuerMedia } from "./official-media";
-import type { BenefitKind, CardFactKey, ProgramBenefit } from "./program-details";
+import { unavailable, type BenefitKind, type CardFactKey, type ProgramBenefit } from "./program-details";
+export { unavailable } from "./program-details";
 
 export type CatalogObservation = {
   key: string;
@@ -58,6 +59,7 @@ export type DiscoveryCard = {
   mobilePay: boolean;
   metal: boolean;
   facts: Partial<Record<CardFactKey, string>>;
+  factSources: Partial<Record<CardFactKey, "official" | "catalog-lead">>;
   dimensions: DiscoveryPlanDimension[];
   benefits: ProgramBenefit[];
   observations: CatalogObservation[];
@@ -69,8 +71,6 @@ export type CatalogQuery = {
   network?: string;
 };
 
-const unavailable = "Details unavailable";
-
 const factPreferences: Record<CardFactKey, string[]> = {
   regions: ["eligibility_scope", "eligibility", "regional_scope"],
   kyc: ["kyc"],
@@ -78,10 +78,10 @@ const factPreferences: Record<CardFactKey, string[]> = {
   type: ["card_type", "card_forms", "card_form"],
   network: ["network", "network_issuer"],
   supportedAssets: ["supported_assets", "currencies_assets", "funding_asset"],
-  fundingFee: ["top_up_fee", "topup_fee", "card_fees", "fees"],
-  annualFee: ["annual_fee", "account_fees", "card_fees"],
-  fxFee: ["fx_fee", "fx", "fees"],
-  atmLimit: ["atm_limit", "atm_fee", "atm", "atm_availability", "limits"],
+  fundingFee: ["top_up_fee", "topup_fee", "load_fee"],
+  annualFee: ["annual_fee"],
+  fxFee: ["fx_fee", "fx"],
+  atmLimit: ["atm_limit", "atm_limits", "atm_fee", "atm", "atm_availability"],
   cashbackMax: ["reward_rate", "reward_current", "reward_default", "reward", "purchase_fee_reward"],
   stakingRequired: ["reward_qualification", "qualification_paths", "staking_requirement"],
 };
@@ -132,12 +132,76 @@ function canonicalName(externalKey: string, hint: string) {
   return hint;
 }
 
+function canonicalOfficialLink(externalKey: string, candidateUrl: string | null) {
+  if (externalKey === "ready-lite") return "https://www.ready.co/card";
+  return candidateUrl ?? undefined;
+}
+
 function humanize(value: string) {
-  return value.replace(/^(benefit|promotion)_/, "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()).replace(/\bAi\b/g, "AI").replace(/\bFx\b/g, "FX").replace(/\bAtm\b/g, "ATM");
+  const known: Record<string, string> = {
+    benefit_ai_subscriptions: "AI subscription rebate",
+    benefit_media_subscriptions: "Streaming subscription rebate",
+    future_subscription_benefit: "Subscription rebate",
+    mobile_wallet: "Mobile wallet support",
+  };
+  if (known[value]) return known[value];
+  return value.replace(/^(benefit|promotion|future)_/, "").replace(/_(benefit|promotion)$/, "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()).replace(/\bAi\b/g, "AI").replace(/\bFx\b/g, "FX").replace(/\bAtm\b/g, "ATM");
 }
 
 function visibleValue(value: string) {
   return value.replace(/[—–]/g, "-");
+}
+
+function numberValue(value: Record<string, unknown>, key: string) {
+  return typeof value[key] === "number" ? value[key] as number : undefined;
+}
+
+function money(amount: number, currency = "USD") {
+  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `;
+  return `${symbol}${amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+}
+
+function structuredFact(entry: { fieldKey: string; displayValue: string; valueJson?: unknown }, key: CardFactKey) {
+  const value = asObject(entry.valueJson);
+  if (!value) return undefined;
+  const feeCurrency = typeof value.feeCurrency === "string" ? value.feeCurrency : "USD";
+
+  if (key === "annualFee") {
+    const annual = numberValue(value, "annualFee") ?? numberValue(value, "annualFeeUsd");
+    const monthly = numberValue(value, "monthlyFee") ?? numberValue(value, "monthlyFeeUsd");
+    if (annual !== undefined) return annual === 0 ? "Free" : `${money(annual, feeCurrency)}/year`;
+    if (monthly !== undefined) return monthly === 0 ? "No monthly fee" : `${money(monthly, feeCurrency)}/month`;
+  }
+  if (key === "fxFee") {
+    const percent = numberValue(value, "fxFeePercent") ?? numberValue(value, "fxPercent") ?? numberValue(value, "issuerMarkupPercent");
+    if (percent !== undefined) return percent === 0 ? "No issuer FX fee" : `${percent}%`;
+  }
+  if (key === "atmLimit") {
+    const freeMonthly = numberValue(value, "monthlyFreeAtmUsd") ?? numberValue(value, "monthlyAtmWaiverUsd");
+    const daily = numberValue(value, "dailyLimitUsd") ?? numberValue(value, "dailyLimit");
+    const fee = numberValue(value, "atmFeePercent") ?? numberValue(value, "feeAfterPercent");
+    if (freeMonthly !== undefined) return `${money(freeMonthly)}/month without issuer ATM fees${fee ? `, then ${fee}%` : ""}`;
+    if (daily !== undefined) return `${money(daily)}/day${fee !== undefined ? `, ${fee}% fee` : ""}`;
+    if (fee !== undefined) return fee === 0 ? "No issuer ATM fee" : `${fee}% issuer ATM fee`;
+  }
+  if (key === "cashbackMax") {
+    if (entry.fieldKey.includes("reward")) return entry.displayValue;
+    const percent = numberValue(value, "rewardPercent") ?? numberValue(value, "rate") ?? numberValue(value, "nexoPercent") ?? numberValue(value, "btcPercent");
+    const points = numberValue(value, "pointsPerUsd");
+    if (percent !== undefined) return `${percent}%${typeof value.rewardCurrency === "string" ? ` in ${value.rewardCurrency}` : " rewards"}`;
+    if (points !== undefined) return `${points} points per USD`;
+  }
+  if (key === "type") {
+    const forms = Array.isArray(value.forms) ? value.forms.filter((item): item is string => typeof item === "string") : [];
+    if (forms.length) return forms.join(" and ");
+    if (typeof value.form === "string") return value.form;
+    if (typeof value.networkTier === "string") return value.networkTier;
+  }
+  if (key === "fundingFee") {
+    const percent = numberValue(value, "loadPercent") ?? numberValue(value, "topUpPercent") ?? numberValue(value, "topupPercent");
+    if (percent !== undefined) return percent === 0 ? "No card load fee" : `${percent}% card load fee`;
+  }
+  return undefined;
 }
 
 function scopeText(scope: unknown) {
@@ -158,16 +222,39 @@ function factsFromEntries(entries: Array<{ fieldKey: string; displayValue: strin
     return match ? [[factKey, byKey.get(match) as string]] : [];
   })) as Partial<Record<CardFactKey, string>>;
   for (const entry of entries) {
-    const value = asObject(entry.valueJson);
-    if (!value) continue;
-    if (!facts.annualFee && ["annualFee", "annualFeeUsd", "monthlyFee", "monthlyFeeUsd"].some((key) => typeof value[key] === "number")) facts.annualFee = entry.displayValue;
-    if (!facts.fxFee && ["fxPercent", "fxFeePercent", "issuerMarkupPercent"].some((key) => typeof value[key] === "number")) facts.fxFee = entry.displayValue;
-    if (!facts.atmLimit && Object.keys(value).some((key) => /atm|withdrawal/i.test(key))) facts.atmLimit = entry.displayValue;
-    if (!facts.cashbackMax && (entry.fieldKey.includes("reward") || ["rewardPercent", "rate", "nexoPercent", "btcPercent", "pointsPerUsd"].some((key) => typeof value[key] === "number"))) facts.cashbackMax = entry.displayValue;
-    if (!facts.type && ["form", "forms", "networkTier"].some((key) => value[key] !== undefined)) facts.type = entry.displayValue;
-    if (!facts.fundingFee && Object.keys(value).some((key) => /topup|topUp|loadPercent/.test(key))) facts.fundingFee = entry.displayValue;
+    for (const key of Object.keys(factPreferences) as CardFactKey[]) {
+      const value = facts[key] ? undefined : structuredFact(entry, key);
+      if (value) facts[key] = value;
+    }
   }
   return facts;
+}
+
+function catalogLeadFacts(observation: unknown) {
+  const lead = asObject(observation);
+  if (!lead) return {};
+  const string = (key: string) => typeof lead[key] === "string" && lead[key] ? visibleValue(lead[key] as string).replace(/^NA$|^Not specified$/i, unavailable) : undefined;
+  const reward = typeof lead.cashbackMax === "number" ? (lead.cashbackMax > 0 ? `Up to ${lead.cashbackMax}%` : "No reward rate listed") : undefined;
+  return {
+    regions: string("regions"),
+    kyc: string("kyc"),
+    custody: string("custody"),
+    type: string("type"),
+    network: string("network"),
+    supportedAssets: string("supportedAssets"),
+    annualFee: string("annualFee"),
+    fxFee: string("fxFee"),
+    atmLimit: string("atmLimit"),
+    cashbackMax: reward,
+    stakingRequired: string("stakingRequired"),
+  } satisfies Partial<Record<CardFactKey, string | undefined>>;
+}
+
+function fallbackLogo(observation: unknown, officialUrl: string | null) {
+  const lead = asObject(observation);
+  if (typeof lead?.logo === "string") return lead.logo;
+  if (!officialUrl) return undefined;
+  try { return `https://unavatar.io/${new URL(officialUrl).hostname}`; } catch { return undefined; }
 }
 
 function benefitKind(fieldKey: string): BenefitKind {
@@ -226,8 +313,16 @@ export const getDiscoverySnapshot = cache(async function getDiscoverySnapshot() 
       if (!latestEvidence.has(evidence.fieldKey)) latestEvidence.set(evidence.fieldKey, evidence);
     }
     const currentEvidence = [...latestEvidence.values()];
+    const catalogLead = asObject(candidate.observation);
     const evidenceEntries = currentEvidence.map(({ fieldKey, displayValue, scopeJson, valueJson }) => ({ fieldKey, displayValue: visibleValue(displayValue), scopeJson, valueJson }));
-    const facts = factsFromEntries(evidenceEntries);
+    const programEntries = evidenceEntries.filter((entry) => {
+      const scope = asObject(entry.scopeJson);
+      return !scope?.plan && !scope?.tier && !scope?.dimension;
+    });
+    const officialFacts = factsFromEntries(programEntries);
+    const leadFacts = catalogLeadFacts(candidate.observation);
+    const facts = { ...leadFacts, ...officialFacts } as Partial<Record<CardFactKey, string>>;
+    const factSources = Object.fromEntries((Object.keys(facts) as CardFactKey[]).map((key) => [key, officialFacts[key] ? "official" : "catalog-lead"])) as DiscoveryCard["factSources"];
     const media = officialIssuerMedia[candidate.externalKey];
     const dimensions = candidate.planDimensions.map((dimension) => ({
       id: dimension.slug,
@@ -257,16 +352,17 @@ export const getDiscoverySnapshot = cache(async function getDiscoverySnapshot() 
       sourceUrl: evidence.artifact.locator,
       observedAt: evidence.observedAt.toISOString(),
     }));
-    const supportedCurrencies = asArray(asObject(currentEvidence.find(({ fieldKey }) => fieldKey === "supported_assets")?.valueJson)?.assets)
+    const officialCurrencies = asArray(asObject(currentEvidence.find(({ fieldKey }) => fieldKey === "supported_assets")?.valueJson)?.assets)
       .filter((value): value is string => typeof value === "string");
+    const catalogCurrencies = asArray(catalogLead?.supportedCurrencies).filter((value): value is string => typeof value === "string");
 
     return {
       id: candidate.externalKey,
       slug: canonicalSlug(candidate.externalKey),
       name: canonicalName(candidate.externalKey, candidate.canonicalHint),
       issuer: candidate.issuerHint,
-      officialLink: candidate.officialUrl ?? undefined,
-      logo: media?.path,
+      officialLink: canonicalOfficialLink(candidate.externalKey, candidate.officialUrl),
+      logo: media?.path ?? fallbackLogo(candidate.observation, candidate.officialUrl),
       media,
       verification: candidate.planResearchStatus === "BLOCKED" ? "blocked" : "official-research",
       planResearchStatus: candidate.planResearchStatus,
@@ -283,10 +379,11 @@ export const getDiscoverySnapshot = cache(async function getDiscoverySnapshot() 
       atmLimit: values("atmLimit"),
       cashbackMax: values("cashbackMax"),
       stakingRequired: values("stakingRequired"),
-      supportedCurrencies,
-      mobilePay: currentEvidence.some(({ fieldKey }) => fieldKey === "mobile_wallet"),
-      metal: dimensions.some(({ options }) => options.some(({ name }) => name.toLowerCase().includes("metal"))),
+      supportedCurrencies: officialCurrencies.length ? officialCurrencies : catalogCurrencies,
+      mobilePay: currentEvidence.some(({ fieldKey }) => fieldKey === "mobile_wallet") || catalogLead?.mobilePay === true,
+      metal: dimensions.some(({ options }) => options.some(({ name }) => name.toLowerCase().includes("metal"))) || catalogLead?.metal === true,
       facts,
+      factSources,
       dimensions,
       benefits: benefitsFromEntries(evidenceEntries.filter(({ scopeJson, valueJson }) => !asObject(scopeJson)?.plan && !asObject(scopeJson)?.tier && !asObject(valueJson)?.minimumRewardTier)),
       observations,
@@ -307,15 +404,43 @@ export function filterDiscoveryCards(cards: DiscoveryCard[], { query = "", custo
     const matchesQuery = !normalizedQuery || [card.name, card.issuer, card.regions, card.supportedAssets]
       .some((value) => value.toLowerCase().includes(normalizedQuery));
     const matchesCustody = custody === "all" || card.custody === custody;
-    const matchesNetwork = network === "all" || card.network === network;
+    const matchesNetwork = network === "all" || category(card.network, "network") === network;
     return matchesQuery && matchesCustody && matchesNetwork;
   });
 }
 
 export function distribution(cards: DiscoveryCard[], field: "custody" | "network" | "type") {
   const counts = new Map<string, number>();
-  for (const card of cards) counts.set(card[field], (counts.get(card[field]) ?? 0) + 1);
+  for (const card of cards) {
+    const label = category(card[field], field);
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }
   return [...counts].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+}
+
+function category(value: string, field: "custody" | "network" | "type") {
+  if (value === unavailable) return unavailable;
+  const normalized = value.toLowerCase();
+  if (field === "network") {
+    const visa = normalized.includes("visa");
+    const mastercard = normalized.includes("mastercard");
+    if (visa && mastercard) return "Visa / Mastercard";
+    if (visa) return "Visa";
+    if (mastercard) return "Mastercard";
+    return "Other network";
+  }
+  if (field === "custody") {
+    if (/self[- ]?custod|non[- ]?custod|delegated wallet/.test(normalized)) return "Self-custody";
+    if (/credit|collateral|borrow/.test(normalized)) return "Credit or collateral";
+    if (/custod|account balance|fiat account|preload|pre-load/.test(normalized)) return "Custodial account";
+    if (/convert|wallet|spend.*crypto/.test(normalized)) return "Wallet conversion";
+    return "Other funding model";
+  }
+  if (normalized.includes("credit")) return "Credit";
+  if (normalized.includes("prepaid")) return "Prepaid";
+  if (normalized.includes("debit")) return "Debit";
+  if (normalized.includes("virtual") && !normalized.includes("physical")) return "Virtual only";
+  return "Other card model";
 }
 
 export function maximumReward(card: DiscoveryCard) {

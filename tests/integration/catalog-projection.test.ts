@@ -16,9 +16,13 @@ describe("database catalog projection", () => {
 
     const ready = cards.find(({ slug }) => slug === "ready-card");
     expect(ready?.name).toBe("Ready Card");
+    expect(ready?.network).toBe("Mastercard");
+    expect(ready?.factSources.network).toBe("catalog-lead");
+    expect(ready?.supportedCurrencies).toContain("USD");
     expect(ready?.dimensions[0].options.map(({ name }) => name)).toEqual(["Lite", "Metal"]);
 
     const bybit = cards.find(({ slug }) => slug === "bybit-card");
+    expect(bybit?.network).toBe("Mastercard");
     expect(bybit?.dimensions[0].options.map(({ name }) => name)).toEqual(["Base", "Beta", "Alpha", "Apex", "Omega", "Infinite"]);
     expect(bybit?.dimensions[0].options.map(({ facts }) => facts.cashbackMax)).toEqual([
       "Base: $0 spend; 2%; $5 monthly cap",
@@ -29,7 +33,7 @@ describe("database catalog projection", () => {
       "Infinite: Supreme/PRO 3-5 or $25,000 spend; 10%; $600 monthly cap",
     ]);
     expect(bybit?.dimensions[0].options[0].benefits).toHaveLength(0);
-    expect(bybit?.dimensions[0].options[1].benefits.map(({ title }) => title)).toEqual(["AI Subscriptions", "Media Subscriptions"]);
+    expect(bybit?.dimensions[0].options[1].benefits.map(({ title }) => title)).toEqual(["AI subscription rebate", "Streaming subscription rebate"]);
 
     const wirex = cards.find(({ slug }) => slug === "wirex-card");
     expect(wirex?.dimensions.map(({ id, combinable }) => [id, combinable])).toEqual([
