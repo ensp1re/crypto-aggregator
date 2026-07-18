@@ -1,22 +1,34 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { IssuerMark } from "./issuer-mark";
-import { maximumReward, type DiscoveryCard } from "@/modules/catalog/discovery";
 import { comparisonHref } from "@/modules/catalog/comparison";
 
-export function CardRow({ card }: { card: DiscoveryCard }) {
-  const hasCatalogLead = (["custody", "network", "cashbackMax", "regions"] as const).some((key) => card.factSources[key] === "catalog-lead");
-  const optionCount = card.dimensions.reduce((total, dimension) => total + dimension.options.length, 0);
+export type CatalogCardSummary = {
+  cashbackMax: string;
+  custody: string;
+  id: string;
+  issuer: string;
+  logo?: string;
+  logoAlt?: string;
+  name: string;
+  network: string;
+  optionCount: number;
+  regions: string;
+  searchText: string;
+  slug: string;
+};
+
+export function CardRow({ card }: { card: CatalogCardSummary }) {
   return (
     <article className="catalog-row">
       <div className="catalog-identity">
-        <IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} />
-        <div><h2><Link href={`/cards/${card.slug}`}>{card.name}</Link></h2><p>{card.issuer}{optionCount ? ` / ${optionCount} options` : ""}</p>{hasCatalogLead ? <small className="catalog-lead-note">Includes provisional catalog data</small> : null}</div>
+        <IssuerMark issuer={card.issuer} src={card.logo} alt={card.logoAlt} />
+        <div><h2><Link href={`/cards/${card.slug}`}>{card.name}</Link></h2><p>{card.issuer}{card.optionCount ? ` / ${card.optionCount} options` : ""}</p></div>
       </div>
       <dl className="catalog-facts">
         <div><dt>Funding model</dt><dd>{card.custody}</dd></div>
         <div><dt>Network</dt><dd>{card.network}</dd></div>
-        <div><dt>Rewards</dt><dd>{maximumReward(card)}</dd></div>
+        <div><dt>Rewards</dt><dd>{card.cashbackMax}</dd></div>
         <div><dt>Regions</dt><dd>{card.regions}</dd></div>
       </dl>
       <div className="catalog-actions">

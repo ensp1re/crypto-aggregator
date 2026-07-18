@@ -10,23 +10,29 @@ export type CustomSelectOption = {
 
 type CustomSelectProps = {
   defaultValue?: string;
+  compact?: boolean;
+  hideLabel?: boolean;
   label: string;
-  name: string;
+  name?: string;
+  onValueChange?: (value: string) => void;
   options: CustomSelectOption[];
   required?: boolean;
+  value?: string;
 };
 
-export function CustomSelect({ defaultValue, label, name, options, required = false }: CustomSelectProps) {
+export function CustomSelect({ compact = false, defaultValue, hideLabel = false, label, name, onValueChange, options, required = false, value }: CustomSelectProps) {
   const reactId = useId();
   const labelId = `${reactId}-label`;
   const listboxId = `${reactId}-listbox`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listboxRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const initialIndex = Math.max(0, options.findIndex((option) => option.value === defaultValue));
-  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
+  const initialIndex = Math.max(0, options.findIndex((option) => option.value === (value ?? defaultValue)));
+  const [internalSelectedIndex, setInternalSelectedIndex] = useState(initialIndex);
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [open, setOpen] = useState(false);
+  const controlledIndex = options.findIndex((option) => option.value === value);
+  const selectedIndex = value === undefined ? internalSelectedIndex : Math.max(0, controlledIndex);
   const selected = options[selectedIndex];
 
   useEffect(() => {
@@ -51,9 +57,10 @@ export function CustomSelect({ defaultValue, label, name, options, required = fa
   };
 
   const choose = (index: number) => {
-    setSelectedIndex(index);
+    if (value === undefined) setInternalSelectedIndex(index);
     setActiveIndex(index);
     setOpen(false);
+    if (options[index]) onValueChange?.(options[index].value);
     triggerRef.current?.focus();
   };
 
@@ -64,11 +71,11 @@ export function CustomSelect({ defaultValue, label, name, options, required = fa
   };
 
   return (
-    <div className="custom-select" ref={rootRef}>
-      <span className="custom-select-label" id={labelId}>
+    <div className={`custom-select${compact ? " compact" : ""}`} ref={rootRef}>
+      <span className={hideLabel ? "sr-only" : "custom-select-label"} id={labelId}>
         {label}{required ? <><span aria-hidden="true"> *</span><span className="sr-only"> required</span></> : null}
       </span>
-      <input type="hidden" name={name} value={selected?.value ?? ""} />
+      {name ? <input type="hidden" name={name} value={selected?.value ?? ""} /> : null}
       <button
         aria-controls={listboxId}
         aria-expanded={open}

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Search, SlidersHorizontal } from "lucide-react";
-import { CardRow } from "@/components/card-row";
-import { CustomSelect } from "@/components/custom-select";
-import { filterDiscoveryCards, getDiscoverySnapshot } from "@/modules/catalog/discovery";
+import { CatalogExplorer } from "@/components/catalog-explorer";
+import { getDiscoverySnapshot, maximumReward } from "@/modules/catalog/discovery";
 
 export const metadata: Metadata = { title: "Explore crypto cards", description: "Browse and compare crypto-card programs by fees, rewards, funding model, and region." };
 
@@ -14,7 +12,20 @@ export default async function CardsPage({ searchParams }: { searchParams: Search
   const query = value("q") ?? "";
   const network = value("network") ?? "all";
   const snapshot = await getDiscoverySnapshot();
-  const results = filterDiscoveryCards(snapshot.cards, { query, network });
+  const cards = snapshot.cards.map((card) => ({
+    cashbackMax: maximumReward(card),
+    custody: card.custody,
+    id: card.id,
+    issuer: card.issuer,
+    logo: card.logo,
+    logoAlt: card.media?.alt,
+    name: card.name,
+    network: card.network,
+    optionCount: card.dimensions.reduce((total, dimension) => total + dimension.options.length, 0),
+    regions: card.regions,
+    searchText: [card.name, card.issuer, card.regions, card.supportedAssets, card.custody, card.network].join(" ").toLowerCase(),
+    slug: card.slug,
+  }));
 
   return (
     <div className="shell page-stack catalog-page">
@@ -22,15 +33,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Search
         <div><p className="kicker">Global card index</p><h1>{snapshot.cards.length} cards in one place.</h1></div>
         <p>Search by card, issuer, region, asset, funding model, or network.</p>
       </header>
-      <form className="filter-bar" action="/cards" method="get">
-        <label className="search-field"><span className="sr-only">Search cards</span><Search aria-hidden="true" size={18} /><input name="q" defaultValue={query} placeholder="Search card, issuer, region, asset" /></label>
-        <CustomSelect label="Network" name="network" defaultValue={network} options={[{ value: "all", label: "All networks" }, { value: "Visa", label: "Visa" }, { value: "Mastercard", label: "Mastercard" }, { value: "Visa / Mastercard", label: "Visa / Mastercard" }]} />
-        <button className="button primary" type="submit"><SlidersHorizontal aria-hidden="true" size={17} /> Apply</button>
-      </form>
-      <div className="result-line"><p><strong>{results.length}</strong> of {snapshot.cards.length} cards</p><p>Sorted alphabetically. Commercial status has no effect.</p></div>
-      <section className="catalog-list" aria-label="Crypto cards">
-        {results.length ? results.map((card) => <CardRow card={card} key={card.id} />) : <div className="empty-state"><h2>No matching card</h2><p>Clear filters or try an issuer, region, or asset name.</p></div>}
-      </section>
+      <CatalogExplorer cards={cards} initialNetwork={network} initialQuery={query} />
     </div>
   );
 }

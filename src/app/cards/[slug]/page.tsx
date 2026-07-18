@@ -4,18 +4,16 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, BadgePercent, Check, Gift, Plane, Smartphone, WalletCards } from "lucide-react";
 import { IssuerMark } from "@/components/issuer-mark";
 import { ComparePicker } from "@/components/compare-picker";
+import { ProfilePlanSelector } from "@/components/profile-plan-selector";
 import { getCompareOptions } from "@/modules/catalog/comparison-server";
 import { getDiscoveryCard } from "@/modules/catalog/discovery";
 import {
   getCardFact,
-  getCardFactSource,
   getProgramBenefits,
   getProgramDetails,
   getProgramName,
   getSelectedOptions,
-  profileHref,
   profileSelections,
-  selectionKey,
   type BenefitKind,
 } from "@/modules/catalog/program-details";
 
@@ -42,7 +40,7 @@ export default async function CardDetailPage({
   const compareOptions = await getCompareOptions();
   const facts = ([
     ["Card model", "type"], ["Payment network", "network"], ["Funding model", "custody"], ["Funding or top-up fee", "fundingFee"], ["Regions", "regions"], ["Annual fee", "annualFee"], ["FX fee", "fxFee"], ["Rewards", "cashbackMax"], ["ATM fees and limits", "atmLimit"], ["Requirements", "stakingRequired"], ["KYC", "kyc"],
-  ] as const).map(([label, key]) => ({ label, key, value: getCardFact(card, key, selections), source: getCardFactSource(card, key, selections) }));
+  ] as const).map(([label, key]) => ({ label, value: getCardFact(card, key, selections) }));
 
   return (
     <div className="shell page-stack detail-page">
@@ -54,22 +52,17 @@ export default async function CardDetailPage({
           <ComparePicker cards={compareOptions} anchorSlug={card.slug} initialSelected={[card.slug]} initialPlans={selections} buttonLabel="Compare" />
         </div>
       </header>
-      {card.dimensions.length ? <section className="plan-selector" aria-labelledby="plan-selector-title">
-        <div><p className="kicker">Card options</p><h2 id="plan-selector-title">Choose the options you want</h2></div>
-        <div className="plan-dimensions">
-          {card.dimensions.map((dimension) => <div className="plan-dimension" key={dimension.id}>
-            <h3>{dimension.label}</h3>
-            <div className="plan-tabs" aria-label={`${name} ${dimension.label}`}>
-              {dimension.options.map((option) => <Link
-                key={option.id}
-                href={profileHref(card, { ...selections, [selectionKey(card.slug, dimension.id)]: option.id })}
-                aria-current={selections[selectionKey(card.slug, dimension.id)] === option.id ? "page" : undefined}
-              >{option.name}</Link>)}
-            </div>
-          </div>)}
-        </div>
-        {selectedOptions.map(({ dimension, option }) => <p key={dimension.id}><strong>{dimension.label}:</strong> {option.summary}</p>)}
-      </section> : null}
+      {card.dimensions.length ? <ProfilePlanSelector cardName={name} cardSlug={card.slug} dimensions={card.dimensions.map((dimension) => ({ id: dimension.id, label: dimension.label, options: dimension.options.map((option) => ({ id: option.id, name: option.name, summary: option.summary })) }))} key={JSON.stringify(selections)} selected={Object.fromEntries(card.dimensions.map((dimension) => [dimension.id, selections[`${card.slug}.${dimension.id}`] ?? dimension.options[0]?.id ?? ""]))} /> : null}
+      <div className="detail-grid">
+        <section className="fact-sheet" aria-labelledby="terms-title">
+          <div className="section-title"><div><p className="kicker">At a glance</p><h2 id="terms-title">Card details</h2></div></div>
+          <dl>{facts.map(({ label, value }) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+        </section>
+        <aside className="profile-aside">
+          <section><WalletCards aria-hidden="true" /><h2>Assets and currencies</h2><p>{getCardFact(card, "supportedAssets", selections)}</p>{card.supportedCurrencies.length ? <ul>{card.supportedCurrencies.map((currency) => <li key={currency}>{currency}</li>)}</ul> : null}</section>
+          <section><Check aria-hidden="true" /><h2>Card format</h2><p>{card.mobilePay ? "Mobile wallet support available" : "Mobile wallet support not documented"}</p><p>{getCardFact(card, "type", selections)}</p></section>
+        </aside>
+      </div>
       {benefits.length > 0 ? <section className="benefits-section" aria-labelledby="benefits-title">
         <div className="section-title"><div><p className="kicker">Included value</p><h2 id="benefits-title">Benefits &amp; perks{selectedOptions.length ? ` / ${selectedOptions.map(({ option }) => option.name).join(" + ")}` : ""}</h2></div>{details?.officialUrl ? <a className="text-link" href={details.officialUrl} rel="noreferrer" target="_blank">View current terms <ArrowUpRight aria-hidden="true" size={16} /></a> : null}</div>
         <div className="benefit-list">{benefits.map((benefit) => <article key={`${benefit.kind}-${benefit.title}`}>
@@ -77,26 +70,18 @@ export default async function CardDetailPage({
           <div><p>{benefit.kind}</p><h3>{benefit.title}{benefit.status ? <span>{benefit.status === "coming-soon" ? "Coming soon" : benefit.validUntil ? `Through ${benefit.validUntil}` : "Time-limited"}</span> : null}</h3><p>{benefit.description}</p></div>
         </article>)}</div>
       </section> : null}
-      {officialObservations.length > 0 ? <section className="fact-sheet official-evidence" aria-labelledby="official-evidence-title">
-        <div className="section-title"><div><p className="kicker">From the issuer</p><h2 id="official-evidence-title">Latest card details</h2></div><span>{officialObservations.length} details</span></div>
-        <dl>{officialObservations.map((observation) => <div key={observation.key}>
-          <dt>{observation.label}</dt>
-          <dd className="official-value">{observation.value}<small>{observation.scope}</small></dd>
-          <dd className="fact-status"><a href={observation.sourceUrl} rel="noreferrer" target="_blank">View source <ArrowUpRight aria-hidden="true" size={14} /></a></dd>
-        </div>)}</dl>
-        <p className="evidence-footnote">Direct links open the current official source for each detail.</p>
-      </section> : null}
-      <div className="detail-grid">
-        <section className="fact-sheet" aria-labelledby="terms-title">
-          <div className="section-title"><div><p className="kicker">At a glance</p><h2 id="terms-title">Card details</h2></div></div>
-          <dl>{facts.map(({ label, value, source }) => <div key={label}><dt>{label}</dt><dd>{value}{source === "catalog-lead" ? <small className="fact-origin">Provisional catalog data</small> : null}</dd></div>)}</dl>
+      {officialObservations.length > 0 ? <details className="source-ledger">
+        <summary><span><small>Issuer sources</small><strong>Review {officialObservations.length} sourced details</strong></span><span>Show sources</span></summary>
+        <section className="fact-sheet official-evidence" aria-labelledby="official-evidence-title">
+          <div className="section-title"><div><p className="kicker">From the issuer</p><h2 id="official-evidence-title">Latest card details</h2></div></div>
+          <dl>{officialObservations.map((observation) => <div key={observation.key}>
+            <dt>{observation.label}</dt>
+            <dd className="official-value">{observation.value}<small>{observation.scope}</small></dd>
+            <dd className="fact-status"><a href={observation.sourceUrl} rel="noreferrer" target="_blank">View source <ArrowUpRight aria-hidden="true" size={14} /></a></dd>
+          </div>)}</dl>
+          <p className="evidence-footnote">Direct links open the current official source for each detail.</p>
         </section>
-        <aside className="profile-aside">
-          {card.media ? <section><Check aria-hidden="true" /><h2>Issuer logo</h2><p>Logo added on {card.media.observedAt}.</p><a className="text-link" href={card.media.sourcePage} rel="noreferrer" target="_blank">View logo source <ArrowUpRight aria-hidden="true" size={16} /></a></section> : null}
-          <section><WalletCards aria-hidden="true" /><h2>Assets and currencies</h2><p>{getCardFact(card, "supportedAssets", selections)}</p>{card.supportedCurrencies.length ? <ul>{card.supportedCurrencies.map((currency) => <li key={currency}>{currency}</li>)}</ul> : null}</section>
-          <section><Check aria-hidden="true" /><h2>Card format</h2><p>{card.mobilePay ? "Mobile wallet support available" : "Mobile wallet support not documented"}</p><p>{getCardFact(card, "type", selections)}</p></section>
-        </aside>
-      </div>
+      </details> : null}
     </div>
   );
 }
