@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T21:05:06+02:00",
+  "updatedAt": "2026-07-18T21:09:03+02:00",
   "goal": "Replace provisional consumer labels, repair live tier switching, and redesign catalog search, comparison controls, and card profiles.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "feat/live-catalog-profile-ux",
-    "head": "0b5265227d9ad37c00dfb91665c90fead2a91e13",
+    "head": "faabde1f5b0478cc52d56d66f637acee96cffdc7",
     "worktree": "dirty"
   },
   "completed": [
@@ -32,10 +32,11 @@
     "Removed consumer-facing catalog-lead and provisional labels, added instant in-memory catalog search, and reused the accessible custom selector for catalog filters, profile options, and comparison options.",
     "Tier and plan changes now update comparison facts immediately before synchronizing shareable URL state; the Ready Metal-to-Lite browser assertion proves plan-scoped rows change.",
     "Reworked profile hierarchy around card setup, facts, benefits, and a collapsed source ledger while preserving source provenance in the database projection.",
-    "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance."
+    "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance.",
+    "Opened PR 8 at https://github.com/ensp1re/crypto-aggregator/pull/8; Vercel preview 9zmAKC9ooVt9arDQH3qkShEMb6ge is READY at https://cardstats-git-feat-live-catalog-profile-ux-aterli.vercel.app."
   ],
   "nextActions": [
-    "Push feat/live-catalog-profile-ux, open its isolated review PR, and verify the protected Vercel preview.",
+    "Review PR 8 and its protected Vercel preview; merge only after founder approval.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -63,6 +64,7 @@
       ,"ESLint, strict TypeScript, all 28 Vitest checks with approved PostgreSQL access, and the database-backed Next.js production build pass on feat/live-catalog-profile-ux."
       ,"All 12 desktop/mobile Playwright checks pass, including axe, 44px mobile targets, live search without Apply, Ready profile plan changes, Ready comparison plan changes, horizontal table containment, landscape, reduced motion, and 200% text reflow."
       ,"Desktop and Pixel 5 screenshots of the catalog, Ready profile, and Ready/MetaMask comparison were inspected against the ui-ux-pro-max checklist and the taste-skill preserve-mode hierarchy."
+      ,"PR 8 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for the catalog, Ready profile, and Ready/MetaMask comparison."
     ],
     "failed": [],
     "notRun": [
