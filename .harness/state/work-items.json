@@ -95,7 +95,8 @@
         "Priority profiles expose 24 official observations in a separate review-pending ledger while retaining zero verified fields and zero promoted candidates.",
         "Vitest passes 20 assertions, the 49-page build passes, Playwright passes all 8 desktop/mobile checks plus the targeted mobile rerun, and protected preview dpl_8oqTbTFrms3PupiCSUufcH18vuqG is ready with authenticated 200 smoke checks.",
         "Removed repeated discovery-warning and Unverified labels from public components; replaced all native selects with one accessible custom listbox; lint, strict TypeScript, 20 tests, the 49-page build, 8 desktop/mobile Playwright checks, axe, touch targets, visual inspection, and authenticated preview smoke checks pass.",
-        "Profile-to-comparison selection now uses an accessible searchable dialog and shareable URL state; the semantic desktop/mobile table, 23-test unit/integration suite, 50-page production build, 10 Playwright checks, axe, landscape, reduced-motion, localized scroll, and 200% text checks pass."
+        "Profile-to-comparison selection now uses an accessible searchable dialog and shareable URL state; the semantic desktop/mobile table, 23-test unit/integration suite, 50-page production build, 10 Playwright checks, axe, landscape, reduced-motion, localized scroll, and 200% text checks pass.",
+        "Protected preview dpl_G5xxfvXCbRgBXYrFgQoEGbdDD47G is READY; authenticated MetaMask profile and shareable comparison smoke checks return HTTP 200."
       ],
       "completion": null
     }

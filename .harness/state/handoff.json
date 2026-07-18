@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T14:32:57+02:00",
+  "updatedAt": "2026-07-18T14:43:58+02:00",
   "goal": "Ship an isolated, reviewable card-profile-to-comparison workflow with an accessible picker and a readable mobile comparison table.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "feat/profile-compare-workflow",
-    "head": "f551c710aa15459f5bccf122e1c112343bd3ed11",
+    "head": "5db37d9f81cf7e68a08c581441dd2f70ea9c107c",
     "worktree": "dirty"
   },
   "completed": [
@@ -17,7 +17,8 @@
     "Made repeated cards query parameters the canonical comparison state, with allowlist validation, deduplication, stable ordering, a four-card cap, and shareable URLs.",
     "Replaced the hard-coded three-card div matrix with an add/remove comparison flow and a semantic HTML table grouped by access, funding, cost, rewards, and qualification.",
     "Replaced the mobile stacked-card layout with a localized horizontal table scroller, sticky factor column, visible 44px scroll controls, and no horizontal page overflow.",
-    "Updated the UI blueprint and persisted CardStats design system to record the approved mobile comparison behavior."
+    "Updated the UI blueprint and persisted CardStats design system to record the approved mobile comparison behavior.",
+    "Deployed protected Vercel preview dpl_G5xxfvXCbRgBXYrFgQoEGbdDD47G for pull-request review."
   ],
   "nextActions": [
     "Review the isolated comparison-workflow pull request; merge it if accepted or close it without changing main if rejected.",
@@ -37,12 +38,13 @@
       "Full Playwright suite passes 10 desktop/mobile tests covering picker selection, Escape and focus return, shareable URL navigation, semantic table structure, axe, reduced motion, localized scrolling, 375px, 812x375 landscape, and 200% text.",
       "Desktop comparison, 375px mobile comparison, and desktop picker were visually inspected against the persisted CardStats design system.",
       "The required ui-ux-pro-max validation search and canonical accessibility, touch, responsive, and interaction checklist were applied.",
-      "Git whitespace validation passes."
+      "Git whitespace validation passes.",
+      "Protected preview cardstats-qvu8ae65m-aterli.vercel.app is READY; authenticated profile and shareable comparison smoke checks return HTTP 200."
     ],
     "failed": [],
     "notRun": [
       "Manual VoiceOver and NVDA testing is unavailable in this environment; native semantics, keyboard behavior, focus management, and axe passed.",
-      "No preview or production deployment was created because this change is intentionally isolated for pull-request review."
+      "No production deployment or alias promotion was performed; the isolated preview is review-only."
     ]
   },
   "risks": [
