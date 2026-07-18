@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { agentCatalogMarkdown, buildAgentCatalog } from "@/lib/agent-catalog";
 import { getDiscoverySnapshot } from "@/modules/catalog/discovery";
 
 describe("database catalog projection", () => {
@@ -40,5 +41,21 @@ describe("database catalog projection", () => {
       ["subscription", true],
       ["loyalty_tier", true],
     ]);
+  });
+
+  it("publishes only researched, source-backed facts in the agent catalog", async () => {
+    const catalog = buildAgentCatalog(await getDiscoverySnapshot());
+    expect(catalog.cardCount).toBe(52);
+    expect(catalog.cards).toHaveLength(catalog.cardCount);
+    expect(catalog.cards.every(({ canonicalUrl, sources }) => canonicalUrl.startsWith("https://www.cardstats.xyz/cards/") && sources.length > 0)).toBe(true);
+
+    const ready = catalog.cards.find(({ canonicalUrl }) => canonicalUrl.endsWith("/ready-card"));
+    expect(ready?.facts).not.toHaveProperty("network");
+    expect(ready?.plans[0].options.map(({ name }) => name)).toEqual(["Lite", "Metal"]);
+
+    const markdown = agentCatalogMarkdown(catalog);
+    expect(markdown).toContain("## MetaMask Card");
+    expect(markdown).toContain("Primary sources:");
+    expect(markdown).not.toContain("Not disclosed");
   });
 });

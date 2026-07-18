@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T22:52:46+02:00",
-  "goal": "Implement the crawlability, canonical metadata, structured data, and AI-discovery foundation for cardstats.xyz after domain and Search Console setup.",
+  "updatedAt": "2026-07-18T23:02:43+02:00",
+  "goal": "Make CardStats explicitly accessible and safely extractable for AI search, citation crawlers, and user-directed agents.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
     "branch": "feat/seo-foundation",
-    "head": "75ec1802661922e8554ab7b291baf43e65d4d1dc",
+    "head": "a127a982c761939581ba2d0877674be8421fa2a8",
     "worktree": "dirty"
   },
   "completed": [
@@ -31,10 +31,12 @@
     "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance.",
     "Implemented the first technical SEO pass for the canonical www.cardstats.xyz host: route metadata, canonical and social tags, robots.txt, database-backed sitemap filtering out blocked profiles, generated social artwork, and llms.txt.",
     "Added safe Organization, WebSite, CollectionPage, ItemList, BreadcrumbList, WebPage, FinancialProduct, and Dataset JSON-LD that reflects visible database-backed content.",
-    "Opened PR 9 with a passing Vercel deployment and authenticated 200 smoke checks for the app, crawler endpoints, AI summary, and a researched card profile."
+    "Opened PR 9 with a passing Vercel deployment and authenticated 200 smoke checks for the app, crawler endpoints, AI summary, and a researched card profile.",
+    "Explicitly allowed current OpenAI, Anthropic, Perplexity, Google, and Bing search, user-fetch, and training agents on public routes while retaining the private research block.",
+    "Added revalidated Markdown and JSON agent catalogs that expose only researched programs, official facts, plan data, benefits, source URLs, and observation dates; blocked cards, unknowns, and catalog-lead fallback facts are omitted."
   ],
   "nextActions": [
-    "Review PR 9 and its protected Vercel preview; merge only after founder approval, then submit the canonical sitemap in Search Console.",
+    "Review the updated PR 9 preview and agent endpoints; merge only after founder approval, then submit the canonical sitemap in Google and Bing webmaster tools.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -50,7 +52,9 @@
       "ESLint, strict TypeScript, all 31 Vitest assertions, and the PostgreSQL-backed Next.js production build pass on feat/seo-foundation.",
       "Playwright passed the existing 12 desktop/mobile product checks plus crawler endpoint checks in both projects; rendered canonical, social, and JSON-LD output was separately parsed across home, catalog, profile, comparison, and analytics routes.",
       "Local production smoke checks returned HTTP 200 for robots.txt, sitemap.xml, llms.txt, and the generated PNG social image.",
-      "PR 9 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for home, robots.txt, sitemap.xml, llms.txt, and the MetaMask profile."
+      "PR 9 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for home, robots.txt, sitemap.xml, llms.txt, and the MetaMask profile.",
+      "AI access changes pass ESLint, strict TypeScript, all 32 Vitest assertions, and the PostgreSQL-backed Next.js production build with static one-day-revalidated /api/catalog and /llms-full.txt routes.",
+      "Both desktop and mobile crawler endpoint checks pass for explicit bot rules, llms.txt, the full Markdown catalog, the JSON catalog, sitemap, and social image."
     ],
     "failed": [],
     "notRun": [
@@ -88,10 +92,13 @@
     ,"next.config.ts",
     "public/llms.txt",
     "src/app/opengraph-image.tsx",
+    "src/app/api/catalog/route.ts",
+    "src/app/llms-full.txt/route.ts",
     "src/app/robots.ts",
     "src/app/sitemap.ts",
     "src/components/json-ld.tsx",
     "src/lib/seo.ts",
+    "src/lib/agent-catalog.ts",
     "tests/unit/seo.test.ts"
   ],
   "doNotRepeat": [

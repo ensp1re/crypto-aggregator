@@ -89,7 +89,11 @@ test("program detail exposes card details and the card website", async ({ page }
 test("crawler discovery endpoints expose only canonical public routes", async ({ request }) => {
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
-  expect(await robots.text()).toContain("Sitemap: https://www.cardstats.xyz/sitemap.xml");
+  const robotsText = await robots.text();
+  expect(robotsText).toContain("Sitemap: https://www.cardstats.xyz/sitemap.xml");
+  for (const agent of ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Google-Extended", "bingbot"]) {
+    expect(robotsText).toContain(`User-Agent: ${agent}`);
+  }
 
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
@@ -100,6 +104,17 @@ test("crawler discovery endpoints expose only canonical public routes", async ({
   const llms = await request.get("/llms.txt");
   expect(llms.status()).toBe(200);
   expect(await llms.text()).toContain("CardStats is an independent global crypto-card catalog");
+
+  const fullCatalog = await request.get("/llms-full.txt");
+  expect(fullCatalog.status()).toBe(200);
+  expect(fullCatalog.headers()["content-type"]).toContain("text/markdown");
+  expect(await fullCatalog.text()).toContain("## MetaMask Card");
+
+  const catalogApi = await request.get("/api/catalog");
+  expect(catalogApi.status()).toBe(200);
+  const agentCatalog = await catalogApi.json();
+  expect(agentCatalog.cardCount).toBe(52);
+  expect(agentCatalog.cards.some(({ canonicalUrl }: { canonicalUrl: string }) => canonicalUrl.endsWith("/metamask-card"))).toBe(true);
 
   const socialImage = await request.get("/opengraph-image");
   expect(socialImage.status()).toBe(200);
