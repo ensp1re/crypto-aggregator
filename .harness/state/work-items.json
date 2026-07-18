@@ -75,7 +75,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "After explicit founder approval, add DATABASE_URL as a sensitive Vercel preview-only variable, redeploy pull request 6, verify the hosted routes, and keep main unchanged.",
+      "nextAction": "Monitor the merged production catalog, resolve the eight research blockers, and independently review candidate evidence before canonical claim promotion.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
@@ -106,7 +106,9 @@
         "Protected preview deployment 5502478963 is READY at https://cardstats-65d7f4rha-aterli.vercel.app; authenticated smoke checks return 200 and contain the expected MetaMask, TapX, and Ready/MetaMask/RedotPay comparison content.",
         "The database now contains 60 discovery candidates, 280 scoped observations from 64 official sources for 52 candidates, 8 explicit blockers, 38 plan dimensions, and 125 options; zero candidates were promoted or published.",
         "One database-backed runtime projection replaces local research modules and keeps Ready as one program while exposing Solflare, Trustee Plus, Kraken, Bybit, and 55 other cards.",
-        "ESLint, strict TypeScript, Prisma validation/generation, 26 deterministic tests, the Next.js Webpack production compile, and both harness verification commands pass; the restricted sandbox blocked only database connectivity and Turbopack's internal helper port."
+        "ESLint, strict TypeScript, Prisma validation/generation, 26 deterministic tests, the Next.js Webpack production compile, and both harness verification commands pass; the restricted sandbox blocked only database connectivity and Turbopack's internal helper port.",
+        "Founder approved sensitive Vercel Preview and Production database access and the production merge; PR 6 squash-merged as f7aad76.",
+        "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready; six authenticated production smoke routes returned HTTP 200 with expected database-backed card, tier, and comparison content."
       ],
       "completion": null
     }
