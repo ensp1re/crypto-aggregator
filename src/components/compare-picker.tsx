@@ -89,7 +89,7 @@ export function ComparePicker({
             <div>
               <p className="kicker">Build comparison</p>
               <h2 id={titleId}>{anchor ? `Compare ${anchor.name}` : "Choose cards to compare"}</h2>
-              <p id={descriptionId}>Select at least two cards. You can choose a plan for cards with multiple options on the next screen.</p>
+              <p id={descriptionId}>Select at least two cards. Plans, memberships, and reward tiers can be changed in the comparison.</p>
             </div>
             <button className="icon-button" type="button" onClick={closePicker} aria-label="Close card picker">
               <X aria-hidden="true" size={20} />

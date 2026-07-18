@@ -80,7 +80,7 @@ This direction applies the UI-UX-PRO-MAX methodology—mobile-first hierarchy, a
 5. Apply hard eligibility/lifecycle filters.
 6. Return 3–6 options with “why it fits,” principal tradeoff, evidence confidence, and effective-value range.
 7. Show excluded near-matches and why.
-8. Let users adjust assumptions, compare, confirm with issuer, save, or choose none.
+8. Let users adjust assumptions, compare, open the current source, save, or choose none.
 
 Target: useful result in under three minutes and no more than five mandatory questions.
 

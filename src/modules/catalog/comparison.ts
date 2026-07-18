@@ -32,8 +32,10 @@ export function comparisonHref(slugs: readonly string[], plans: Readonly<Record<
   const params = new URLSearchParams();
   for (const slug of slugs) params.append("cards", slug);
   for (const slug of slugs) {
-    const plan = plans[slug];
-    if (plan) params.append("plans", `${slug}:${plan}`);
+    for (const [key, option] of Object.entries(plans)) {
+      if (!key.startsWith(`${slug}.`) || !option) continue;
+      params.append("plans", `${slug}:${key.slice(slug.length + 1)}:${option}`);
+    }
   }
   const query = params.toString();
   return query ? `/compare?${query}` : "/compare";

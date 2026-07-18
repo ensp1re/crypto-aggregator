@@ -1,42 +1,41 @@
 import { describe, expect, it } from "vitest";
-import snapshot from "@/modules/catalog/discovery-snapshot.json";
-import { getProgramBenefits, getProgramDetails } from "@/modules/catalog/program-details";
-import { programResearch } from "@/modules/catalog/program-research";
+import type { DiscoveryCard } from "@/modules/catalog/discovery";
+import { getCardFact, getProgramBenefits, selectionKey } from "@/modules/catalog/program-details";
 
-describe("official card program research", () => {
-  it("covers every catalog program with a direct source and explicit scope", () => {
-    expect(Object.keys(programResearch)).toHaveLength(42);
-    for (const card of snapshot.cards) {
-      const research = programResearch[card.id.toLowerCase()];
-      expect(research, card.id).toBeDefined();
-      if (card.id !== "tapx-card") {
-        expect(research.officialUrl).toMatch(/^https:\/\//);
-        expect(research.sourceUrl).toMatch(/^https:\/\//);
-      }
-      expect(research.availability.length).toBeGreaterThan(5);
-      expect(research.scope.length).toBeGreaterThan(20);
-    }
+const card = {
+  slug: "wirex-card",
+  facts: { annualFee: "Base fee" },
+  benefits: [{ kind: "wallet", title: "Mobile wallets", description: "Apple Pay and Google Pay" }],
+  dimensions: [
+    {
+      id: "subscription",
+      label: "Subscription",
+      kind: "SUBSCRIPTION",
+      combinable: true,
+      options: [{ id: "premium", name: "Premium", summary: "Premium", tierOrder: 1, facts: { annualFee: "€9.99/month" }, benefits: [], }],
+    },
+    {
+      id: "loyalty_tier",
+      label: "Loyalty tier",
+      kind: "LOYALTY_TIER",
+      combinable: true,
+      options: [{ id: "enhanced", name: "Enhanced", summary: "Enhanced", tierOrder: 1, facts: { cashbackMax: "2%" }, benefits: [{ kind: "rewards", title: "Enhanced rewards", description: "2%" }] }],
+    },
+  ],
+} as DiscoveryCard;
+
+const selections = {
+  [selectionKey("wirex-card", "subscription")]: "premium",
+  [selectionKey("wirex-card", "loyalty_tier")]: "enhanced",
+};
+
+describe("database-backed program projection", () => {
+  it("combines independent selected dimensions", () => {
+    expect(getCardFact(card, "annualFee", selections)).toBe("€9.99/month");
+    expect(getCardFact(card, "cashbackMax", selections)).toBe("2%");
   });
 
-  it("uses program names instead of duplicating plans as cards", () => {
-    expect(programResearch.kripicard.name).toBe("Kripicard");
-    expect(programResearch["ready-lite"].name).toBe("Ready Card");
-    expect(programResearch["whitebit-card"].name).toBe("WhiteBIT Nova");
-  });
-
-  it("publishes selectors only for source-backed one-dimensional choices", () => {
-    expect(getProgramDetails("ready-lite")?.selectionLabel).toBe("plan");
-    expect(getProgramDetails("fold-card")?.selectionLabel).toBe("membership");
-    expect(getProgramDetails("redotpay-card")?.selectionLabel).toBe("subscription");
-    expect(getProgramDetails("fiat24-card")?.selectionLabel).toBe("account tier");
-    expect(getProgramDetails("plutus-card")?.plans).toBeUndefined();
-    expect(getProgramDetails("coca-card")?.plans).toBeUndefined();
-  });
-
-  it("keeps future and dated benefits visibly qualified", () => {
-    expect(getProgramBenefits("ready-lite").find((benefit) => benefit.status === "coming-soon")?.title)
-      .toBe("Subscription savings");
-    expect(getProgramBenefits("gnosis-card").find((benefit) => benefit.status === "time-limited")?.validUntil)
-      .toBe("30 September 2026");
+  it("combines program and selected-option benefits", () => {
+    expect(getProgramBenefits(card, selections).map(({ title }) => title)).toEqual(["Mobile wallets", "Enhanced rewards"]);
   });
 });

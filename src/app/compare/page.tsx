@@ -9,10 +9,12 @@ export const metadata: Metadata = { title: "Compare crypto cards", description: 
 
 export default async function ComparePage({ searchParams }: { searchParams: Promise<{ cards?: string | string[]; plans?: string | string[] }> }) {
   const query = await searchParams;
-  const cards = resolveComparisonCards(query.cards);
-  const compareOptions = getCompareOptions();
+  const [cards, compareOptions] = await Promise.all([
+    resolveComparisonCards(query.cards),
+    getCompareOptions(),
+  ]);
   const selectedSlugs = cards.map((card) => card.slug);
-  const plans = resolveProgramPlans(selectedSlugs, query.plans);
+  const plans = resolveProgramPlans(cards, query.plans);
   return (
     <div className="shell page-stack compare-page">
       <header className="editorial-header"><div><p className="kicker">Card comparison</p><h1>Compare cards side by side.</h1></div><p>Choose up to four cards. For cards with multiple plans, pick the plan directly in the table.</p></header>

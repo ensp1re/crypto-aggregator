@@ -1,8 +1,9 @@
 import { normalizeComparisonSlugs, type CompareOption } from "./comparison";
 import { getDiscoverySnapshot, type DiscoveryCard } from "./discovery";
 
-export function getCompareOptions(): CompareOption[] {
-  return getDiscoverySnapshot().cards.map(({ slug, name, issuer, regions, custody, network }) => ({
+export async function getCompareOptions(): Promise<CompareOption[]> {
+  const { cards } = await getDiscoverySnapshot();
+  return cards.map(({ slug, name, issuer, regions, custody, network }) => ({
     slug,
     name,
     issuer,
@@ -12,8 +13,8 @@ export function getCompareOptions(): CompareOption[] {
   }));
 }
 
-export function resolveComparisonCards(raw: string | string[] | undefined) {
-  const cards = getDiscoverySnapshot().cards;
+export async function resolveComparisonCards(raw: string | string[] | undefined) {
+  const { cards } = await getDiscoverySnapshot();
   const slugs = normalizeComparisonSlugs(raw, cards.map((card) => card.slug));
   return slugs
     .map((slug) => cards.find((card) => card.slug === slug))

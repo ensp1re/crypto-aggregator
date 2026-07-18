@@ -40,14 +40,49 @@ enum ValueState {
 enum ClaimField {
   ELIGIBILITY
   CARD_TYPE
+  NETWORK
   FUNDING_MODEL
+  SUPPORTED_ASSETS
+  KYC
   ISSUANCE_FEE
+  SHIPPING_FEE
   MONTHLY_FEE
+  ANNUAL_FEE
+  TOP_UP_FEE
+  CONVERSION_FEE
   FX_FEE
   ATM_FEE
+  ATM_LIMIT
   REWARD_RATE
   REWARD_CAP
+  REWARD_CURRENCY
+  REWARD_QUALIFICATION
+  MOBILE_WALLET
+  BENEFIT
+  PROMOTION
   SPEND_LIMIT
+}
+
+enum PlanDimensionKind {
+  CARD_PLAN
+  SUBSCRIPTION
+  MEMBERSHIP_LEVEL
+  REWARD_TIER
+  REWARD_CATEGORY
+  REWARD_OFFER
+  LOYALTY_TIER
+  LOYALTY_LEVEL
+  LOYALTY_RANK
+  VERIFICATION_LEVEL
+  ACCOUNT_TIER
+  CARD_MODE
+}
+
+enum PlanResearchStatus {
+  STRUCTURED
+  PARTIAL
+  NO_PUBLIC_MATRIX
+  BLOCKED
 }
 
 enum ClaimStatus {
@@ -144,25 +179,48 @@ model CardOffering {
   program         CardProgram      @relation(fields: [programId], references: [id], onDelete: Restrict)
   issuer          Organization     @relation("OfferingIssuer", fields: [issuerId], references: [id], onDelete: Restrict)
   plans           Plan[]
+  planDimensions  PlanDimension[]
   claims          Claim[]
   publishedClaims PublishedClaim[]
 
   @@index([countryCode, lifecycle])
 }
 
+model PlanDimension {
+  id           String            @id @default(uuid()) @db.Uuid
+  offeringId   String            @db.Uuid
+  slug         String
+  label        String
+  kind         PlanDimensionKind
+  combinable   Boolean           @default(false)
+  displayOrder Int
+  createdAt    DateTime          @default(now()) @db.Timestamptz(3)
+  offering     CardOffering      @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  plans        Plan[]
+
+  @@unique([offeringId, slug])
+  @@unique([id, offeringId])
+  @@unique([offeringId, displayOrder])
+}
+
 model Plan {
-  id              String           @id @default(uuid()) @db.Uuid
-  slug            String           @unique
-  offeringId      String           @db.Uuid
+  id              String                    @id @default(uuid()) @db.Uuid
+  slug            String                    @unique
+  offeringId      String                    @db.Uuid
+  dimensionId     String                    @db.Uuid
   name            String
   tierOrder       Int
   qualification   String
   lifecycle       Lifecycle
-  offering        CardOffering     @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  offering        CardOffering              @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  dimension       PlanDimension             @relation(fields: [dimensionId, offeringId], references: [id, offeringId], onDelete: Cascade)
   claims          Claim[]
   publishedClaims PublishedClaim[]
+  claimScopes     ClaimPlanScope[]
+  publishedScopes PublishedClaimPlanScope[]
 
-  @@unique([offeringId, tierOrder])
+  @@unique([dimensionId, tierOrder])
+  @@unique([id, offeringId])
 }
 
 model Source {
@@ -215,23 +273,61 @@ model SourceImportRun {
 }
 
 model DiscoveryCandidate {
-  id            String                       @id @default(uuid()) @db.Uuid
-  importRunId   String                       @db.Uuid
-  externalKey   String
-  canonicalHint String
-  issuerHint    String
-  officialUrl   String?
-  observation   Json
-  status        CandidateStatus              @default(DISCOVERED)
-  rightsBasis   String
-  discoveredAt  DateTime                     @db.Timestamptz(3)
-  reviewedAt    DateTime?                    @db.Timestamptz(3)
-  reviewReason  String?
-  importRun     SourceImportRun              @relation(fields: [importRunId], references: [id], onDelete: Cascade)
-  evidence      DiscoveryCandidateEvidence[]
+  id                 String                       @id @default(uuid()) @db.Uuid
+  importRunId        String                       @db.Uuid
+  externalKey        String
+  canonicalHint      String
+  issuerHint         String
+  officialUrl        String?
+  observation        Json
+  status             CandidateStatus              @default(DISCOVERED)
+  planResearchStatus PlanResearchStatus            @default(NO_PUBLIC_MATRIX)
+  planResearchReason String?
+  rightsBasis        String
+  discoveredAt       DateTime                     @db.Timestamptz(3)
+  reviewedAt         DateTime?                    @db.Timestamptz(3)
+  reviewReason       String?
+  importRun          SourceImportRun              @relation(fields: [importRunId], references: [id], onDelete: Cascade)
+  evidence           DiscoveryCandidateEvidence[]
+  planDimensions     CandidatePlanDimension[]
 
   @@unique([importRunId, externalKey])
   @@index([status, canonicalHint])
+}
+
+model CandidatePlanDimension {
+  id           String                    @id @default(uuid()) @db.Uuid
+  candidateId  String                    @db.Uuid
+  slug         String
+  label        String
+  kind         PlanDimensionKind
+  combinable   Boolean                   @default(false)
+  displayOrder Int
+  observedAt   DateTime                  @db.Timestamptz(3)
+  candidate    DiscoveryCandidate        @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  options      CandidatePlanOption[]
+
+  @@unique([candidateId, slug])
+  @@unique([candidateId, displayOrder])
+}
+
+model CandidatePlanOption {
+  id              String                 @id @default(uuid()) @db.Uuid
+  dimensionId     String                 @db.Uuid
+  slug            String
+  name            String
+  tierOrder       Int
+  qualification   String?
+  lifecycle       Lifecycle?
+  displayValue    String
+  valueJson       Json?
+  scopeJson       Json
+  sourceFieldKeys String[]
+  observedAt      DateTime               @db.Timestamptz(3)
+  dimension       CandidatePlanDimension @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
+
+  @@unique([dimensionId, slug])
+  @@unique([dimensionId, tierOrder])
 }
 
 model DiscoveryCandidateEvidence {
@@ -289,34 +385,49 @@ model MarketMetricPoint {
 }
 
 model Claim {
-  id             String          @id @default(uuid()) @db.Uuid
-  offeringId     String          @db.Uuid
-  planId         String?         @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
+  offeringId     String           @db.Uuid
+  planId         String?          @db.Uuid
   field          ClaimField
+  subjectKey     String           @default("default") @db.VarChar(160)
+  scopeKey       String           @default("offering") @db.VarChar(500)
   valueState     ValueState
   displayValue   String
   valueJson      Json?
-  countryCode    String          @db.VarChar(2)
-  critical       Boolean         @default(true)
-  status         ClaimStatus     @default(CANDIDATE)
-  effectiveFrom  DateTime        @db.Date
-  effectiveTo    DateTime?       @db.Date
-  observedAt     DateTime        @db.Timestamptz(3)
-  createdById    String          @db.Uuid
-  approvedById   String?         @db.Uuid
-  publishedAt    DateTime?       @db.Timestamptz(3)
-  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
-  offering       CardOffering    @relation(fields: [offeringId], references: [id], onDelete: Restrict)
-  plan           Plan?           @relation(fields: [planId], references: [id], onDelete: Restrict)
-  createdBy      Actor           @relation("ClaimCreator", fields: [createdById], references: [id], onDelete: Restrict)
-  approvedBy     Actor?          @relation("ClaimApprover", fields: [approvedById], references: [id], onDelete: Restrict)
+  countryCode    String           @db.VarChar(2)
+  critical       Boolean          @default(true)
+  status         ClaimStatus      @default(CANDIDATE)
+  effectiveFrom  DateTime         @db.Date
+  effectiveTo    DateTime?        @db.Date
+  observedAt     DateTime         @db.Timestamptz(3)
+  createdById    String           @db.Uuid
+  approvedById   String?          @db.Uuid
+  publishedAt    DateTime?        @db.Timestamptz(3)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
+  offering       CardOffering     @relation(fields: [offeringId], references: [id], onDelete: Restrict)
+  plan           Plan?            @relation(fields: [planId, offeringId], references: [id, offeringId], onDelete: Restrict)
+  createdBy      Actor            @relation("ClaimCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedBy     Actor?           @relation("ClaimApprover", fields: [approvedById], references: [id], onDelete: Restrict)
   evidence       ClaimEvidence[]
+  planScopes     ClaimPlanScope[]
   reviewEvents   ReviewEvent[]
   publishedClaim PublishedClaim?
 
+  @@unique([id, offeringId])
   @@index([offeringId, planId, field, status])
   @@index([countryCode, status, effectiveTo])
+}
+
+model ClaimPlanScope {
+  claimId    String @db.Uuid
+  planId     String @db.Uuid
+  offeringId String @db.Uuid
+  claim      Claim  @relation(fields: [claimId, offeringId], references: [id, offeringId], onDelete: Cascade)
+  plan       Plan   @relation(fields: [planId, offeringId], references: [id, offeringId], onDelete: Restrict)
+
+  @@id([claimId, planId])
+  @@index([planId])
 }
 
 model ClaimEvidence {
@@ -354,25 +465,40 @@ model PublicationRevision {
 }
 
 model PublishedClaim {
-  id                    String              @id @default(uuid()) @db.Uuid
-  claimId               String              @unique @db.Uuid
-  offeringId            String              @db.Uuid
-  planId                String?             @db.Uuid
+  id                    String                    @id @default(uuid()) @db.Uuid
+  claimId               String                    @unique @db.Uuid
+  offeringId            String                    @db.Uuid
+  planId                String?                   @db.Uuid
   field                 ClaimField
+  subjectKey            String                    @default("default") @db.VarChar(160)
+  scopeKey              String                    @default("offering") @db.VarChar(500)
   valueState            ValueState
   displayValue          String
   valueJson             Json?
-  countryCode           String              @db.VarChar(2)
-  effectiveFrom         DateTime            @db.Date
-  effectiveTo           DateTime?           @db.Date
-  observedAt            DateTime            @db.Timestamptz(3)
-  publishedAt           DateTime            @db.Timestamptz(3)
-  publicationRevisionId String              @db.Uuid
-  claim                 Claim               @relation(fields: [claimId], references: [id], onDelete: Restrict)
-  offering              CardOffering        @relation(fields: [offeringId], references: [id], onDelete: Restrict)
-  plan                  Plan?               @relation(fields: [planId], references: [id], onDelete: Restrict)
-  publicationRevision   PublicationRevision @relation(fields: [publicationRevisionId], references: [id], onDelete: Restrict)
+  countryCode           String                    @db.VarChar(2)
+  effectiveFrom         DateTime                  @db.Date
+  effectiveTo           DateTime?                 @db.Date
+  observedAt            DateTime                  @db.Timestamptz(3)
+  publishedAt           DateTime                  @db.Timestamptz(3)
+  publicationRevisionId String                    @db.Uuid
+  claim                 Claim                     @relation(fields: [claimId], references: [id], onDelete: Restrict)
+  offering              CardOffering              @relation(fields: [offeringId], references: [id], onDelete: Restrict)
+  plan                  Plan?                     @relation(fields: [planId, offeringId], references: [id, offeringId], onDelete: Restrict)
+  publicationRevision   PublicationRevision       @relation(fields: [publicationRevisionId], references: [id], onDelete: Restrict)
+  planScopes            PublishedClaimPlanScope[]
 
+  @@unique([id, offeringId])
   @@index([offeringId, planId, field])
   @@index([countryCode, field])
+}
+
+model PublishedClaimPlanScope {
+  publishedClaimId String         @db.Uuid
+  planId           String         @db.Uuid
+  offeringId       String         @db.Uuid
+  publishedClaim   PublishedClaim @relation(fields: [publishedClaimId, offeringId], references: [id, offeringId], onDelete: Cascade)
+  plan             Plan           @relation(fields: [planId, offeringId], references: [id, offeringId], onDelete: Restrict)
+
+  @@id([publishedClaimId, planId])
+  @@index([planId])
 }

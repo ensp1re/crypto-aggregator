@@ -97,11 +97,15 @@ async function main() {
       },
     });
 
+    const [deSubscription, frSubscription] = await Promise.all([
+      tx.planDimension.create({ data: { offeringId: deOffering.id, slug: "subscription", label: "Subscription", kind: "SUBSCRIPTION", displayOrder: 1 } }),
+      tx.planDimension.create({ data: { offeringId: frOffering.id, slug: "subscription", label: "Subscription", kind: "SUBSCRIPTION", displayOrder: 1 } }),
+    ]);
     const [deCore, dePlus, frCore, frPlus] = await Promise.all([
-      tx.plan.create({ data: { slug: "atlas-de-core", offeringId: deOffering.id, name: "Core", tierOrder: 1, qualification: "No subscription", lifecycle: "LIVE" } }),
-      tx.plan.create({ data: { slug: "atlas-de-plus", offeringId: deOffering.id, name: "Plus", tierOrder: 2, qualification: "EUR 9.99 monthly subscription", lifecycle: "LIVE" } }),
-      tx.plan.create({ data: { slug: "atlas-fr-core", offeringId: frOffering.id, name: "Core", tierOrder: 1, qualification: "No subscription", lifecycle: "LIVE" } }),
-      tx.plan.create({ data: { slug: "atlas-fr-plus", offeringId: frOffering.id, name: "Plus", tierOrder: 2, qualification: "EUR 7.99 monthly subscription", lifecycle: "LIVE" } }),
+      tx.plan.create({ data: { slug: "atlas-de-core", offeringId: deOffering.id, dimensionId: deSubscription.id, name: "Core", tierOrder: 1, qualification: "No subscription", lifecycle: "LIVE" } }),
+      tx.plan.create({ data: { slug: "atlas-de-plus", offeringId: deOffering.id, dimensionId: deSubscription.id, name: "Plus", tierOrder: 2, qualification: "EUR 9.99 monthly subscription", lifecycle: "LIVE" } }),
+      tx.plan.create({ data: { slug: "atlas-fr-core", offeringId: frOffering.id, dimensionId: frSubscription.id, name: "Core", tierOrder: 1, qualification: "No subscription", lifecycle: "LIVE" } }),
+      tx.plan.create({ data: { slug: "atlas-fr-plus", offeringId: frOffering.id, dimensionId: frSubscription.id, name: "Plus", tierOrder: 2, qualification: "EUR 7.99 monthly subscription", lifecycle: "LIVE" } }),
     ]);
 
     const [deSource, frSource] = await Promise.all([
@@ -132,6 +136,7 @@ async function main() {
         data: {
           offeringId: data.offeringId,
           planId: data.planId,
+          scopeKey: data.planId ?? "offering",
           field: data.field,
           valueState: data.valueState ?? "KNOWN",
           displayValue: data.displayValue,
@@ -144,6 +149,7 @@ async function main() {
           approvedById: verifier.id,
           publishedAt,
           evidence: { create: { artifactId: data.artifactId, relation: "SUPPORTS", excerptHash: data.hash } },
+          planScopes: data.planId ? { create: { planId: data.planId } } : undefined,
           reviewEvents: {
             create: [
               { actorId: researcher.id, action: "SUBMITTED", reason: "Captured from the license-safe synthetic terms fixture." },
@@ -158,6 +164,7 @@ async function main() {
           claimId: claim.id,
           offeringId: data.offeringId,
           planId: data.planId,
+          scopeKey: data.planId ?? "offering",
           field: data.field,
           valueState: data.valueState ?? "KNOWN",
           displayValue: data.displayValue,
@@ -167,6 +174,7 @@ async function main() {
           observedAt,
           publishedAt,
           publicationRevisionId: publication.id,
+          planScopes: data.planId ? { create: { planId: data.planId } } : undefined,
         },
       });
     };

@@ -10,21 +10,21 @@ test("home and catalog expose the full card index", async ({ page }, testInfo) =
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Compare the card");
   await expect(page.getByText("Cards indexed")).toBeVisible();
-  await expect(page.getByText("Card profiles")).toBeVisible();
-  await page.getByRole("link", { name: /Explore 42 cards/ }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Forty-two cards");
-  await expect(page.getByText("42 of 42 cards")).toBeVisible();
+  await expect(page.getByText("Official sources collected")).toBeVisible();
+  await page.getByRole("link", { name: /Explore 60 cards/ }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("60 cards");
+  await expect(page.getByText("60 of 60 cards")).toBeVisible();
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
-  const fundingControl = page.getByRole("combobox", { name: /Funding control/ });
-  await fundingControl.focus();
+  const network = page.getByRole("combobox", { name: /Network/ });
+  await network.focus();
   await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("listbox", { name: "Funding control" })).toBeVisible();
+  await expect(page.getByRole("listbox", { name: "Network" })).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-  await page.keyboard.press("s");
+  await page.keyboard.press("v");
   await page.keyboard.press("Enter");
-  await expect(fundingControl).toContainText("Self-Custody");
+  await expect(network).toContainText("Visa");
   await page.getByRole("button", { name: /Apply/ }).click();
-  await expect(page).toHaveURL(/custody=Self-Custody/);
+  await expect(page).toHaveURL(/network=Visa/);
   await expectNoOverflow(page);
 
   const accessibility = await new AxeBuilder({ page }).analyze();
@@ -67,11 +67,11 @@ test("program detail exposes card details and the card website", async ({ page }
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
-test("analytics provides accessible custody data and an explicit licensed-data boundary", async ({ page }) => {
+test("analytics provides accessible catalog data and an explicit licensed-data boundary", async ({ page }) => {
   await page.goto("/analytics");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("keep users in control");
-  await expect(page.getByRole("heading", { name: "Funding models" })).toBeVisible();
-  await expect(page.getByRole("table", { name: "Funding models data" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("official sources disclose");
+  await expect(page.getByRole("heading", { name: "Funding descriptions" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Funding descriptions data" })).toBeVisible();
   await expect(page.getByText("Payment volume is not imported yet.")).toBeVisible();
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
@@ -81,7 +81,7 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
   await page.goto("/cards/metamask-card");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Compare MetaMask Card" });
-  await dialog.getByRole("checkbox", { name: /ether.fi Cash/ }).check();
+  await dialog.getByRole("checkbox", { name: /Ether\.fi Cash/i }).check();
   await dialog.getByRole("checkbox", { name: /Gnosis Pay/ }).check();
   await dialog.getByRole("button", { name: "Compare 3 cards" }).click();
   await expect(page).toHaveURL(/cards=metamask-card&cards=etherfi-card&cards=gnosis-card/);
@@ -92,23 +92,22 @@ test("profile picker creates a shareable multi-card comparison", async ({ page }
 });
 
 test("one Ready Card profile controls Lite and Metal plan details", async ({ page }) => {
-  await page.goto("/cards/ready-lite");
+  await page.goto("/cards/ready-card");
   await expect(page.getByRole("heading", { level: 1, name: "Ready Card" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Lite", exact: true })).toHaveAttribute("aria-current", "page");
   await page.getByRole("link", { name: "Metal", exact: true }).click();
-  await expect(page).toHaveURL(/plan=metal/);
+  await expect(page).toHaveURL(/plans=card_plan%3Ametal/);
   await expect(page.getByRole("heading", { name: "Benefits & perks / Metal" })).toBeVisible();
-  await expect(page.getByText("120 USDC for the first year")).toBeVisible();
-  await expect(page.getByText("Ready Travel", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Subscription savings/ })).toBeVisible();
+  await expect(page.getByText(/Metal: \$120\/year/).first()).toBeVisible();
+  await expect(page.getByText(/Metal partner offers/).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "Visit website" })).toHaveAttribute("href", "https://www.ready.co/card");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Compare Ready Card" });
   await dialog.getByRole("checkbox", { name: /MetaMask Card/ }).check();
   await dialog.getByRole("button", { name: "Compare 2 cards" }).click();
-  await expect(page).toHaveURL(/plans=ready-lite%3Ametal/);
-  await expect(page.getByLabel("Ready Card plan").getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
-  await expect(page.getByText("120 USDC for the first year")).toBeVisible();
+  await expect(page).toHaveURL(/plans=ready-card%3Acard_plan%3Ametal/);
+  await expect(page.getByLabel("Ready Card Card plan").getByRole("link", { name: "Metal", exact: true })).toHaveAttribute("aria-current", "true");
+  await expect(page.getByText(/Metal: \$120\/year/).first()).toBeVisible();
 });
 
 test("real comparison uses a contained semantic table on mobile", async ({ page }, testInfo) => {

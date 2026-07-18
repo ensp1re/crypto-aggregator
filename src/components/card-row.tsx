@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { IssuerMark } from "./issuer-mark";
 import { maximumReward, type DiscoveryCard } from "@/modules/catalog/discovery";
+import { comparisonHref } from "@/modules/catalog/comparison";
 
 export function CardRow({ card }: { card: DiscoveryCard }) {
   return (
@@ -17,6 +18,7 @@ export function CardRow({ card }: { card: DiscoveryCard }) {
         <div><dt>Regions</dt><dd>{card.regions}</dd></div>
       </dl>
       <div className="catalog-actions">
+        <Link className="text-link" href={comparisonHref([card.slug])}>Compare</Link>
         <Link className="text-link" href={`/cards/${card.slug}`}>Open profile <ArrowUpRight aria-hidden="true" size={16} /></Link>
       </div>
     </article>

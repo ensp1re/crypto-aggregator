@@ -9,22 +9,22 @@ import type { DiscoveryCard } from "@/modules/catalog/discovery";
 import {
   benefitSummary,
   getCardFact,
-  getProgramDetails,
   getProgramName,
-  getProgramPlan,
+  getSelectedOptions,
+  selectionKey,
   type BenefitKind,
   type CardFactKey,
 } from "@/modules/catalog/program-details";
 
 const groups = [
-  { label: "Access", rows: [["Current status", "availability"], ["Product scope", "scope"], ["Regions", "regions"], ["KYC", "kyc"]] },
+  { label: "Access", rows: [["Regions", "regions"], ["KYC", "kyc"]] },
   { label: "Funding and card model", rows: [["Funding model", "custody"], ["Funding or top-up fee", "fundingFee"], ["Card model", "type"], ["Network", "network"], ["Supported assets", "supportedAssets"]] },
   { label: "Cost and access limits", rows: [["Annual fee", "annualFee"], ["FX fee", "fxFee"], ["ATM limit", "atmLimit"]] },
   { label: "Rewards and requirements", rows: [["Rewards", "cashbackMax"], ["Requirements", "stakingRequired"]] },
   { label: "Benefits and perks", rows: [["Travel", "travel"], ["Subscriptions", "subscriptions"], ["Partner offers", "partner"], ["Mobile wallets", "wallet"]] },
 ] as const;
 
-type ComparisonKey = CardFactKey | Exclude<BenefitKind, "rewards"> | "availability" | "scope";
+type ComparisonKey = CardFactKey | Exclude<BenefitKind, "rewards">;
 
 export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plans: Record<string, string> }) {
   const [differencesOnly, setDifferencesOnly] = useState(false);
@@ -33,7 +33,7 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
   const visibleGroups = useMemo(() => groups.map((group) => ({
     ...group,
     rows: group.rows.filter(([, key]) => {
-      const values = cards.map((card) => displayValue(card, key, plans[card.slug]));
+      const values = cards.map((card) => displayValue(card, key, plans));
       if (isBenefitKey(key) && values.every((value) => value === "No details yet")) return false;
       return !differencesOnly || new Set(values).size > 1;
     }),
@@ -66,26 +66,28 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
             <tr>
               <th className="factor-column" scope="col">Decision factor</th>
               {cards.map((card) => {
-                const details = getProgramDetails(card.slug);
-                const selectedPlan = getProgramPlan(card.slug, plans[card.slug]);
+                const selectedOptions = getSelectedOptions(card, plans);
                 const remainingCards = cards.filter((item) => item.slug !== card.slug);
-                const remainingPlans = Object.fromEntries(Object.entries(plans).filter(([slug]) => slug !== card.slug));
+                const remainingPlans = Object.fromEntries(Object.entries(plans).filter(([key]) => !key.startsWith(`${card.slug}.`)));
                 const name = getProgramName(card);
                 return <th id={`card-${card.slug}`} scope="col" key={card.id}>
                   <div className="compare-card-heading">
                     <IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} size={42} />
-                    <span><strong><Link href={`/cards/${card.slug}${selectedPlan ? `?plan=${selectedPlan.id}` : ""}`}>{name}</Link></strong><small>{selectedPlan?.name ?? card.issuer}</small></span>
+                    <span><strong><Link href={`/cards/${card.slug}`}>{name}</Link></strong><small>{selectedOptions.length ? selectedOptions.map(({ option }) => option.name).join(" + ") : card.issuer}</small></span>
                     <span className="compare-card-actions">
                       <Link href={comparisonHref(remainingCards.map((item) => item.slug), remainingPlans)} aria-label={`Remove ${name} from comparison`}><X aria-hidden="true" size={16} /></Link>
                     </span>
                   </div>
-                  {details?.plans?.length ? <div className="compare-plan-tabs" aria-label={`${name} ${details.selectionLabel ?? "card option"}`}>
-                    {details.plans.map((plan) => <Link
-                      aria-current={selectedPlan?.id === plan.id ? "true" : undefined}
-                      href={comparisonHref(cards.map((item) => item.slug), { ...plans, [card.slug]: plan.id })}
-                      key={plan.id}
-                    >{plan.name}</Link>)}
-                  </div> : null}
+                  {card.dimensions.map((dimension) => <div className="compare-plan-control" key={dimension.id}>
+                    <span>{dimension.label}</span>
+                    <div className="compare-plan-tabs" aria-label={`${name} ${dimension.label}`}>
+                      {dimension.options.map((option) => <Link
+                        aria-current={plans[selectionKey(card.slug, dimension.id)] === option.id ? "true" : undefined}
+                        href={comparisonHref(cards.map((item) => item.slug), { ...plans, [selectionKey(card.slug, dimension.id)]: option.id })}
+                        key={option.id}
+                      >{option.name}</Link>)}
+                    </div>
+                  </div>)}
                 </th>;
               })}
             </tr>
@@ -96,7 +98,7 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
               const rowId = `factor-${key}`;
               return <tr key={key}>
                 <th id={rowId} className="factor-column" scope="row">{label}</th>
-                {cards.map((card) => <td headers={`${rowId} card-${card.slug}`} key={card.id}>{displayValue(card, key, plans[card.slug])}</td>)}
+                {cards.map((card) => <td headers={`${rowId} card-${card.slug}`} key={card.id}>{displayValue(card, key, plans)}</td>)}
               </tr>;
             })}
           </tbody>)}
@@ -106,14 +108,11 @@ export function ComparisonTable({ cards, plans }: { cards: DiscoveryCard[]; plan
   );
 }
 
-function displayValue(card: DiscoveryCard, key: ComparisonKey, planId?: string) {
-  if (key === "availability" || key === "scope") {
-    return getProgramDetails(card.slug)?.[key] ?? "Details unavailable";
-  }
+function displayValue(card: DiscoveryCard, key: ComparisonKey, plans: Record<string, string>) {
   if (isBenefitKey(key)) {
-    return benefitSummary(card.slug, planId, key);
+    return benefitSummary(card, plans, key);
   }
-  return getCardFact(card, key, planId);
+  return getCardFact(card, key, plans);
 }
 
 function isBenefitKey(key: ComparisonKey): key is Exclude<BenefitKind, "rewards"> {
