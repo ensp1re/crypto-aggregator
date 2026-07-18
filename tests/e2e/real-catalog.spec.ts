@@ -9,11 +9,18 @@ async function expectNoOverflow(page: Page) {
 test("home and catalog expose the full card index", async ({ page }, testInfo) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Compare the card");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /^https:\/\/www\.cardstats\.xyz\/?$/,
+  );
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /opengraph-image/);
+  expect(await page.locator('script[type="application/ld+json"]').count()).toBeGreaterThan(0);
   await expect(page.getByText("Cards indexed")).toBeVisible();
   await expect(page.getByText("Official sources collected")).toBeVisible();
   await page.getByRole("link", { name: /Explore 60 cards/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("60 cards");
   await expect(page.getByText("60 of 60 cards")).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://www.cardstats.xyz/cards");
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
   const network = page.getByRole("combobox", { name: /Network/ });
   await network.focus();
@@ -51,6 +58,13 @@ test("home and catalog expose the full card index", async ({ page }, testInfo) =
 test("program detail exposes card details and the card website", async ({ page }) => {
   await page.goto("/cards/metamask-card");
   await expect(page.getByRole("heading", { level: 1, name: "MetaMask Card" })).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://www.cardstats.xyz/cards/metamask-card");
+  const schemaTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.flatMap((script) => {
+    const value = JSON.parse(script.textContent ?? "{}");
+    return value["@graph"]?.map((item: { "@type"?: string }) => item["@type"]) ?? [value["@type"]];
+  }));
+  expect(schemaTypes).toContain("FinancialProduct");
+  expect(schemaTypes).toContain("BreadcrumbList");
   await expect(page.getByAltText("MetaMask fox symbol")).toBeVisible();
   await page.getByText(/Review \d+ sourced details/).click();
   await expect(page.getByRole("heading", { name: "Latest card details" })).toBeVisible();
@@ -70,6 +84,41 @@ test("program detail exposes card details and the card website", async ({ page }
   await expect(compareButton).toBeFocused();
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test("crawler discovery endpoints expose only canonical public routes", async ({ request }) => {
+  const robots = await request.get("/robots.txt");
+  expect(robots.status()).toBe(200);
+  const robotsText = await robots.text();
+  expect(robotsText).toContain("Sitemap: https://www.cardstats.xyz/sitemap.xml");
+  for (const agent of ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Google-Extended", "bingbot"]) {
+    expect(robotsText).toContain(`User-Agent: ${agent}`);
+  }
+
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.status()).toBe(200);
+  const sitemapText = await sitemap.text();
+  expect(sitemapText).toContain("https://www.cardstats.xyz/cards/metamask-card");
+  expect(sitemapText).not.toContain("/research");
+
+  const llms = await request.get("/llms.txt");
+  expect(llms.status()).toBe(200);
+  expect(await llms.text()).toContain("CardStats is an independent global crypto-card catalog");
+
+  const fullCatalog = await request.get("/llms-full.txt");
+  expect(fullCatalog.status()).toBe(200);
+  expect(fullCatalog.headers()["content-type"]).toContain("text/markdown");
+  expect(await fullCatalog.text()).toContain("## MetaMask Card");
+
+  const catalogApi = await request.get("/api/catalog");
+  expect(catalogApi.status()).toBe(200);
+  const agentCatalog = await catalogApi.json();
+  expect(agentCatalog.cardCount).toBe(52);
+  expect(agentCatalog.cards.some(({ canonicalUrl }: { canonicalUrl: string }) => canonicalUrl.endsWith("/metamask-card"))).toBe(true);
+
+  const socialImage = await request.get("/opengraph-image");
+  expect(socialImage.status()).toBe(200);
+  expect(socialImage.headers()["content-type"]).toContain("image/png");
 });
 
 test("analytics provides accessible catalog data and an explicit licensed-data boundary", async ({ page }) => {

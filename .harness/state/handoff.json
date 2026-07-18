@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T21:09:03+02:00",
-  "goal": "Replace provisional consumer labels, repair live tier switching, and redesign catalog search, comparison controls, and card profiles.",
+  "updatedAt": "2026-07-18T23:05:16+02:00",
+  "goal": "Make CardStats explicitly accessible and safely extractable for AI search, citation crawlers, and user-directed agents.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "feat/live-catalog-profile-ux",
-    "head": "faabde1f5b0478cc52d56d66f637acee96cffdc7",
+    "branch": "feat/seo-foundation",
+    "head": "b2de237a692c9791c5360e43339b4f93fe82f0cc",
     "worktree": "dirty"
   },
   "completed": [
@@ -22,21 +22,21 @@
     "Kept mobile comparison as a semantic horizontally scrollable table with a sticky factor column and explicit scroll controls; it never changes to card grids.",
     "Removed reported, Confirm with issuer, and the requested eligibility/regional normalization copy from consumer surfaces.",
     "Documented that candidate plan research remains staging data and does not change canonical claim publication status.",
-    "Founder explicitly approved sensitive Vercel Preview and Production database access and the production merge; PR 6 was squash-merged as f7aad76.",
-    "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and serves the 60-card catalog.",
     "Repaired the public database projection so structured tier economics no longer repeat one summary across unrelated fee, FX, ATM, and reward rows.",
     "Added marked catalog-lead fallback fields, resilient issuer marks, normalized analytics categories, mobile navigation, and an adaptive one-card-at-a-time comparison table with native tier selectors.",
     "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison.",
-    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged.",
-    "Squash-merged PR 7 as 0b526522 before beginning the follow-up work, then created feat/live-catalog-profile-ux as the requested isolated review branch.",
     "Removed consumer-facing catalog-lead and provisional labels, added instant in-memory catalog search, and reused the accessible custom selector for catalog filters, profile options, and comparison options.",
     "Tier and plan changes now update comparison facts immediately before synchronizing shareable URL state; the Ready Metal-to-Lite browser assertion proves plan-scoped rows change.",
     "Reworked profile hierarchy around card setup, facts, benefits, and a collapsed source ledger while preserving source provenance in the database projection.",
     "Visually reviewed desktop and mobile catalog, Ready profile, and Ready/MetaMask comparison layouts after applying ui-ux-pro-max and design-taste-frontend guidance.",
-    "Opened PR 8 at https://github.com/ensp1re/crypto-aggregator/pull/8; Vercel preview 9zmAKC9ooVt9arDQH3qkShEMb6ge is READY at https://cardstats-git-feat-live-catalog-profile-ux-aterli.vercel.app."
+    "Implemented the first technical SEO pass for the canonical www.cardstats.xyz host: route metadata, canonical and social tags, robots.txt, database-backed sitemap filtering out blocked profiles, generated social artwork, and llms.txt.",
+    "Added safe Organization, WebSite, CollectionPage, ItemList, BreadcrumbList, WebPage, FinancialProduct, and Dataset JSON-LD that reflects visible database-backed content.",
+    "Opened PR 9 with a passing Vercel deployment and authenticated 200 smoke checks for the app, crawler endpoints, AI summary, and a researched card profile.",
+    "Explicitly allowed current OpenAI, Anthropic, Perplexity, Google, and Bing search, user-fetch, and training agents on public routes while retaining the private research block.",
+    "Added revalidated Markdown and JSON agent catalogs that expose only researched programs, official facts, plan data, benefits, source URLs, and observation dates; blocked cards, unknowns, and catalog-lead fallback facts are omitted."
   ],
   "nextActions": [
-    "Review PR 8 and its protected Vercel preview; merge only after founder approval.",
+    "Review the updated PR 9 preview and agent endpoints; merge only after founder approval, then submit the canonical sitemap in Google and Bing webmaster tools.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -49,29 +49,18 @@
   "openQuestions": [],
   "verification": {
     "passed": [
-      "ESLint and strict TypeScript pass.",
-      "26 deterministic unit, ingestion, policy, and access tests pass.",
-      "Prisma schema validation and client generation pass.",
-      "Next.js production compilation passes with the Webpack builder.",
-      "Harness check and full deterministic harness verification pass.",
-      "Database migrations were applied earlier in this session; the collector stored 60 candidates, 280 observations, 38 dimensions, and 125 options.",
-      "The required ui-ux-pro-max workflow and taste audit were applied; prior Chromium evidence confirms the searchable dialog and localized mobile table interaction.",
-      "Vercel preview dpl_4qH3Ph9MA54pH5fLNni9hsE1qc7B passed its deployment check and six authenticated database-backed smoke routes returned HTTP 200.",
-      "PR 6 is squash-merged as f7aad76; production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and six production smoke routes returned HTTP 200 with expected Solflare, Bybit, Ready, Kraken, and comparison content."
-      ,"ESLint, strict TypeScript, 28 Vitest checks, the PostgreSQL-backed Next.js production build, 10 previously passing desktop/mobile Playwright checks, and the corrected two-project Ready tier interaction check pass."
-      ,"Axe, 44px mobile targets, horizontal table containment, landscape, reduced motion, and 200% text reflow passed in Chromium; desktop home/profile and Pixel 7 catalog/comparison screenshots were visually inspected."
-      ,"Vercel preview deployment dpl_5qvnPUwKVDVd2885R2st3LgAtUBW reached READY and authenticated home, Ready profile, and Ready/Bybit/Solflare comparison smoke checks returned HTTP 200."
-      ,"ESLint, strict TypeScript, all 28 Vitest checks with approved PostgreSQL access, and the database-backed Next.js production build pass on feat/live-catalog-profile-ux."
-      ,"All 12 desktop/mobile Playwright checks pass, including axe, 44px mobile targets, live search without Apply, Ready profile plan changes, Ready comparison plan changes, horizontal table containment, landscape, reduced motion, and 200% text reflow."
-      ,"Desktop and Pixel 5 screenshots of the catalog, Ready profile, and Ready/MetaMask comparison were inspected against the ui-ux-pro-max checklist and the taste-skill preserve-mode hierarchy."
-      ,"PR 8 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for the catalog, Ready profile, and Ready/MetaMask comparison."
+      "ESLint, strict TypeScript, all 31 Vitest assertions, and the PostgreSQL-backed Next.js production build pass on feat/seo-foundation.",
+      "Playwright passed the existing 12 desktop/mobile product checks plus crawler endpoint checks in both projects; rendered canonical, social, and JSON-LD output was separately parsed across home, catalog, profile, comparison, and analytics routes.",
+      "Local production smoke checks returned HTTP 200 for robots.txt, sitemap.xml, llms.txt, and the generated PNG social image.",
+      "PR 9 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for home, robots.txt, sitemap.xml, llms.txt, and the MetaMask profile.",
+      "AI access changes pass ESLint, strict TypeScript, all 32 Vitest assertions, and the PostgreSQL-backed Next.js production build with static one-day-revalidated /api/catalog and /llms-full.txt routes.",
+      "Both desktop and mobile crawler endpoint checks pass for explicit bot rules, llms.txt, the full Markdown catalog, the JSON catalog, sitemap, and social image.",
+      "Updated PR 9 deployment 3G4sAG5iMmahiyYr1ys4nVjp7GVx is ready; OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Googlebot user-agent smoke checks returned HTTP 200 with the expected text, Markdown, and JSON content types."
     ],
     "failed": [],
     "notRun": [
-      "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Vercel Turbopack build and local Webpack production compile passed.",
       "Manual VoiceOver and NVDA testing is unavailable in this environment.",
-      "The first Vitest command used an unsupported Jest-only flag and was rerun successfully with the repository command; the first sandboxed integration run was blocked by network EPERM and passed with approved database access.",
-      "The first two Playwright passes exposed stale copy expectations, a narrow mobile navigation target, text-zoom overflow, and a strict selector; each defect was corrected and the affected desktop/mobile checks passed on rerun."
+      "Search Console performance data is not exposed through the current workspace connectors, so query-led content expansion was intentionally not started."
     ]
   },
   "risks": [
@@ -79,7 +68,8 @@
     "Binance, BitPay, Coinbase, Deblock, Kripicard, Revolut, TapX, and Xapo remain explicit research blockers.",
     "Four programs remain partial because the issuer exposes an incomplete, image-only, in-app, or otherwise non-reproducible option matrix.",
     "Issuer terms and promotions can change; scheduled revalidation and stale-state projection are not yet complete.",
-    "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release."
+    "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release.",
+    "The domain is newly connected to Search Console and may not have actionable query data yet; rankings cannot be guaranteed and content expansion should wait for measured impressions rather than publishing thin pages."
   ],
   "touchedPaths": [
     ".harness/state/handoff.json",
@@ -100,7 +90,17 @@
     "src/modules/publication/publication-service.ts",
     "src/modules/verification",
     "tests"
-    ,"next.config.ts"
+    ,"next.config.ts",
+    "public/llms.txt",
+    "src/app/opengraph-image.tsx",
+    "src/app/api/catalog/route.ts",
+    "src/app/llms-full.txt/route.ts",
+    "src/app/robots.ts",
+    "src/app/sitemap.ts",
+    "src/components/json-ld.tsx",
+    "src/lib/seo.ts",
+    "src/lib/agent-catalog.ts",
+    "tests/unit/seo.test.ts"
   ],
   "doNotRepeat": [
     "Do not split one card program into duplicate catalog entries for plans or tiers.",

@@ -75,7 +75,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Review PR 8 and its protected Vercel preview; merge only after founder approval.",
+      "nextAction": "Review the updated PR 9 preview and agent endpoints; merge only after founder approval, then submit the canonical sitemap in Google and Bing webmaster tools.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
@@ -113,7 +113,11 @@
         "PR 7 was squash-merged as 0b526522 before the new UX work began.",
         "The isolated live-catalog and plan-selector branch passes ESLint, strict TypeScript, all 28 Vitest checks with PostgreSQL access, the production build, all 12 desktop/mobile Playwright checks, axe, touch targets, horizontal table containment, landscape, reduced motion, and 200% text reflow.",
         "The catalog, Ready profile, and Ready/MetaMask comparison were visually inspected on desktop and Pixel 5 after the ui-ux-pro-max and design-taste-frontend audits.",
-        "PR 8 is open at https://github.com/ensp1re/crypto-aggregator/pull/8; its Vercel check passes and authenticated preview smoke checks return HTTP 200 for catalog, Ready profile, and Ready/MetaMask comparison routes."
+        "PR 8 is open at https://github.com/ensp1re/crypto-aggregator/pull/8; its Vercel check passes and authenticated preview smoke checks return HTTP 200 for catalog, Ready profile, and Ready/MetaMask comparison routes.",
+        "The isolated SEO foundation adds canonical metadata, social previews, crawl directives, a database-backed sitemap, safe route-specific structured data, and an AI-readable site summary; lint, strict TypeScript, 31 Vitest assertions, the production build, and all 14 desktop/mobile browser checks pass.",
+        "PR 9 is open at https://github.com/ensp1re/crypto-aggregator/pull/9; its Vercel deployment passes and authenticated preview smoke checks return HTTP 200 for app and crawler routes.",
+        "The AI discovery extension explicitly allows current OpenAI, Anthropic, Perplexity, Google, and Bing agents and publishes source-bounded Markdown and JSON catalogs; lint, strict TypeScript, 32 tests, production build, and desktop/mobile endpoint checks pass.",
+        "Updated PR 9 Vercel deployment 3G4sAG5iMmahiyYr1ys4nVjp7GVx passes; emulated OpenAI, Anthropic, Perplexity, and Google crawler requests return HTTP 200 for their discovery endpoints."
       ],
       "completion": null
     }

@@ -2,18 +2,37 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, DatabaseZap } from "lucide-react";
 import { DistributionChart } from "@/components/distribution-chart";
+import { JsonLd } from "@/components/json-ld";
+import { SITE_URL, organizationReference, pageMetadata } from "@/lib/seo";
 import { distribution, getDiscoverySnapshot, unavailable } from "@/modules/catalog/discovery";
 
-export const metadata: Metadata = { title: "Crypto card market analytics", description: "Coverage-aware crypto-card infrastructure and funding analytics." };
+export const metadata: Metadata = pageMetadata({
+  title: "Crypto Card Market Data & Analytics",
+  description: "Explore crypto card market distributions by payment network, funding model, and card model across the current CardStats catalog.",
+  path: "/analytics",
+});
 
 export default async function AnalyticsPage() {
   const snapshot = await getDiscoverySnapshot();
   const total = snapshot.cards.length;
   const custody = distribution(snapshot.cards, "custody");
   const disclosedFunding = snapshot.cards.filter(({ custody: model }) => model !== unavailable).length;
+  const analyticsSchema = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${SITE_URL}/analytics#dataset`,
+    name: "CardStats crypto card catalog distributions",
+    description: "Program counts by payment network, funding model, and card model across the CardStats crypto card catalog.",
+    url: `${SITE_URL}/analytics`,
+    creator: organizationReference(),
+    isAccessibleForFree: true,
+    spatialCoverage: "Worldwide",
+    ...(snapshot.observedAt ? { dateModified: snapshot.observedAt } : {}),
+    variableMeasured: ["Card program count", "Payment network", "Funding model", "Card model"],
+  };
 
   return (
-    <div className="shell page-stack analytics-page">
+    <div className="shell page-stack analytics-page"><JsonLd data={analyticsSchema} />
       <header className="analytics-header"><p className="kicker">Market structure / {total} cards</p><h1>How is the current catalog structured?</h1><p><strong>{disclosedFunding} of {total}</strong> cards have a collected funding-model description. Source links remain available on researched card profiles.</p></header>
       <div className="analytics-controls"><span>Cards: {total}</span><span>Unit: card count</span><span>Method: current database observations</span></div>
       <DistributionChart title="Funding models" description="Broad working categories make unlike issuer language comparable without turning missing values into assumptions." data={custody} total={total} />
