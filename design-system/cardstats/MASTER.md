@@ -61,8 +61,10 @@ with the data. Never imply that a competitor observation is issuer-verified.
 - **Selector:** use the square custom listbox with a persistent label, current value, checkmark, and cobalt
   active rule. It must preserve form submission and support arrows, Home, End, Enter, Space, Escape, Tab,
   type-ahead, outside click, visible focus, and 44px touch targets.
-- **Comparison:** one shared context, no winner before eligibility and economics verification; stack each
-  card value under the factor on mobile.
+- **Comparison:** one shared context, no winner before eligibility and economics verification; compare
+  each factor across cards in a semantic table. On mobile, preserve readable card columns inside a
+  localized horizontal scroller with a sticky factor column and visible scroll controls; never replace
+  the matrix with card grids.
 - **Charts:** horizontal bars for categorical counts, exact direct labels, denominator and method above,
   accessible table below. Do not use pie charts for the custody taxonomy.
 - **Caveats:** amber surface with icon plus text. Color never carries meaning alone.

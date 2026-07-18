@@ -169,13 +169,13 @@ Three-pane desktop workspace: queue; normalized before/after and scope; safe art
 Never use an unreadably scaled matrix. On mobile:
 
 - a bottom comparison tray shows up to three selected programs;
-- sticky program tabs choose the current focal pair/set;
-- each attribute renders as a labeled stacked row with values side by side;
+- the semantic comparison table keeps readable column widths inside one localized horizontal scroller;
+- the decision-factor column stays visible while card columns move, and visible 44px controls supplement touch scrolling;
 - section accordions reduce length while preserving headings;
 - “differences only” hides equal rows but exposes a count and reset;
 - unknown/conflicting values have text labels and explanation;
 - source actions are at least 44×44px;
-- no essential content requires horizontal page scrolling.
+- no essential content requires horizontal page scrolling, and comparison data never becomes a card grid.
 
 Desktop can use sticky column headers and a matrix for up to four offerings. Preserve program/context labels while scrolling.
 

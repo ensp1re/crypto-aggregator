@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
 async function expectNoOverflow(page: Page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
 }
 
 test("home and catalog expose real discovery coverage without false verification", async ({ page }, testInfo) => {
@@ -52,6 +52,16 @@ test("program detail keeps observed terms and official confirmation distinct", a
   await expect(page.getByText(/New U.S. and U.K. sign-ups temporarily paused/)).toBeVisible();
   await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Confirm with issuer/ })).toHaveAttribute("href", /^https:/);
+  const compareButton = page.getByRole("button", { name: "Compare", exact: true });
+  await compareButton.click();
+  const dialog = page.getByRole("dialog", { name: "Compare MetaMask Card" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("checkbox", { name: /MetaMask Card/ })).toBeChecked();
+  await expect(dialog.getByRole("checkbox", { name: /MetaMask Card/ })).toBeDisabled();
+  expect((await new AxeBuilder({ page }).include("dialog").analyze()).violations).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(compareButton).toBeFocused();
   await expectNoOverflow(page);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
@@ -66,13 +76,33 @@ test("analytics provides accessible custody data and an explicit licensed-data b
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
-test("real comparison stacks cleanly on mobile and declares uncertainty", async ({ page }, testInfo) => {
-  await page.goto("/compare");
+test("profile picker creates a shareable multi-card comparison", async ({ page }) => {
+  await page.goto("/cards/metamask-card");
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Compare MetaMask Card" });
+  await dialog.getByRole("checkbox", { name: /Ether.fi Cash/ }).check();
+  await dialog.getByRole("checkbox", { name: /Gnosis Pay/ }).check();
+  await dialog.getByRole("button", { name: "Compare 3 cards" }).click();
+  await expect(page).toHaveURL(/cards=metamask-card&cards=etherfi-card&cards=gnosis-card/);
+  await expect(page.getByRole("table", { name: "Crypto card comparison" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /MetaMask Card/ })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /Ether.fi Cash/ })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /Gnosis Pay/ })).toBeVisible();
+});
+
+test("real comparison uses a contained semantic table on mobile", async ({ page }, testInfo) => {
+  await page.goto("/compare?cards=metamask-card&cards=etherfi-card&cards=gnosis-card");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("without a fake winner");
   await expect(page.getByRole("table", { name: "Crypto card comparison" })).toBeVisible();
+  await expect(page.getByRole("checkbox", { name: "Differences only" })).toBeVisible();
   await expect(page.getByText("Unverified observation")).toHaveCount(0);
   await expectNoOverflow(page);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   if (testInfo.project.name === "mobile-chromium") {
+    const tableScroll = page.locator(".compare-table-scroll");
+    expect(await tableScroll.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+    await page.getByRole("button", { name: "Scroll comparison right" }).click();
+    expect(await tableScroll.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
     await page.setViewportSize({ width: 812, height: 375 });
     await expectNoOverflow(page);
     await page.setViewportSize({ width: 375, height: 812 });

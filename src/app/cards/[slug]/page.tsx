@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Check, WalletCards } from "lucide-react";
 import { IssuerMark } from "@/components/issuer-mark";
+import { ComparePicker } from "@/components/compare-picker";
+import { getCompareOptions } from "@/modules/catalog/comparison-server";
 import { getDiscoveryCard, getDiscoverySnapshot, maximumReward } from "@/modules/catalog/discovery";
 import { getOfficialObservations } from "@/modules/catalog/official-observations";
 
@@ -19,6 +21,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ slu
   const card = getDiscoveryCard((await params).slug);
   if (!card) notFound();
   const officialObservations = getOfficialObservations(card.id);
+  const compareOptions = getCompareOptions();
   const facts = [
     ["Card model", card.type], ["Payment network", card.network], ["Funding control", card.custody],
     ["Reported regions", card.regions], ["Annual fee", card.annualFee], ["FX fee", card.fxFee],
@@ -31,7 +34,10 @@ export default async function CardDetailPage({ params }: { params: Promise<{ slu
       <Link className="back-link" href="/cards"><ArrowLeft aria-hidden="true" size={16} /> All programs</Link>
       <header className="profile-header">
         <div className="profile-identity"><IssuerMark issuer={card.issuer} src={card.logo} alt={card.media?.alt} size={72} /><div><p className="kicker">{card.issuer} / discovery profile</p><h1>{card.name}</h1><p>{card.network} / {card.type} / {card.custody}</p></div></div>
-        <a className="button primary" href={card.officialLink} rel="noreferrer" target="_blank">Confirm with issuer <ArrowUpRight aria-hidden="true" size={17} /></a>
+        <div className="profile-actions">
+          <a className="button primary" href={card.officialLink} rel="noreferrer" target="_blank">Confirm with issuer <ArrowUpRight aria-hidden="true" size={17} /></a>
+          <ComparePicker cards={compareOptions} anchorSlug={card.slug} initialSelected={[card.slug]} buttonLabel="Compare" />
+        </div>
       </header>
       {officialObservations.length > 0 ? <section className="fact-sheet official-evidence" aria-labelledby="official-evidence-title">
         <div className="section-title"><div><p className="kicker">Official evidence</p><h2 id="official-evidence-title">Observations awaiting independent review</h2></div><span>{officialObservations.length} observations</span></div>
