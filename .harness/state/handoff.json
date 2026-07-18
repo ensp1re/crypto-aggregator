@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T20:17:34+02:00",
+  "updatedAt": "2026-07-18T20:22:05+02:00",
   "goal": "Review the isolated responsive UI and database-projection repair before any production merge.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "feat/site-ui-data-polish",
-    "head": "565721b7b8eabc4f80bc644974bc53227f280bfc",
+    "head": "0cf2bcf5ff69ebfcfe4021392709fbbe625976a3",
     "worktree": "dirty"
   },
   "completed": [
@@ -26,7 +26,8 @@
     "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and serves the 60-card catalog.",
     "Repaired the public database projection so structured tier economics no longer repeat one summary across unrelated fee, FX, ATM, and reward rows.",
     "Added marked catalog-lead fallback fields, resilient issuer marks, normalized analytics categories, mobile navigation, and an adaptive one-card-at-a-time comparison table with native tier selectors.",
-    "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison."
+    "Applied ui-ux-pro-max and design-taste-frontend preserve-mode audits across home, catalog, profiles, analytics, navigation, and comparison.",
+    "Opened isolated PR 7 and a protected Vercel preview at https://cardstats-git-feat-site-ui-data-polish-aterli.vercel.app; production remains unchanged."
   ],
   "nextActions": [
     "Open and inspect the isolated preview for feat/site-ui-data-polish before deciding whether to merge it.",
@@ -53,6 +54,7 @@
       "PR 6 is squash-merged as f7aad76; production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready and six production smoke routes returned HTTP 200 with expected Solflare, Bybit, Ready, Kraken, and comparison content."
       ,"ESLint, strict TypeScript, 28 Vitest checks, the PostgreSQL-backed Next.js production build, 10 previously passing desktop/mobile Playwright checks, and the corrected two-project Ready tier interaction check pass."
       ,"Axe, 44px mobile targets, horizontal table containment, landscape, reduced motion, and 200% text reflow passed in Chromium; desktop home/profile and Pixel 7 catalog/comparison screenshots were visually inspected."
+      ,"Vercel preview deployment dpl_5qvnPUwKVDVd2885R2st3LgAtUBW reached READY and authenticated home, Ready profile, and Ready/Bybit/Solflare comparison smoke checks returned HTTP 200."
     ],
     "failed": [],
     "notRun": [

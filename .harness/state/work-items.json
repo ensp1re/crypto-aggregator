@@ -109,7 +109,8 @@
         "ESLint, strict TypeScript, Prisma validation/generation, 26 deterministic tests, the Next.js Webpack production compile, and both harness verification commands pass; the restricted sandbox blocked only database connectivity and Turbopack's internal helper port.",
         "Founder approved sensitive Vercel Preview and Production database access and the production merge; PR 6 squash-merged as f7aad76.",
         "Vercel production deployment dpl_JCQ7h1Es7CP6kkNWpvA69JdM7izn is ready; six authenticated production smoke routes returned HTTP 200 with expected database-backed card, tier, and comparison content.",
-        "The isolated UI/data repair passes ESLint, strict TypeScript, 28 Vitest checks, a PostgreSQL-backed production build, desktop/mobile axe checks, mobile table containment, landscape, reduced motion, 44px targets, and 200% text reflow; affected Ready tier checks pass in both browser projects."
+        "The isolated UI/data repair passes ESLint, strict TypeScript, 28 Vitest checks, a PostgreSQL-backed production build, desktop/mobile axe checks, mobile table containment, landscape, reduced motion, 44px targets, and 200% text reflow; affected Ready tier checks pass in both browser projects.",
+        "PR 7 is open without merging; protected preview dpl_5qvnPUwKVDVd2885R2st3LgAtUBW is READY and authenticated home, Ready profile, and Ready/Bybit/Solflare comparison routes return HTTP 200."
       ],
       "completion": null
     }
