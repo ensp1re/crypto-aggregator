@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T19:20:09+02:00",
+  "updatedAt": "2026-07-18T19:27:00+02:00",
   "goal": "Deliver the isolated database-backed 60-card catalog, complete official-source plan research, and program-first comparison workflow for founder review.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "feat/profile-compare-workflow",
-    "head": "e8519ba75838f3c1095c8dcdd99c77d140de9767",
+    "head": "d481de9da65b067b9eec3a1318fc004701e5647b",
     "worktree": "dirty"
   },
   "completed": [
@@ -24,7 +24,7 @@
     "Documented that candidate plan research is staging data and must not become a production public projection without canonical resolution and independent publication review."
   ],
   "nextActions": [
-    "Commit and push the isolated pull-request branch, wait for Vercel, and inspect the new preview routes.",
+    "Obtain explicit founder approval to copy the existing DATABASE_URL into Vercel as a sensitive preview-only variable, then redeploy and inspect the new preview routes.",
     "Founder reviews pull request 6 and either approves further canonical publication work or closes the PR without changing main."
   ],
   "decisions": [
@@ -49,7 +49,8 @@
     "notRun": [
       "The current sandbox blocked the two PostgreSQL integration tests with connect EPERM; 26 non-database tests passed and the database-backed projection was verified earlier before the final cache/documentation-only edits.",
       "Turbopack could not bind its internal CSS helper port in the restricted sandbox; the Webpack production compile passed.",
-      "The final current-commit Playwright and hosted smoke checks await the new Vercel preview.",
+      "Vercel deployment dpl_BcHE3447dxCeDkt83AUv95Jpu4W8 compiled and passed TypeScript, then failed page-data collection because the project has no DATABASE_URL; adding the local credential externally requires fresh explicit founder approval.",
+      "The final current-commit Playwright and hosted smoke checks await a database-enabled Vercel preview.",
       "Manual VoiceOver and NVDA testing is unavailable in this environment.",
       "No production deployment or merge was performed."
     ]

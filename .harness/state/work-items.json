@@ -75,7 +75,7 @@
       ],
       "plan": "docs/implementation-plan.md",
       "blocker": null,
-      "nextAction": "Push the isolated 60-card database-backed catalog update to pull request 6, verify the new Vercel preview, and keep main unchanged pending founder review.",
+      "nextAction": "After explicit founder approval, add DATABASE_URL as a sensitive Vercel preview-only variable, redeploy pull request 6, verify the hosted routes, and keep main unchanged.",
       "verification": [
         "Safe AST ingestion extracted 42 minimal discovery records from the public CryptoAgg application bundle without executing source JavaScript.",
         "PaymentScan adapter is restricted to documented bearer-token API routes and refuses public ingestion without explicit republication rights.",
