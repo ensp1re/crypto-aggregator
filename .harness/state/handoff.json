@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-20T15:03:28+02:00",
+  "updatedAt": "2026-07-20T15:04:37+02:00",
   "goal": "Improve CardStats' Google search-result favicon signals and prevent the homepage research counter from becoming a low-quality search snippet.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
@@ -8,7 +8,7 @@
   "status": "active",
   "git": {
     "branch": "main",
-    "head": "c51da4d7e2c278b70dcfffb349a79a9447f0075f",
+    "head": "2daf0aaac725849b2d842d71467ea70897a609a7",
     "worktree": "dirty"
   },
   "completed": [
@@ -35,10 +35,11 @@
     "Explicitly allowed current OpenAI, Anthropic, Perplexity, Google, and Bing search, user-fetch, and training agents on public routes while retaining the private research block.",
     "Added revalidated Markdown and JSON agent catalogs that expose only researched programs, official facts, plan data, benefits, source URLs, and observation dates; blocked cards, unknowns, and catalog-lead fallback facts are omitted.",
     "Replaced the keyword-list homepage description with a specific comparison promise, excluded CTA and research-counter fragments from snippets, and replaced the hard-coded numeric date with the latest locale-formatted research observation date.",
-    "Strengthened the stable square CardStats favicon and Organization logo signals with explicit formats, intrinsic 512px dimensions, and complete ImageObject metadata."
+    "Strengthened the stable square CardStats favicon and Organization logo signals with explicit formats, intrinsic 512px dimensions, and complete ImageObject metadata.",
+    "Pushed the reviewed favicon and snippet refinement to origin/main as commit 2daf0aa."
   ],
   "nextActions": [
-    "Review the updated PR 9 preview, including the rendered homepage metadata and snippet-safe hero; merge only after founder approval, then request homepage recrawling and submit the canonical sitemap in Google and Bing webmaster tools.",
+    "Confirm the production deployment for commit 2daf0aa, then request homepage recrawling and submit the canonical sitemap in Google and Bing webmaster tools.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -60,7 +61,8 @@
       "Both desktop and mobile crawler endpoint checks pass for explicit bot rules, llms.txt, the full Markdown catalog, the JSON catalog, sitemap, and social image.",
       "Updated PR 9 deployment 3G4sAG5iMmahiyYr1ys4nVjp7GVx is ready; OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Googlebot user-agent smoke checks returned HTTP 200 with the expected text, Markdown, and JSON content types.",
       "The focused SEO unit suite passes three assertions, including the compact source-linked homepage description.",
-      "ESLint, strict TypeScript, 29 unit and ingestion assertions, both deterministic harness commands, and Git whitespace checks pass for the favicon and snippet refinement."
+      "ESLint, strict TypeScript, 29 unit and ingestion assertions, both deterministic harness commands, and Git whitespace checks pass for the favicon and snippet refinement.",
+      "Commit 2daf0aa was pushed successfully to origin/main."
     ],
     "failed": [
       "The combined npm run check command stopped when three database integration assertions could not connect through the restricted sandbox (EPERM); 29 non-database assertions passed before the stop."
