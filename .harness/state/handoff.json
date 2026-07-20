@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-18T23:05:16+02:00",
-  "goal": "Make CardStats explicitly accessible and safely extractable for AI search, citation crawlers, and user-directed agents.",
+  "updatedAt": "2026-07-20T15:03:28+02:00",
+  "goal": "Improve CardStats' Google search-result favicon signals and prevent the homepage research counter from becoming a low-quality search snippet.",
   "scope": [
     "real-catalog-ingestion-and-redesign"
   ],
   "status": "active",
   "git": {
-    "branch": "feat/seo-foundation",
-    "head": "b2de237a692c9791c5360e43339b4f93fe82f0cc",
+    "branch": "main",
+    "head": "c51da4d7e2c278b70dcfffb349a79a9447f0075f",
     "worktree": "dirty"
   },
   "completed": [
@@ -33,10 +33,12 @@
     "Added safe Organization, WebSite, CollectionPage, ItemList, BreadcrumbList, WebPage, FinancialProduct, and Dataset JSON-LD that reflects visible database-backed content.",
     "Opened PR 9 with a passing Vercel deployment and authenticated 200 smoke checks for the app, crawler endpoints, AI summary, and a researched card profile.",
     "Explicitly allowed current OpenAI, Anthropic, Perplexity, Google, and Bing search, user-fetch, and training agents on public routes while retaining the private research block.",
-    "Added revalidated Markdown and JSON agent catalogs that expose only researched programs, official facts, plan data, benefits, source URLs, and observation dates; blocked cards, unknowns, and catalog-lead fallback facts are omitted."
+    "Added revalidated Markdown and JSON agent catalogs that expose only researched programs, official facts, plan data, benefits, source URLs, and observation dates; blocked cards, unknowns, and catalog-lead fallback facts are omitted.",
+    "Replaced the keyword-list homepage description with a specific comparison promise, excluded CTA and research-counter fragments from snippets, and replaced the hard-coded numeric date with the latest locale-formatted research observation date.",
+    "Strengthened the stable square CardStats favicon and Organization logo signals with explicit formats, intrinsic 512px dimensions, and complete ImageObject metadata."
   ],
   "nextActions": [
-    "Review the updated PR 9 preview and agent endpoints; merge only after founder approval, then submit the canonical sitemap in Google and Bing webmaster tools.",
+    "Review the updated PR 9 preview, including the rendered homepage metadata and snippet-safe hero; merge only after founder approval, then request homepage recrawling and submit the canonical sitemap in Google and Bing webmaster tools.",
     "Resolve the eight research blockers and independently review candidate evidence before promoting any canonical claims."
   ],
   "decisions": [
@@ -44,7 +46,8 @@
     "Benefits & perks is the consumer label; time-bound promotions retain dates and conditions and do not overwrite durable economics.",
     "A selector appears only when official evidence supplies an option matrix; partial, unavailable, and blocked research remain explicit states.",
     "Founder explicitly directed the research-stage database projection to production; candidate rows remain distinct from reviewed canonical claims and no claim workflow status was changed.",
-    "The source-backed semantic table is the comparison model on every viewport; mobile uses localized horizontal scrolling rather than a card grid."
+    "The source-backed semantic table is the comparison model on every viewport; mobile uses localized horizontal scrolling rather than a card grid.",
+    "The Google result icon is controlled by the favicon declaration while Organization logo markup is a separate brand-understanding signal; both use the existing CardStats mark at a stable URL."
   ],
   "openQuestions": [],
   "verification": {
@@ -55,12 +58,17 @@
       "PR 9 Vercel checks pass; authenticated preview smoke checks return HTTP 200 for home, robots.txt, sitemap.xml, llms.txt, and the MetaMask profile.",
       "AI access changes pass ESLint, strict TypeScript, all 32 Vitest assertions, and the PostgreSQL-backed Next.js production build with static one-day-revalidated /api/catalog and /llms-full.txt routes.",
       "Both desktop and mobile crawler endpoint checks pass for explicit bot rules, llms.txt, the full Markdown catalog, the JSON catalog, sitemap, and social image.",
-      "Updated PR 9 deployment 3G4sAG5iMmahiyYr1ys4nVjp7GVx is ready; OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Googlebot user-agent smoke checks returned HTTP 200 with the expected text, Markdown, and JSON content types."
+      "Updated PR 9 deployment 3G4sAG5iMmahiyYr1ys4nVjp7GVx is ready; OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Googlebot user-agent smoke checks returned HTTP 200 with the expected text, Markdown, and JSON content types.",
+      "The focused SEO unit suite passes three assertions, including the compact source-linked homepage description.",
+      "ESLint, strict TypeScript, 29 unit and ingestion assertions, both deterministic harness commands, and Git whitespace checks pass for the favicon and snippet refinement."
     ],
-    "failed": [],
+    "failed": [
+      "The combined npm run check command stopped when three database integration assertions could not connect through the restricted sandbox (EPERM); 29 non-database assertions passed before the stop."
+    ],
     "notRun": [
       "Manual VoiceOver and NVDA testing is unavailable in this environment.",
-      "Search Console performance data is not exposed through the current workspace connectors, so query-led content expansion was intentionally not started."
+      "Search Console performance data is not exposed through the current workspace connectors, so query-led content expansion was intentionally not started.",
+      "The current-change PostgreSQL integration rerun and production build were not run because unsandboxed shared development database access was denied; end-to-end browser checks were not repeated for the metadata and copy-only change."
     ]
   },
   "risks": [
@@ -69,7 +77,8 @@
     "Four programs remain partial because the issuer exposes an incomplete, image-only, in-app, or otherwise non-reproducible option matrix.",
     "Issuer terms and promotions can change; scheduled revalidation and stale-state projection are not yet complete.",
     "Native dialog and horizontally scrolled table semantics still need manual VoiceOver and NVDA confirmation before production release.",
-    "The domain is newly connected to Search Console and may not have actionable query data yet; rankings cannot be guaranteed and content expansion should wait for measured impressions rather than publishing thin pages."
+    "The domain is newly connected to Search Console and may not have actionable query data yet; rankings cannot be guaranteed and content expansion should wait for measured impressions rather than publishing thin pages.",
+    "Google may generate query-specific snippets from visible page content and does not guarantee favicon display; deployment, recrawling, and processing are still required before the result changes."
   ],
   "touchedPaths": [
     ".harness/state/handoff.json",
@@ -100,7 +109,10 @@
     "src/components/json-ld.tsx",
     "src/lib/seo.ts",
     "src/lib/agent-catalog.ts",
-    "tests/unit/seo.test.ts"
+    "tests/unit/seo.test.ts",
+    "public/icon.svg",
+    "src/app/layout.tsx",
+    "src/app/page.tsx"
   ],
   "doNotRepeat": [
     "Do not split one card program into duplicate catalog entries for plans or tiers.",

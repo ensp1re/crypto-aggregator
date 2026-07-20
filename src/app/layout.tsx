@@ -17,7 +17,14 @@ export const metadata: Metadata = {
   category: "finance",
   referrer: "origin-when-cross-origin",
   formatDetection: { email: false, address: false, telephone: false },
-  icons: { icon: "/icon.svg", shortcut: "/icon.svg", apple: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/favicon.ico", type: "image/x-icon", sizes: "32x32" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -29,7 +36,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         "@id": organizationReference()["@id"],
         name: SITE_NAME,
         url: SITE_URL,
-        logo: { "@type": "ImageObject", url: absoluteUrl("/icon.svg") },
+        logo: {
+          "@type": "ImageObject",
+          url: absoluteUrl("/icon.svg"),
+          contentUrl: absoluteUrl("/icon.svg"),
+          width: 512,
+          height: 512,
+        },
         description: SITE_DESCRIPTION,
       },
       {

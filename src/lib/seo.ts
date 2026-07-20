@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "CardStats";
 export const SITE_URL = "https://www.cardstats.xyz";
-export const SITE_DESCRIPTION = "Compare crypto cards by fees, rewards, funding model, regions, plans, and benefits using one independent global card index.";
+export const SITE_DESCRIPTION = "Compare crypto cards by eligibility, fees, rewards, funding model, and available plans. Check source-linked card details before you apply.";
 export const SOCIAL_IMAGE = "/opengraph-image";
 
 type PageMetadataInput = {

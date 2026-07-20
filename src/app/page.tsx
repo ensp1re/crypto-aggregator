@@ -13,6 +13,9 @@ export const metadata: Metadata = pageMetadata({
 
 export default async function HomePage() {
   const snapshot = await getDiscoverySnapshot();
+  const researchDate = snapshot.observedAt
+    ? new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(snapshot.observedAt))
+    : "Date unavailable";
   const featured = ["metamask-card", "bybit-card", "gnosis-card", "ready-card"]
     .map((slug) => snapshot.cards.find((card) => card.slug === slug))
     .filter((card): card is NonNullable<typeof card> => Boolean(card));
@@ -25,11 +28,11 @@ export default async function HomePage() {
           <div className="hero-copy">
             <p className="kicker">Independent crypto-card intelligence</p>
             <h1>Compare the card.<br /><em>Choose the right plan.</em></h1>
-            <p className="hero-lede">A global index of crypto cards, funding models, fees, rewards, plans, and benefits.</p>
-            <div className="button-row"><Link className="button primary" href="/cards">Explore {snapshot.cards.length} cards <ArrowRight aria-hidden="true" size={17} /></Link><Link className="button secondary" href="/analytics">Open market analytics</Link></div>
+            <p className="hero-lede">Compare crypto cards by eligibility, fees, rewards, funding model, and available plans. Check source-linked card details before you apply.</p>
+            <div className="button-row" data-nosnippet><Link className="button primary" href="/cards">Explore {snapshot.cards.length} cards <ArrowRight aria-hidden="true" size={17} /></Link><Link className="button secondary" href="/analytics">Open market analytics</Link></div>
           </div>
-          <aside className="hero-index" aria-label="Current research coverage">
-            <header><span>Card index</span><span>17.07.26</span></header>
+          <aside className="hero-index" aria-label="Current research coverage" data-nosnippet>
+            <header><span>Research snapshot</span><span>{researchDate}</span></header>
             <dl><div><dt>Cards indexed</dt><dd>{snapshot.cards.length}</dd></div><div><dt>Official sources collected</dt><dd>{researched}</dd></div><div><dt>Tier options structured</dt><dd>{snapshot.cards.flatMap(({ dimensions }) => dimensions.flatMap(({ options }) => options)).length}</dd></div><div><dt>Comparison slots</dt><dd>4</dd></div></dl>
             <p><CircleDot aria-hidden="true" size={14} /> Catalog data loads from PostgreSQL.</p>
           </aside>
